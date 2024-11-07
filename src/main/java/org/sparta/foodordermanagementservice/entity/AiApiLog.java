@@ -12,6 +12,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "p_ai_api_log")
 public class AiApiLog {
 
     @Id
