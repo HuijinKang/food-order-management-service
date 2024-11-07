@@ -4,12 +4,17 @@ package org.sparta.foodordermanagementservice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
+import org.sparta.foodordermanagementservice.common.PageSizeRule;
+import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
+import org.sparta.foodordermanagementservice.dto.response.OrderListResponse;
+import org.sparta.foodordermanagementservice.dto.response.SortedBy;
 import org.sparta.foodordermanagementservice.service.OrderService;
-import org.sparta.foodordermanagementservice.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/orders")
@@ -21,20 +26,21 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ApiResponse<List<GetOrderListResponse>> getOrderList
+    public ApiResponse<List<OrderListResponse>> getOrderList
             (
-                    @RequestParam GetOrderListReqCondition condition,
+                    @RequestParam OrderListRequestCondition condition,
                     @RequestParam Long key,
                     @RequestParam int pageSize,
-                    @RequestParam int pageNubmer,
+                    @RequestParam int pageNumber,
                     @RequestParam SortedBy sortedBy,
                     @RequestParam boolean isAsc
-            )
-    {
-        if (pageSize != 10 && pageSize != 30 &&pageSize != 50 ) //todo 페이지 사이즈 매직넘버 객체로 묶기
-            pageSize = 10;
+            ) {
+
+        if (!PageSizeRule.isPageSizeValid(pageSize))
+            pageSize = PageSizeRule.DEFAULT_PAGE_SIZE;
+
+
+
         return ApiResponse.ofSuccess(null);
     }
-
-
 }
