@@ -8,12 +8,11 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_menu")
-public class Menu {
+public class Menu extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,9 +22,9 @@ public class Menu {
     @JoinColumn(name = "store_id")
     private Store store;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private MenuStatus status = MenuStatus.ACTIVE;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MenuStatus status = MenuStatus.ACTIVE;
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -33,24 +32,11 @@ public class Menu {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String menuImageUrl;
+    @Column(nullable = true)
+    private String description;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+//    @Column(nullable = false, columnDefinition = "TEXT")
+//    private String menuImageUrl;
 
-    @Column(nullable = false, length = 100)
-    private String createdBy;
 
-    @Column
-    private LocalDateTime updatedAt;
-
-    @Column(length = 100)
-    private String updatedBy;
-
-    @Column
-    private LocalDateTime deletedAt;
-
-    @Column(length = 100)
-    private String deletedBy;
 }
