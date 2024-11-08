@@ -2,8 +2,9 @@ package org.sparta.foodordermanagementservice.repository;
 
 
 import lombok.RequiredArgsConstructor;
-import org.sparta.foodordermanagementservice.domain.Order;
-import org.sparta.foodordermanagementservice.dto.SelectOrderListDto;
+import org.sparta.foodordermanagementservice.dto.OrderDTO;
+import org.sparta.foodordermanagementservice.dto.SelectOrderListDTO;
+import org.sparta.foodordermanagementservice.entity.Order;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -12,11 +13,19 @@ import java.util.List;
 @Transactional
 public class OrderDbTransactionalFacade {
 
-    private final OrderRepository orderRepository;
+    private final OrderRepository orderRepo;
 
-    //    private final PaymentRepository paymentRepository;
-    public List<Order> selectOrderList(SelectOrderListDto dto) {
-        return orderRepository.selectOrderList(dto);
+    //    private final PaymentRepository paymentRepo;
+
+
+    public List<OrderDTO> selectOrderList(SelectOrderListDTO dto) {
+
+        List<Order> selectedOrderList
+                = orderRepo.selectOrderList(dto);
+
+        return selectedOrderList.stream()
+                .map(OrderDTO::from)
+                .toList();
     }
 
 }

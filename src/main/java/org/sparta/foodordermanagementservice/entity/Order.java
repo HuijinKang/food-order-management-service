@@ -2,52 +2,56 @@ package org.sparta.foodordermanagementservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 @SuppressWarnings("unused")
 
 
-//todo  db q보며 수정
 @Entity
 @Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Table(name = "p_order")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(nullable = false)
+    private final User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
-    private Store store;
+    @JoinColumn(nullable = false)
+    private final Store store;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private OrderStatus status;
-//
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private OrderType type;
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status;
 
-    @Column(nullable = false, length = 255)
-    private String address;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private final OrderType type;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
+    private final String address;
+
+    @Column(nullable = false)
     private String comment;
+
+    @Column(nullable = false)
+    private final int totalPrice;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String createdBy;
 
     @Column
@@ -59,6 +63,23 @@ public class Order {
     @Column
     private LocalDateTime deletedAt;
 
-    @Column(length = 255)
+    @Column
     private String deletedBy;
+
+    @Builder
+    public Order(User user,
+                 Store store,
+                 OrderStatus status,
+                 OrderType type,
+                 String address,
+                 String comment,
+                 int totalPrice) {
+        this.user = user;
+        this.store = store;
+        this.status = status;
+        this.type = type;
+        this.address = address;
+        this.comment = comment;
+        this.totalPrice = totalPrice;
+    }
 }

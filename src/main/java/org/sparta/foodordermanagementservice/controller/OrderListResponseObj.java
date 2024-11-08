@@ -2,9 +2,9 @@ package org.sparta.foodordermanagementservice.controller;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sparta.foodordermanagementservice.domain.Order;
-import org.sparta.foodordermanagementservice.domain.OrderStatus;
-import org.sparta.foodordermanagementservice.domain.OrderType;
+import org.sparta.foodordermanagementservice.dto.OrderDTO;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 
 
 @Getter
@@ -17,16 +17,17 @@ public class OrderListResponseObj {
     private final int totalPrice;
 
 
-    public static OrderListResponseObj from(Order order) {
-        return new OrderListResponseObjBuilder()
-                .storeId(String.valueOf(order.getStore().getId()))
+    public static OrderListResponseObj from(OrderDTO order) {
+
+        //todo storeDTO 작업되면 수정
+        return OrderListResponseObj.builder()
+                .storeId("temp")      //String.valueOf(order.getStoreDTO().getId()))
                 .status(order.getStatus())
                 .type(order.getType())
                 .address(order.getAddress())
                 .totalPrice(order.getTotalPrice())
                 .build();
     }
-
 
 
     @Builder

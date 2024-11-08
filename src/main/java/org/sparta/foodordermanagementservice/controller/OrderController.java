@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.common.PageSizeRule;
-import org.sparta.foodordermanagementservice.domain.Order;
-import org.sparta.foodordermanagementservice.dto.SearchOrderListDto;
+import org.sparta.foodordermanagementservice.dto.OrderDTO;
+import org.sparta.foodordermanagementservice.dto.SearchOrderListDTO;
 import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
 import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 import org.sparta.foodordermanagementservice.service.OrderService;
@@ -32,7 +32,7 @@ public class OrderController {
     public ApiResponse<List<OrderListResponseObj>> searchOrderList
             (
                     @RequestParam OrderListRequestCondition condition,
-                    @RequestParam Long key,
+                    @RequestParam String key,
                     @RequestParam int pageSize,
                     @RequestParam int pageNumber,
                     @RequestParam SortedBy sortedBy,
@@ -42,8 +42,8 @@ public class OrderController {
         if (!PageSizeRule.isPageSizeValid(pageSize))
             pageSize = PageSizeRule.DEFAULT_PAGE_SIZE;
 
-        SearchOrderListDto dto
-                = SearchOrderListDto.builder()
+        SearchOrderListDTO dto
+                = SearchOrderListDTO.builder()
                 .condition(condition)
                 .key(key)
                 .pageSize(pageSize)
@@ -52,7 +52,7 @@ public class OrderController {
                 .isAsc(isAsc)
                 .build();
 
-        List<Order> searchedOrderList
+        List<OrderDTO> searchedOrderList
                 = orderService.searchOrderList(dto);
 
         List<OrderListResponseObj> responseObjList

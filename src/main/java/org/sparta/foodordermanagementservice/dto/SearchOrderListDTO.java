@@ -7,20 +7,20 @@ import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 
 
 @Getter
-public class SearchOrderListDto {
+public class SearchOrderListDTO {
 
     private final OrderListRequestCondition condition;
-    private final Long key;
+    private final String key;
     private final int pageSize;
     private final int pageNumber;
     private final SortedBy sortedBy;
     private final boolean isAsc;
 
     @Builder
-    public SearchOrderListDto
+    public SearchOrderListDTO
             (
                     OrderListRequestCondition condition,
-                    Long key,
+                    String key,
                     int pageSize,
                     int pageNumber,
                     SortedBy sortedBy,

@@ -1,10 +1,10 @@
 package org.sparta.foodordermanagementservice.service;
 
-import org.sparta.foodordermanagementservice.domain.Order;
-import org.sparta.foodordermanagementservice.dto.SearchOrderListDto;
+import org.sparta.foodordermanagementservice.dto.OrderDTO;
+import org.sparta.foodordermanagementservice.dto.SearchOrderListDTO;
 
 import java.util.List;
 
 public interface OrderService {
-    List<Order> searchOrderList(SearchOrderListDto dto);
+    List<OrderDTO> searchOrderList(SearchOrderListDTO dto);
 }
