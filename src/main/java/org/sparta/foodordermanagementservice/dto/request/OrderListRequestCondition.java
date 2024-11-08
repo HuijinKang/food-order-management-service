@@ -2,6 +2,7 @@ package org.sparta.foodordermanagementservice.dto.request;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.sparta.foodordermanagementservice.common.utils.QueryStringEnumConverter;
 
 @Getter
 @RequiredArgsConstructor
