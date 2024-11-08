@@ -12,6 +12,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "p_store")
 public class Store {
 
@@ -23,8 +24,11 @@ public class Store {
     @JoinColumn(name = "store_id")
     private User user;
 
-    @Column(nullable = false, length = 100)
-    private String region;
+    @Column(nullable = false)
+    private double latitude;
+
+    @Column(nullable = false)
+    private double longitude;
 
     @Column(nullable = false, length = 255)
     private String name;
