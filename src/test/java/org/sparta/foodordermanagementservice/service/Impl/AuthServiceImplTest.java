@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.service.Impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import org.sparta.foodordermanagementservice.dto.request.SignupRequestDTO;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,14 +27,22 @@ class AuthServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-    private final SignupRequestDTO validSignUpRequest = SignupRequestDTO.builder()
-            .username("testuser")
-            .password("testpassword")
-            .email("test@email.com")
-            .nickname("testnickname")
-            .isPublic(true)
-            .userRole(UserRole.CUSTOMER)
-            .build();
+    @Mock
+    private PasswordEncoder encoder;
+
+    private SignupRequestDTO validSignUpRequest;
+
+    @BeforeEach
+    void setUp() {
+        validSignUpRequest = SignupRequestDTO.builder()
+                .username("testuser")
+                .password("testpassword")
+                .email("test@email.com")
+                .nickname("testnickname")
+                .isPublic(true)
+                .userRole(UserRole.CUSTOMER)
+                .build();
+    }
 
     @Test
     @DisplayName("회원가입 성공")
@@ -52,37 +62,36 @@ class AuthServiceImplTest {
     void signupFailWhenUsernameIsDuplicate() {
 
         when(userRepository.existsByUsername(validSignUpRequest.getUsername())).thenReturn(true);
-        when(userRepository.existsByNickname(validSignUpRequest.getNickname())).thenReturn(false);
-        when(userRepository.existsByEmail(validSignUpRequest.getEmail())).thenReturn(false);
 
         CustomException exception = assertThrows(CustomException.class, () -> authService.signup(validSignUpRequest));
 
         assertEquals(ErrorCode.DUPLICATE_USERNAME, exception.getErrorCode());
+        verify(userRepository, times(1)).existsByUsername(anyString());
     }
 
     @Test
     @DisplayName("회원가입 실패 - nickname 중복")
     void signupFailWhenNicknameIsDuplicate() {
 
-        when(userRepository.existsByUsername(validSignUpRequest.getUsername())).thenReturn(false);
         when(userRepository.existsByNickname(validSignUpRequest.getNickname())).thenReturn(true);
-        when(userRepository.existsByEmail(validSignUpRequest.getEmail())).thenReturn(false);
 
         CustomException exception = assertThrows(CustomException.class, () -> authService.signup(validSignUpRequest));
 
         assertEquals(ErrorCode.DUPLICATE_NICKNAME, exception.getErrorCode());
+        verify(userRepository, times(1)).existsByNickname(anyString());
+
     }
 
     @Test
     @DisplayName("회원가입 실패 - email 중복")
     void signupFailWhenEmailIsDuplicate() {
 
-        when(userRepository.existsByUsername(validSignUpRequest.getUsername())).thenReturn(false);
-        when(userRepository.existsByNickname(validSignUpRequest.getNickname())).thenReturn(false);
         when(userRepository.existsByEmail(validSignUpRequest.getEmail())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class, () -> authService.signup(validSignUpRequest));
 
         assertEquals(ErrorCode.DUPLICATE_EMAIL, exception.getErrorCode());
+        verify(userRepository, times(1)).existsByEmail(anyString());
+
     }
 }
