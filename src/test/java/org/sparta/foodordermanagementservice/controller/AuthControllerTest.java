@@ -522,6 +522,9 @@ class AuthControllerTest {
 
         String requestJson = objectMapper.writeValueAsString(request);
 
+        // signup이 void 타입이라 doThrow 사용
+        doThrow(new CustomException(ErrorCode.WRONG_ROLE)).when(authService).signup(request);
+
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/auths/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
