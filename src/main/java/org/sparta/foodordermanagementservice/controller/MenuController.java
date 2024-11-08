@@ -1,0 +1,29 @@
+package org.sparta.foodordermanagementservice.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.sparta.foodordermanagementservice.common.ApiResponse;
+import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
+import org.sparta.foodordermanagementservice.service.MenuService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("api/menus")
+@RequiredArgsConstructor
+public class MenuController {
+
+    private final MenuService menuService;
+
+    // 메뉴 등록
+//    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @PostMapping
+    public ApiResponse<?> createMenu(@RequestParam(required = false) UUID storeId,
+                                     @RequestBody MenuRequestDto requestDto) {
+        menuService.createMenu(storeId, requestDto);
+
+        return ApiResponse.ofSuccess(null);
+    }
+
+}
