@@ -46,6 +46,7 @@ class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -432,7 +433,7 @@ class AuthControllerTest {
         String requestJson = objectMapper.writeValueAsString(request);
 
         // signup이 void 타입이라 doThrow 사용
-        doThrow(new CustomException(ErrorCode.DUPLICATE_USERNAME)).when(authService).signup(request);
+        doThrow(new CustomException(ErrorCode.DUPLICATE_USERNAME)).when(authService).signup(any(SignupRequestDTO.class));
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/auths/signup")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -475,7 +476,7 @@ class AuthControllerTest {
         String requestJson = objectMapper.writeValueAsString(request);
 
         // signup이 void 타입이라 doThrow 사용
-        doThrow(new CustomException(ErrorCode.DUPLICATE_NICKNAME)).when(authService).signup(request);
+        doThrow(new CustomException(ErrorCode.DUPLICATE_NICKNAME)).when(authService).signup(any(SignupRequestDTO.class));
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/auths/signup")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -516,9 +517,6 @@ class AuthControllerTest {
                 .build();
 
         String requestJson = objectMapper.writeValueAsString(request);
-
-        // signup이 void 타입이라 doThrow 사용
-        doThrow(new CustomException(ErrorCode.WRONG_ROLE)).when(authService).signup(request);
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/auths/signup")
                         .contentType(MediaType.APPLICATION_JSON)
