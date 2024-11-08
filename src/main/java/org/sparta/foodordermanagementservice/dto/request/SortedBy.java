@@ -1,6 +1,8 @@
 package org.sparta.foodordermanagementservice.dto.request;
 
 import lombok.RequiredArgsConstructor;
+import org.sparta.foodordermanagementservice.common.exeption.CustomException;
+import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 
 @RequiredArgsConstructor
 public enum SortedBy {
@@ -17,6 +19,6 @@ public enum SortedBy {
                 return sortedBy;
             }
         }
-        throw new IllegalArgumentException("지원하지 않는 정렬 방식입니다.");
+        throw new CustomException(ErrorCode.BAD_REQUEST);
     }
 }

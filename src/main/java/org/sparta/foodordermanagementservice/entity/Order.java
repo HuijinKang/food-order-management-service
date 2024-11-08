@@ -5,7 +5,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+@SuppressWarnings("unused")
 
+
+//todo  db q보며 수정
 @Entity
 @Getter
 @Setter
@@ -50,7 +53,7 @@ public class Order {
     @Column
     private LocalDateTime updatedAt;
 
-    @Column(length = 255)
+    @Column
     private String updatedBy;
 
     @Column
