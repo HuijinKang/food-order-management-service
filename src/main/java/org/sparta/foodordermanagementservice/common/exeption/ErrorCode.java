@@ -20,7 +20,8 @@ public enum ErrorCode {
     /* 회원가입 */
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "S001", "중복된 아이디입니다."),
     DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "S002", "중복된 닉네임입니다."),
-    WRONG_ROLE(HttpStatus.BAD_REQUEST, "S003", "회원가입은 고객과 가게 주인만 할 수 있습니다."),
+    DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "S003", "중복된 닉네임입니다."),
+    WRONG_ROLE(HttpStatus.BAD_REQUEST, "S004", "회원가입은 고객과 가게 주인만 할 수 있습니다."),
 
     /*로그인*/
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "L001", "로그인이 필요합니다."),
