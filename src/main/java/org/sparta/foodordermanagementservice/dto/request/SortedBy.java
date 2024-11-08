@@ -1,4 +1,4 @@
-package org.sparta.foodordermanagementservice.dto.response;
+package org.sparta.foodordermanagementservice.dto.request;
 
 import lombok.RequiredArgsConstructor;
 

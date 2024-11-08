@@ -1,4 +1,4 @@
-package org.sparta.foodordermanagementservice.dto.response;
+package org.sparta.foodordermanagementservice.dto.request;
 
 import lombok.NonNull;
 import org.springframework.core.convert.converter.Converter;
