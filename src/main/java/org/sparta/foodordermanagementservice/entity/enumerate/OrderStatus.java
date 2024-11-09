@@ -5,7 +5,8 @@ public enum OrderStatus {
     WAIT,
     ACCEPT,
     REJECT,
-    CANCEL,
+    CUSTOMER_CANCEL,
+    STORE_CANCEL,
     COMPLETE
 
 }

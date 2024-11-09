@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Repository
@@ -30,4 +31,7 @@ public class OrderDbTransactionalFacade {
                 .toList();
     }
 
+    public void deleteOrder(UUID id) {
+        orderRepo.deleteOrder(id);
+    }
 }

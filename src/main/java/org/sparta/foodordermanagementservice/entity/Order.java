@@ -65,9 +65,11 @@ public class Order {
     @Column
     private String updatedBy;
 
+    @Setter
     @Column
     private LocalDateTime deletedAt;
 
+    @Setter
     @Column
     private String deletedBy;
 

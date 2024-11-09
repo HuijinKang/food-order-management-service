@@ -8,7 +8,7 @@ import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 
 
 @Getter
-public class OrderListResponseObj {
+public class OrderListResObj {
 
     private final String storeId;
     private final OrderStatus status;
@@ -17,10 +17,10 @@ public class OrderListResponseObj {
     private final int totalPrice;
 
 
-    public static OrderListResponseObj from(OrderDTO order) {
+    public static OrderListResObj from(OrderDTO order) {
 
         //todo storeDTO 작업되면 수정
-        return OrderListResponseObj.builder()
+        return OrderListResObj.builder()
                 .storeId("temp")      //String.valueOf(order.getStoreDTO().getId()))
                 .status(order.getStatus())
                 .type(order.getType())
@@ -31,7 +31,7 @@ public class OrderListResponseObj {
 
 
     @Builder
-    public OrderListResponseObj(String storeId, OrderStatus status, OrderType type, String address, int totalPrice) {
+    public OrderListResObj(String storeId, OrderStatus status, OrderType type, String address, int totalPrice) {
         this.storeId = storeId;
         this.status = status;
         this.type = type;

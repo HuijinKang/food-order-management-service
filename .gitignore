@@ -1,7 +1,7 @@
 ### local
 .gitignore
 build.gradle
-main/resources/application.properties
+/main/resources/application.properties
 
 ######공통
 HELP.md

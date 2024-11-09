@@ -9,14 +9,12 @@ import org.sparta.foodordermanagementservice.dto.OrderDTO;
 import org.sparta.foodordermanagementservice.dto.SearchOrderListDTO;
 import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
 import org.sparta.foodordermanagementservice.dto.request.SortedBy;
-import org.sparta.foodordermanagementservice.dto.response.OrderListResponseObj;
+import org.sparta.foodordermanagementservice.dto.response.OrderListResObj;
 import org.sparta.foodordermanagementservice.service.OrderService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -31,12 +29,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ApiResponse<List<OrderListResponseObj>> searchOrderList
+    public ApiResponse<List<OrderListResObj>> searchOrderList
             (
-                    @RequestParam  OrderListRequestCondition condition,
-                    @RequestParam  String key,
-                    @RequestParam  int pageSize,
-                    @RequestParam  int pageNumber,
+                    @RequestParam OrderListRequestCondition condition,
+                    @RequestParam String key,
+                    @RequestParam int pageSize,
+                    @RequestParam int pageNumber,
                     @RequestParam SortedBy sortedBy,
                     @RequestParam boolean isAsc
             ) {
@@ -57,11 +55,33 @@ public class OrderController {
         List<OrderDTO> searchedOrderList
                 = orderService.searchOrderList(dto);
 
-        List<OrderListResponseObj> responseObjList
+        List<OrderListResObj> responseObjList
                 = searchedOrderList.stream()
-                .map(OrderListResponseObj::from)
+                .map(OrderListResObj::from)
                 .collect(Collectors.toList());
 
         return ApiResponse.ofSuccess(responseObjList);
+    }
+
+//    @GetMapping("/{id}")
+//    public ApiResponse<SearchOrderDetailRes> searchOrderDetail(@PathVariable long id) {
+//
+//        OrderDTO searchedOrder
+//                = orderService.searchOrder(id);
+//
+//        SearchOrderDetailRes orderDetailRes
+//                = SearchOrderDetailRes.from(searchedOrder);
+//
+//        return ApiResponse.ofSuccess(orderDetailRes);
+//    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteOrder(@PathVariable UUID id) {
+
+        log.info("%s", id);
+
+        orderService.deleteOrder(id);
+
+        return ApiResponse.ofSuccess(null);
     }
 }
