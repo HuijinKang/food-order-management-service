@@ -1,3 +1,9 @@
+### local
+.gitignore
+build.gradle
+main/resources/application.properties
+
+######공통
 HELP.md
 .gradle
 build/
@@ -35,3 +41,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+

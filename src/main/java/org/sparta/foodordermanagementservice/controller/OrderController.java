@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @SuppressWarnings("unused")
 
 @RestController
@@ -31,10 +32,10 @@ public class OrderController {
     @GetMapping
     public ApiResponse<List<OrderListResponseObj>> searchOrderList
             (
-                    @RequestParam OrderListRequestCondition condition,
-                    @RequestParam String key,
-                    @RequestParam int pageSize,
-                    @RequestParam int pageNumber,
+                    @RequestParam  OrderListRequestCondition condition,
+                    @RequestParam  String key,
+                    @RequestParam  int pageSize,
+                    @RequestParam  int pageNumber,
                     @RequestParam SortedBy sortedBy,
                     @RequestParam boolean isAsc
             ) {

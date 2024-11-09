@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.OrderDTO;
 import org.sparta.foodordermanagementservice.dto.SelectOrderListDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@Repository
 @Transactional
 public class OrderDbTransactionalFacade {
 

@@ -3,10 +3,12 @@ package org.sparta.foodordermanagementservice.repository;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.SelectOrderListDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 
+@Repository
 @RequiredArgsConstructor
 @SuppressWarnings("unused")
 public class OrderRepository {

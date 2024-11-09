@@ -1,11 +1,9 @@
 package org.sparta.foodordermanagementservice.repository;
 
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.SelectOrderListDTO;
-import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.QOrder;
 import org.springframework.stereotype.Repository;
@@ -24,23 +22,23 @@ public class OrderQDslRepository {
 
         QOrder order = QOrder.order;
 
-        ComparableExpressionBase sortCriteria
-                = dto.getSortedBy() == SortedBy.UPDATED_AT
-                ? order.updatedAt
-                : order.createdAt;
+        BooleanExpression storeIdEq
+                = dto.getStoreId() == null
+                ? null
+                : order.store.id.eq(dto.getStoreId());
 
-        OrderSpecifier sortSpec
-                = dto.isAsc()
-                ? sortCriteria.asc()
-                : sortCriteria.desc();
+        BooleanExpression userNameEq
+                = dto.getUserName() == null
+                ? null
+                : order.user.username.eq(dto.getUserName());
 
         return queryFactory
                 .selectFrom(order)
-                .where(order.store.id.eq(dto.getStoreId())
-                        .and(order.user.username.eq(dto.getUserName())))
-                .orderBy(sortSpec)
-                .offset(dto.getPageSize() * dto.getPageNumber())
+                .where(storeIdEq, userNameEq)
+                .orderBy(OrderSpec.of(dto.getSortedBy(), dto.isAsc()))
+                .offset(dto.getPageSize() * (dto.getPageNumber() - 1))
                 .limit(dto.getPageSize())
                 .fetch();
     }
+
 }

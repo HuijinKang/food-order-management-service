@@ -2,6 +2,8 @@ package org.sparta.foodordermanagementservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 
@@ -14,6 +16,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+@AllArgsConstructor
 @Table(name = "p_order")
 public class Order {
 
@@ -32,10 +35,12 @@ public class Order {
 
     @Setter
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(nullable = false)
     private OrderStatus status;
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(nullable = false)
     private final OrderType type;
 
