@@ -30,15 +30,24 @@ public class OrderQDslRepository {
         BooleanExpression userNameEq
                 = dto.getUserName() == null
                 ? null
-                : order.user.username.eq(dto.getUserName());
+//                : order.user.username.eq(dto.getUserName()); //todo 테스트용, user 구현되면 이걸로 쓰기
+                : order.userName.eq(dto.getUserName());
 
-        return queryFactory
+
+        List<Order> selectedOrderList
+                = queryFactory
                 .selectFrom(order)
-                .where(storeIdEq, userNameEq)
+                .where(
+                        storeIdEq,
+                        userNameEq,
+                        order.deletedAt.isNull()
+                )
                 .orderBy(OrderSpec.of(dto.getSortedBy(), dto.isAsc()))
                 .offset(dto.getPageSize() * (dto.getPageNumber() - 1))
                 .limit(dto.getPageSize())
                 .fetch();
+
+        return selectedOrderList;
     }
 
 }
