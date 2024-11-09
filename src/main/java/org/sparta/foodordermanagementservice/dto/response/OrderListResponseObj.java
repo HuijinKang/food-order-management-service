@@ -1,4 +1,4 @@
-package org.sparta.foodordermanagementservice.controller;
+package org.sparta.foodordermanagementservice.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

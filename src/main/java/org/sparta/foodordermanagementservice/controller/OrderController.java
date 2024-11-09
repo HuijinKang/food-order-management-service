@@ -9,6 +9,7 @@ import org.sparta.foodordermanagementservice.dto.OrderDTO;
 import org.sparta.foodordermanagementservice.dto.SearchOrderListDTO;
 import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
 import org.sparta.foodordermanagementservice.dto.request.SortedBy;
+import org.sparta.foodordermanagementservice.dto.response.OrderListResponseObj;
 import org.sparta.foodordermanagementservice.service.OrderService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
