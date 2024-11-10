@@ -4,12 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.PaymentDTO;
+import org.sparta.foodordermanagementservice.dto.PostPaymentDTO;
+import org.sparta.foodordermanagementservice.dto.request.PostPaymentReq;
 import org.sparta.foodordermanagementservice.dto.response.GetPaymentRes;
 import org.sparta.foodordermanagementservice.service.PaymentService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -26,11 +25,25 @@ public class PaymentController {
     public ApiResponse<GetPaymentRes> getPayment(@PathVariable UUID id) {
 
         // todo auth check customer, master
-        PaymentDTO paymentDto = paymentService.getPayment(id);
+        PaymentDTO gottenPayment = paymentService.getPayment(id);
 
         return ApiResponse.ofSuccess(
-                GetPaymentRes.from(paymentDto)
+                GetPaymentRes.from(gottenPayment)
         );
+    }
+
+    @PostMapping
+    public ApiResponse<UUID> postPayment(@RequestBody PostPaymentReq request) {
+
+        //todo 권한 인증
+        PaymentDTO postedPayment
+                = paymentService.postPayment(PostPaymentDTO.from(request));
+
+        return ApiResponse.ofSuccess(
+                postedPayment.getId()
+        );
+
+
     }
 
 }

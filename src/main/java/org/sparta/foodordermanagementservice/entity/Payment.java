@@ -1,10 +1,7 @@
 package org.sparta.foodordermanagementservice.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
@@ -15,6 +12,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+@Builder
 @AllArgsConstructor
 @Table(name = "p_payment")
 public class Payment {
@@ -28,7 +26,9 @@ public class Payment {
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumns({
+            @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false),
+            @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)})
     private User user;
 
     @Column(nullable = false, length = 1000)
@@ -52,15 +52,22 @@ public class Payment {
     @Column
     private String deletedBy;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
-    @Column(nullable = false)
+    @Setter
     private PaymentStatus status;
 
     @Column(nullable = false)
     private int payedPrice;
 
-    public void setStatus(PaymentStatus status) {
+
+    @Builder
+    public Payment(Order order, User user, PaymentStatus status, int payedPrice, String receipt) {
+        this.order = order;
+        this.user = user;
+        this.receipt = receipt;
         this.status = status;
+        this.payedPrice = payedPrice;
     }
 }

@@ -36,4 +36,9 @@ public class OrderRepository {
 
         orderJpaRepo.save(toDelete);
     }
+
+    public Order selectOrder(UUID orderId) {
+        return orderJpaRepo.findById(orderId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
+    }
 }

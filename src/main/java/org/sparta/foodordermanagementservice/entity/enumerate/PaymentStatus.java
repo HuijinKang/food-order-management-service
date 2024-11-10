@@ -6,11 +6,11 @@ public enum PaymentStatus {
     PAY_WAIT,
     PAYED,
     PAY_PG_API_ERROR,
-    PAY_PG_DENIED,
+    PG_DENIED_PAY,
 
     CANCEL_WAIT,
     CANCELED,
     CANCEL_PG_API_ERROR,
-    CANCEL_PG_DENIED
+    PG_DENIED_CANCEL
 
 }

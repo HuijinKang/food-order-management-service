@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 public class PaymentDTO {
 
+    private final UUID id;
     private final UUID orderId;
     private final long userId;
     private String receipt;
@@ -29,6 +30,7 @@ public class PaymentDTO {
     public static PaymentDTO from(Payment payment) {
 
         return PaymentDTO.builder()
+                .id(payment.getId())
                 .orderId(payment.getOrder().getId())
                 .userId(payment.getUser().getId())
                 .receipt(payment.getReceipt())
@@ -44,7 +46,8 @@ public class PaymentDTO {
     }
 
     @Builder
-    public PaymentDTO(UUID orderId,
+    public PaymentDTO(UUID id,
+                      UUID orderId,
                       long userId,
                       String receipt,
                       PaymentStatus status,
@@ -56,6 +59,7 @@ public class PaymentDTO {
                       LocalDateTime deletedAt,
                       String deletedBy
     ) {
+        this.id = id;
         this.orderId = orderId;
         this.userId = userId;
         this.receipt = receipt;

@@ -2,6 +2,7 @@ package org.sparta.foodordermanagementservice.service;
 
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.PaymentDTO;
+import org.sparta.foodordermanagementservice.dto.PostPaymentDTO;
 import org.sparta.foodordermanagementservice.repository.PaymentTransactionFacade;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,12 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDTO getPayment(UUID paymentId) {
 
         return transaction.selectPayment(paymentId);
+    }
+
+    @Override
+    public PaymentDTO postPayment(PostPaymentDTO dto) {
+
+            return transaction.insertPayment(dto);
+
     }
 }

@@ -31,7 +31,20 @@ public class OrderDTO {
 
 
     @Builder //AllArgsConstructor
-    public OrderDTO(UUID id, UserDTO userDTO, StoreDTO storeDTO, OrderStatus status, OrderType type, String address, String comment, int totalPrice, LocalDateTime createdAt, String createdBy, LocalDateTime updatedAt, String updatedBy, LocalDateTime deletedAt, String deletedBy) {
+    public OrderDTO(UUID id,
+                    UserDTO userDTO,
+                    StoreDTO storeDTO,
+                    OrderStatus status,
+                    OrderType type,
+                    String address,
+                    String comment,
+                    int totalPrice,
+                    LocalDateTime createdAt,
+                    String createdBy,
+                    LocalDateTime updatedAt,
+                    String updatedBy,
+                    LocalDateTime deletedAt,
+                    String deletedBy) {
         this.id = id;
         this.userDTO = userDTO;
         this.storeDTO = storeDTO;
@@ -49,7 +62,8 @@ public class OrderDTO {
     }
 
     public static OrderDTO from(Order order) {
-        //todo 담당자와 연계해 user, store 변환함수 builder 인자로 추가
+        //todo 담당자와 연계해 user,
+        // store 변환함수 builder 인자로 추가
         UserDTO userDto = new UserDTO();
         StoreDTO storeDto = new StoreDTO();
 

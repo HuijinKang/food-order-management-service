@@ -23,4 +23,7 @@ public class PaymentRepository {
     }
 
 
+    public Payment insertPayment(Payment toSave) {
+        return jpaRepo.save(toSave);
+    }
 }
