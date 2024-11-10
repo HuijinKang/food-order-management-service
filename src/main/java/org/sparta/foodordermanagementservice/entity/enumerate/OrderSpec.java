@@ -1,4 +1,4 @@
-package org.sparta.foodordermanagementservice.repository;
+package org.sparta.foodordermanagementservice.entity.enumerate;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;

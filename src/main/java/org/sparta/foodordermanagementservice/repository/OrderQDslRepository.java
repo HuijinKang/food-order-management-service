@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.SelectOrderListDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.QOrder;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderSpec;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
