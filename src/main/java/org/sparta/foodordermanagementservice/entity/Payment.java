@@ -52,10 +52,10 @@ public class Payment {
     @Column
     private String deletedBy;
 
-    @Column(nullable = false)
+    @Setter
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
-    @Setter
+    @Column(nullable = false)
     private PaymentStatus status;
 
     @Column(nullable = false)

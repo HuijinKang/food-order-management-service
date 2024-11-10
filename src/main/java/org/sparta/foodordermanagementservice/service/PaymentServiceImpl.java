@@ -23,7 +23,15 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentDTO postPayment(PostPaymentDTO dto) {
 
-            return transaction.insertPayment(dto);
+        return transaction.insertPayment(dto);
 
+    }
+
+    @Override
+    public void deletePayment(UUID paymentId) {
+
+        String deleter = "admin";/*todo auth완료시 username으로 넣기 */
+
+        transaction.deletePayment(paymentId, deleter);
     }
 }

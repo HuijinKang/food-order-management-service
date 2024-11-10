@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.entity.Payment;
+import org.sparta.foodordermanagementservice.entity.QPayment;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Repository
@@ -15,6 +17,7 @@ public class PaymentRepository {
 
     private final PaymentJpaRepository jpaRepo;
     private final JPAQueryFactory queryFactory;
+    private final QPayment qPayment = QPayment.payment;
 
     public Payment selectPayment(UUID paymentId) {
 
@@ -25,5 +28,14 @@ public class PaymentRepository {
 
     public Payment insertPayment(Payment toSave) {
         return jpaRepo.save(toSave);
+    }
+
+    public void deletePayment(UUID paymentId, String deletedBy) {
+        queryFactory
+                .update(qPayment)
+                .set(qPayment.deletedAt, LocalDateTime.now())
+                .set(qPayment.deletedBy, deletedBy)
+                .where(qPayment.id.eq(paymentId))
+                .execute();
     }
 }

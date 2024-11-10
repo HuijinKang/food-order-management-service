@@ -39,4 +39,9 @@ public class PaymentTransactionFacade {
 
         return PaymentDTO.from(saved);
     }
+
+    public void deletePayment(UUID paymentId, String deletedBy) {
+
+        paymentRepo.deletePayment(paymentId, deletedBy);
+    }
 }

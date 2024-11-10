@@ -11,4 +11,6 @@ public interface PaymentService {
     PaymentDTO getPayment(UUID paymentId);
 
     PaymentDTO postPayment(PostPaymentDTO dto);
+
+    void deletePayment(UUID id);
 }
