@@ -1,16 +1,20 @@
 package org.sparta.foodordermanagementservice.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
-@Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @AllArgsConstructor
 @Table(name = "p_payment")
 public class Payment {
@@ -27,31 +31,36 @@ public class Payment {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false, length = 255)
-    private String paymentType;
-
     @Column(nullable = false, length = 1000)
     private String receipt;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private PaymentStatus status;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String createdBy;
 
     @Column
     private LocalDateTime updatedAt;
 
-    @Column(length = 255)
+    @Column
     private String updatedBy;
 
     @Column
     private LocalDateTime deletedAt;
 
-    @Column(length = 255)
+    @Column
     private String deletedBy;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
+    private PaymentStatus status;
+
+    @Column(nullable = false)
+    private int payedPrice;
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
+    }
 }

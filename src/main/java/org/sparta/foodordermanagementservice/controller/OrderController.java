@@ -18,12 +18,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
+@Slf4j
+@RequiredArgsConstructor
 
 @RestController
 @RequestMapping("api/orders")
-
-@RequiredArgsConstructor
-@Slf4j
 public class OrderController {
 
     private final OrderService orderService;
@@ -78,10 +77,9 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteOrder(@PathVariable UUID id) {
 
-        log.info("%s", id);
-
         orderService.deleteOrder(id);
 
         return ApiResponse.ofSuccess(null);
     }
 }
+

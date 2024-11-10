@@ -32,7 +32,7 @@ public class Order {
 //            @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)})
 //    private final User user;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name="user_id")
     private final long userId;
 
     @Column(nullable = false)
