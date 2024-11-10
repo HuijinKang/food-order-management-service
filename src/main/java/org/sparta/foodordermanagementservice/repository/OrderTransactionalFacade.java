@@ -14,7 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Repository
 @Transactional
-public class OrderDbTransactionalFacade {
+public class OrderTransactionalFacade {
 
     private final OrderRepository orderRepo;
 

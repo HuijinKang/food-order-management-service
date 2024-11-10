@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.OrderDTO;
 import org.sparta.foodordermanagementservice.dto.SearchOrderListDTO;
 import org.sparta.foodordermanagementservice.dto.SelectOrderListDTO;
-import org.sparta.foodordermanagementservice.repository.OrderDbTransactionalFacade;
+import org.sparta.foodordermanagementservice.repository.OrderTransactionalFacade;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderDbTransactionalFacade orderRepository;
+    private final OrderTransactionalFacade orderRepository;
 
     @Override
     public List<OrderDTO> searchOrderList(SearchOrderListDTO dto) {
