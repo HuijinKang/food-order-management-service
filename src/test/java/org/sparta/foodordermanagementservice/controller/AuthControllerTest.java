@@ -95,7 +95,7 @@ class AuthControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지")
                         )));
 
-    };
+    }
 
     @Test
     @DisplayName("회원가입 실패 - 아이디에 특수문자 존재")
