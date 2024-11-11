@@ -60,10 +60,12 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("회원가입 실패 - username 중복")
     void signupFailWhenUsernameIsDuplicate() {
+        SignupRequestDTO duplicatedUser = new SignupRequestDTO();
+        BeanUtils.copyProperties(validSignUpRequest, duplicatedUser);
 
         when(userRepository.existsByUsername(validSignUpRequest.getUsername())).thenReturn(true);
 
-        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(validSignUpRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(duplicatedUser));
 
         assertEquals(ErrorCode.DUPLICATE_USERNAME, exception.getErrorCode());
         verify(userRepository, times(1)).existsByUsername(anyString());
@@ -72,10 +74,12 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("회원가입 실패 - nickname 중복")
     void signupFailWhenNicknameIsDuplicate() {
+        SignupRequestDTO duplicatedUser = new SignupRequestDTO();
+        BeanUtils.copyProperties(validSignUpRequest, duplicatedUser);
 
         when(userRepository.existsByNickname(validSignUpRequest.getNickname())).thenReturn(true);
 
-        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(validSignUpRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(duplicatedUser));
 
         assertEquals(ErrorCode.DUPLICATE_NICKNAME, exception.getErrorCode());
         verify(userRepository, times(1)).existsByNickname(anyString());
@@ -85,10 +89,12 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("회원가입 실패 - email 중복")
     void signupFailWhenEmailIsDuplicate() {
+        SignupRequestDTO duplicatedUser = new SignupRequestDTO();
+        BeanUtils.copyProperties(validSignUpRequest, duplicatedUser);
 
         when(userRepository.existsByEmail(validSignUpRequest.getEmail())).thenReturn(true);
 
-        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(validSignUpRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(duplicatedUser));
 
         assertEquals(ErrorCode.DUPLICATE_EMAIL, exception.getErrorCode());
         verify(userRepository, times(1)).existsByEmail(anyString());
