@@ -5,11 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.request.LoginRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.SignupRequestDTO;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.service.AuthService;
+import org.sparta.foodordermanagementservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +32,7 @@ import java.util.List;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -47,6 +51,8 @@ class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private UserService userService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
@@ -541,5 +547,110 @@ class AuthControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지")
                         )));
 
+    }
+
+    @Test
+    @DisplayName("로그인 성공")
+    void loginSuccess() throws  Exception {
+        LoginRequestDTO request = LoginRequestDTO.builder()
+                .username("testuser")
+                .password("testpassword")
+                .build();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/auths/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("login-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("username").type(JsonFieldType.STRING).description("사용자아이디"),
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
+                                )
+                        ),
+                        responseFields(
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과데이터"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지")
+                        ).and(
+                                fieldWithPath("data.JWTToken").type(JsonFieldType.STRING).description("jwt 토큰"),
+                                fieldWithPath("data.user").type(JsonFieldType.OBJECT).description("유저 정보")
+                                ).and(
+                                    fieldWithPath("data.user.username").type(JsonFieldType.STRING).description("사용자아이디"),
+                                    fieldWithPath("data.user.nickname").type(JsonFieldType.STRING).description("닉네임"),
+                                    fieldWithPath("data.user.email").type(JsonFieldType.STRING).description("이메일"),
+                                    fieldWithPath("data.user.isPublic").type(JsonFieldType.BOOLEAN).description("정보공개 여부"),
+                                    fieldWithPath("data.user.userRole").type(JsonFieldType.STRING).description("사용자 역할")
+
+                        )));
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 없는 사용자")
+    void loginFailWhenUserNotFound() throws  Exception {
+        LoginRequestDTO request = LoginRequestDTO.builder()
+                .username("nottestuser")
+                .password("testpassword")
+                .build();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        when(authService.login(any(LoginRequestDTO.class))).thenThrow(new CustomException(ErrorCode.FAIL_LOGIN));
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/auths/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().is(ErrorCode.FAIL_LOGIN.getStatus().value()))
+                .andDo(print())
+                .andDo(document("login-fail-user-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("username").type(JsonFieldType.STRING).description("사용자아이디"),
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
+                                )
+                        ),
+                        responseFields(
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과데이터"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지")
+                        )));
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 비밀번호 불일치")
+    void loginFailWhenPasswordIsIncorrect() throws  Exception {
+        LoginRequestDTO request = LoginRequestDTO.builder()
+                .username("testuser")
+                .password("nottestpassword")
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        when(authService.login(any(LoginRequestDTO.class))).thenThrow(new CustomException(ErrorCode.FAIL_LOGIN));
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/auths/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().is(ErrorCode.FAIL_LOGIN.getStatus().value()))
+                .andDo(print())
+                .andDo(document("login-fail-password-is-incorrect",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("username").type(JsonFieldType.STRING).description("사용자아이디"),
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
+                                )
+                        ),
+                        responseFields(
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과데이터"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지")
+                        )));
     }
 }

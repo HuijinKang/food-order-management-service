@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.request.LoginRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.SignupRequestDTO;
+import org.sparta.foodordermanagementservice.dto.response.LoginResponseDTO;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.service.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -30,4 +32,9 @@ public class AuthController {
         return ApiResponse.ofSuccess(null);
     }
 
+    @PostMapping("/login")
+    public ApiResponse<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+
+        return null;
+    }
 }
