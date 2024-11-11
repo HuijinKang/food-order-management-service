@@ -6,7 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.request.SignupRequestDTO;
@@ -29,6 +32,9 @@ class AuthServiceImplTest {
 
     @Mock
     private PasswordEncoder encoder;
+
+    @Spy
+    private ModelMapper modelMapper;
 
     private SignupRequestDTO validSignUpRequest;
 
@@ -60,8 +66,9 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("회원가입 실패 - username 중복")
     void signupFailWhenUsernameIsDuplicate() {
-        SignupRequestDTO duplicatedUser = new SignupRequestDTO();
-        BeanUtils.copyProperties(validSignUpRequest, duplicatedUser);
+        modelMapper.getConfiguration().setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setFieldMatchingEnabled(true);
+        SignupRequestDTO duplicatedUser = modelMapper.map(validSignUpRequest, SignupRequestDTO.class);
 
         when(userRepository.existsByUsername(validSignUpRequest.getUsername())).thenReturn(true);
 
@@ -74,8 +81,9 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("회원가입 실패 - nickname 중복")
     void signupFailWhenNicknameIsDuplicate() {
-        SignupRequestDTO duplicatedUser = new SignupRequestDTO();
-        BeanUtils.copyProperties(validSignUpRequest, duplicatedUser);
+        modelMapper.getConfiguration().setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setFieldMatchingEnabled(true);
+        SignupRequestDTO duplicatedUser = modelMapper.map(validSignUpRequest, SignupRequestDTO.class);
 
         when(userRepository.existsByNickname(validSignUpRequest.getNickname())).thenReturn(true);
 
@@ -89,8 +97,9 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("회원가입 실패 - email 중복")
     void signupFailWhenEmailIsDuplicate() {
-        SignupRequestDTO duplicatedUser = new SignupRequestDTO();
-        BeanUtils.copyProperties(validSignUpRequest, duplicatedUser);
+        modelMapper.getConfiguration().setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                        .setFieldMatchingEnabled(true);
+        SignupRequestDTO duplicatedUser = modelMapper.map(validSignUpRequest, SignupRequestDTO.class);
 
         when(userRepository.existsByEmail(validSignUpRequest.getEmail())).thenReturn(true);
 
