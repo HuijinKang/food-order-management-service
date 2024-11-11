@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 @Table(name = "p_user", indexes = {
         @Index(name = "users_idx_username", columnList = "username")
 })
-public class User {
+public class User extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +35,8 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserStatus status;
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Column(nullable = false, unique = true, length = 100)
     private String nickname;
@@ -49,17 +51,17 @@ public class User {
     @Column(nullable = false)
     private Boolean isPublic;
 
-    @Column(nullable = false, updatable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
+//    @Column(nullable = false, updatable = false)
+//    @CreatedDate
+//    private LocalDateTime createdAt;
 
     @Column(nullable = false, length = 100, updatable = false)
     @CreatedBy
     private String createdBy;
 
-    @Column(nullable = false)
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+//    @Column(nullable = false)
+//    @LastModifiedDate
+//    private LocalDateTime updatedAt;
 
     @Column(nullable = false, length = 100)
     @LastModifiedBy
