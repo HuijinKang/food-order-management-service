@@ -141,18 +141,23 @@ class AuthServiceImplTest {
         assertEquals(testUser.getUsername(), loginResponse.getUser().getUsername());
 
         verify(userRepository, times(1)).findByUsername(anyString());
-        verify(jwtUtil, times(1)).createAccessToken(anyString(), UserRole.valueOf(anyString()));
-        verify(encoder, times(1)).encode(anyString());
+        verify(jwtUtil, times(1)).createAccessToken(anyString(), any(UserRole.class));
+        verify(encoder, times(1)).matches(anyString(),anyString());
 
     }
 
     @Test
     @DisplayName("로그인 실패 - 없는 사용자")
     void loginFailWhenUserNotFound() {
-        when(userRepository.findByUsername("notTestUser"))
+        LoginRequestDTO notExistentUser = LoginRequestDTO.builder()
+                .username("notExistentUser")
+                .password("password")
+                .build();
+
+        when(userRepository.findByUsername(anyString()))
                 .thenReturn(Optional.empty());
 
-        assertThrows(CustomException.class, () -> authService.login(validLoginRequest));
+        assertThrows(CustomException.class, () -> authService.login(notExistentUser));
         verify(userRepository, times(1)).findByUsername(anyString());
 
     }
@@ -160,11 +165,17 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("로그인 실패 - 비밀번호 불일치")
     void loginFailWhenPasswordIsInvalid() {
+        LoginRequestDTO IncorrectPasswordUser = LoginRequestDTO.builder()
+                .username("testuser")
+                .password("incorrectPassword")
+                .build();
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
         when(encoder.matches(anyString(), anyString())).thenReturn(false);
 
-        assertThrows(CustomException.class, () -> authService.login(validLoginRequest));
+        assertThrows(CustomException.class, () -> authService.login(IncorrectPasswordUser));
 
-        verify(encoder, times(1)).encode(anyString());
+        verify(encoder, times(1)).matches(anyString(),anyString());
 
     }
 }
