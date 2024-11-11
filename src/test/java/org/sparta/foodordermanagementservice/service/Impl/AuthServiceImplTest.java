@@ -9,11 +9,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.request.LoginRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.SignupRequestDTO;
+import org.sparta.foodordermanagementservice.dto.response.LoginResponseDTO;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
+import org.sparta.foodordermanagementservice.entity.UserStatus;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
+import org.sparta.foodordermanagementservice.security.JwtUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,17 +37,36 @@ class AuthServiceImplTest {
     @Mock
     private PasswordEncoder encoder;
 
+    @Mock
+    private JwtUtil jwtUtil;
+
+    private User testUser;
     private SignupRequestDTO validSignUpRequest;
+    private LoginRequestDTO validLoginRequest;
 
     @BeforeEach
     void setUp() {
-        validSignUpRequest = SignupRequestDTO.builder()
+         testUser = User.builder()
                 .username("testuser")
                 .password("testpassword")
                 .email("test@email.com")
                 .nickname("testnickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
+                .createdBy("testuser")
+                .updatedBy("testuser")
+                .build();
+        validSignUpRequest = SignupRequestDTO.builder()
+                .username(testUser.getUsername())
+                .password(testUser.getPassword())
+                .email(testUser.getEmail())
+                .nickname(testUser.getNickname())
+                .isPublic(testUser.getIsPublic())
+                .userRole(testUser.getUserRole())
+                .build();
+        validLoginRequest = LoginRequestDTO.builder()
+                .username(testUser.getUsername())
+                .password(testUser.getPassword())
                 .build();
     }
 
@@ -60,10 +86,12 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("회원가입 실패 - username 중복")
     void signupFailWhenUsernameIsDuplicate() {
+        SignupRequestDTO duplicatedUser = new SignupRequestDTO();
+        BeanUtils.copyProperties(validSignUpRequest, duplicatedUser);
 
         when(userRepository.existsByUsername(validSignUpRequest.getUsername())).thenReturn(true);
 
-        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(validSignUpRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(duplicatedUser));
 
         assertEquals(ErrorCode.DUPLICATE_USERNAME, exception.getErrorCode());
         verify(userRepository, times(1)).existsByUsername(anyString());
@@ -72,10 +100,12 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("회원가입 실패 - nickname 중복")
     void signupFailWhenNicknameIsDuplicate() {
+        SignupRequestDTO duplicatedUser = new SignupRequestDTO();
+        BeanUtils.copyProperties(validSignUpRequest, duplicatedUser);
 
         when(userRepository.existsByNickname(validSignUpRequest.getNickname())).thenReturn(true);
 
-        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(validSignUpRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(duplicatedUser));
 
         assertEquals(ErrorCode.DUPLICATE_NICKNAME, exception.getErrorCode());
         verify(userRepository, times(1)).existsByNickname(anyString());
@@ -85,13 +115,56 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("회원가입 실패 - email 중복")
     void signupFailWhenEmailIsDuplicate() {
+        SignupRequestDTO duplicatedUser = new SignupRequestDTO();
+        BeanUtils.copyProperties(validSignUpRequest, duplicatedUser);
 
         when(userRepository.existsByEmail(validSignUpRequest.getEmail())).thenReturn(true);
 
-        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(validSignUpRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.signup(duplicatedUser));
 
         assertEquals(ErrorCode.DUPLICATE_EMAIL, exception.getErrorCode());
         verify(userRepository, times(1)).existsByEmail(anyString());
+
+    }
+
+    @Test
+    @DisplayName("로그인 성공")
+    void loginSuccess() {
+        when(encoder.matches(anyString(), anyString())).thenReturn(true);
+        when(jwtUtil.createAccessToken(anyString(), any(UserRole.class))).thenReturn("testToken");
+        when(userRepository.findByUsername(validLoginRequest.getUsername()))
+                .thenReturn(Optional.of(testUser));
+
+        LoginResponseDTO loginResponse = authService.login(validLoginRequest);
+
+        assertEquals("testToken", loginResponse.getJwtToken());
+        assertEquals(testUser.getUsername(), loginResponse.getUser().getUsername());
+
+        verify(userRepository, times(1)).findByUsername(anyString());
+        verify(jwtUtil, times(1)).createAccessToken(anyString(), UserRole.valueOf(anyString()));
+        verify(encoder, times(1)).encode(anyString());
+
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 없는 사용자")
+    void loginFailWhenUserNotFound() {
+        when(userRepository.findByUsername("notTestUser"))
+                .thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, () -> authService.login(validLoginRequest));
+        verify(userRepository, times(1)).findByUsername(anyString());
+
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 비밀번호 불일치")
+    void loginFailWhenPasswordIsInvalid() {
+        when(encoder.matches(anyString(), anyString())).thenReturn(false);
+
+        assertThrows(CustomException.class, () -> authService.login(validLoginRequest));
+
+        verify(encoder, times(1)).encode(anyString());
 
     }
 }
