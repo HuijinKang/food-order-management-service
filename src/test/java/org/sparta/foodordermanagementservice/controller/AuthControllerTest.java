@@ -8,11 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.LoginUser;
 import org.sparta.foodordermanagementservice.dto.request.LoginRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.SignupRequestDTO;
+import org.sparta.foodordermanagementservice.dto.response.LoginResponseDTO;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.service.AuthService;
-import org.sparta.foodordermanagementservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,8 +52,6 @@ class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private UserService userService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
@@ -556,7 +555,21 @@ class AuthControllerTest {
                 .username("testuser")
                 .password("testpassword")
                 .build();
+        LoginUser testUser  = LoginUser.builder()
+                .username(request.getUsername())
+                .email("test@email.com")
+                .isPublic(true)
+                .nickname("testnickname")
+                .userRole(UserRole.CUSTOMER)
+                .build();
+        LoginResponseDTO loginResponseDTO = LoginResponseDTO.builder()
+                .jwtToken("testToken")
+                .user(testUser)
+                .build();
+
         String requestJson = objectMapper.writeValueAsString(request);
+
+        when(authService.login(any(LoginRequestDTO.class))).thenReturn(loginResponseDTO);
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/auths/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -577,7 +590,7 @@ class AuthControllerTest {
                                 fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지")
                         ).and(
-                                fieldWithPath("data.JWTToken").type(JsonFieldType.STRING).description("jwt 토큰"),
+                                fieldWithPath("data.jwtToken").type(JsonFieldType.STRING).description("jwt 토큰"),
                                 fieldWithPath("data.user").type(JsonFieldType.OBJECT).description("유저 정보")
                                 ).and(
                                     fieldWithPath("data.user.username").type(JsonFieldType.STRING).description("사용자아이디"),
@@ -596,6 +609,7 @@ class AuthControllerTest {
                 .username("nottestuser")
                 .password("testpassword")
                 .build();
+
         String requestJson = objectMapper.writeValueAsString(request);
 
         when(authService.login(any(LoginRequestDTO.class))).thenThrow(new CustomException(ErrorCode.FAIL_LOGIN));
@@ -615,7 +629,7 @@ class AuthControllerTest {
                                 )
                         ),
                         responseFields(
-                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과데이터"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터"),
                                 fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지")
                         )));
@@ -648,7 +662,7 @@ class AuthControllerTest {
                                 )
                         ),
                         responseFields(
-                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과데이터"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터"),
                                 fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지")
                         )));
