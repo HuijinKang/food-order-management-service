@@ -61,7 +61,7 @@ openapi3 {
     description = 'Food Order Management Service API description'
     version = '1.0.0'
     format = 'yaml'
-    outputDirectory = "src/main/resources/static"
+    outputDirectory = "src/main/resources/static/docs"
     outputFileNamePrefix = "swagger"
 }
 
