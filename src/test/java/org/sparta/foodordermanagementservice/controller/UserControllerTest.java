@@ -1,6 +1,5 @@
 package org.sparta.foodordermanagementservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,8 +42,6 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mockMvc;
