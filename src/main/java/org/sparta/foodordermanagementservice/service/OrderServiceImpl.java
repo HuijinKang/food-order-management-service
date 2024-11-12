@@ -27,7 +27,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(UUID orderId) {
-        orderRepository.deleteOrder(orderId);
+
+        String deleterName
+                = "test"; //todo auth 완료시 로그인한 유저의 이름으로 변경할것, auth.getPrincipal().getName() 이용
+
+        orderRepository.deleteOrder(orderId, deleterName);
     }
 
 }

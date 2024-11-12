@@ -34,7 +34,7 @@ public class OrderTransactionalFacade {
         return readOrderDtoList;
     }
 
-    public void deleteOrder(UUID orderId) {
-        orderRepo.softDeleteOrder(orderId);
+    public void deleteOrder(UUID orderId, String deleterName) {
+        orderRepo.softDeleteOrder(orderId, deleterName);
     }
 }
