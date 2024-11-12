@@ -1,20 +1,20 @@
 package org.sparta.foodordermanagementservice.dto.response;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Value;
 import org.sparta.foodordermanagementservice.dto.OrderDTO;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 
 
-@Getter
+@Value
 public class OrderListResObj {
 
-    private final String storeId;
-    private final OrderStatus status;
-    private final OrderType type;
-    private final String address;
-    private final int totalPrice;
+    String storeId;
+    OrderStatus status;
+    OrderType type;
+    String address;
+    int totalPrice;
 
 
     public static OrderListResObj from(OrderDTO order) {
@@ -28,7 +28,6 @@ public class OrderListResObj {
                 .totalPrice(order.getTotalPrice())
                 .build();
     }
-
 
     @Builder
     public OrderListResObj(String storeId, OrderStatus status, OrderType type, String address, int totalPrice) {
