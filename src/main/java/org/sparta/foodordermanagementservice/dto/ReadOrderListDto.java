@@ -7,7 +7,7 @@ import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 
 
 @Getter
-public class SearchOrderListDTO {
+public class ReadOrderListDto {
 
     private final OrderListRequestCondition condition;
     private final String key;
@@ -17,7 +17,7 @@ public class SearchOrderListDTO {
     private final boolean isAsc;
 
     @Builder
-    public SearchOrderListDTO
+    public ReadOrderListDto
             (
                     OrderListRequestCondition condition,
                     String key,

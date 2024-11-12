@@ -21,7 +21,7 @@ public class SelectOrderListDTO {
     private final SortedBy sortedBy;
     private final boolean isAsc;
 
-    public static SelectOrderListDTO from(SearchOrderListDTO dto) {
+    public static SelectOrderListDTO from(ReadOrderListDto dto) {
 
         UUID targetStoreId
                 = dto.getCondition() == OrderListRequestCondition.STORE_ID

@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.common.PageSizeRule;
 import org.sparta.foodordermanagementservice.dto.OrderDTO;
-import org.sparta.foodordermanagementservice.dto.SearchOrderListDTO;
+import org.sparta.foodordermanagementservice.dto.ReadOrderListDto;
 import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
 import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 import org.sparta.foodordermanagementservice.dto.response.OrderListResObj;
@@ -28,7 +28,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ApiResponse<List<OrderListResObj>> searchOrderList
+    public ApiResponse<List<OrderListResObj>> readOrderList
             (
                     @RequestParam OrderListRequestCondition condition,
                     @RequestParam String key,
@@ -41,8 +41,8 @@ public class OrderController {
         if (!PageSizeRule.isPageSizeValid(pageSize))
             pageSize = PageSizeRule.DEFAULT_PAGE_SIZE;
 
-        SearchOrderListDTO dto
-                = SearchOrderListDTO.builder()
+        ReadOrderListDto dto
+                = ReadOrderListDto.builder()
                 .condition(condition)
                 .key(key)
                 .pageSize(pageSize)
@@ -51,11 +51,11 @@ public class OrderController {
                 .isAsc(isAsc)
                 .build();
 
-        List<OrderDTO> searchedOrderList
+        List<OrderDTO> orderList
                 = orderService.searchOrderList(dto);
 
         List<OrderListResObj> responseObjList
-                = searchedOrderList.stream()
+                = orderList.stream()
                 .map(OrderListResObj::from)
                 .collect(Collectors.toList());
 
