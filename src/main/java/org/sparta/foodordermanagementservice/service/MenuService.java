@@ -3,6 +3,7 @@ package org.sparta.foodordermanagementservice.service;
 import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.UpdateMenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.response.MenuResponseDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,4 +19,6 @@ public interface MenuService {
     MenuResponseDto getMenu(UUID menuId);
 
     List<MenuResponseDto> getMenus(UUID storeId);
+
+    Page<MenuResponseDto> searchMenus(String condition, String keyword, int pageSize, int pageNumber, String sortedBy, boolean isAsc);
 }

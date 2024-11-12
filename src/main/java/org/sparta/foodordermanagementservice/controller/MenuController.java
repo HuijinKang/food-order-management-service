@@ -6,7 +6,7 @@ import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.UpdateMenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.response.MenuResponseDto;
 import org.sparta.foodordermanagementservice.service.MenuService;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +60,20 @@ public class MenuController {
     public ApiResponse<List<MenuResponseDto>> getMenus(@RequestParam UUID storeId) {
         List<MenuResponseDto> menuList = menuService.getMenus(storeId);
         return ApiResponse.ofSuccess(menuList);
+    }
+
+    // 메뉴 검색
+    @GetMapping("/search")
+    public ApiResponse<Page<MenuResponseDto>> searchMenus(
+            @RequestParam String condition,
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "name") String sortedBy,
+            @RequestParam(defaultValue = "true") boolean isAsc) {
+
+        Page<MenuResponseDto> menuPage = menuService.searchMenus(condition, keyword, pageSize, pageNumber, sortedBy, isAsc);
+        return ApiResponse.ofSuccess(menuPage);
     }
 
 }

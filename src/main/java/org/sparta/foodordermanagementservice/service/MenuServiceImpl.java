@@ -9,6 +9,10 @@ import org.sparta.foodordermanagementservice.entity.Menu;
 import org.sparta.foodordermanagementservice.entity.MenuStatus;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.repository.MenuRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,5 +93,24 @@ public class MenuServiceImpl implements MenuService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    // 메뉴 검색
+    public Page<MenuResponseDto> searchMenus(String condition, String keyword, int pageSize,
+                                             int pageNumber, String sortedBy, boolean isAsc) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize,
+                isAsc ? Sort.by(sortedBy).ascending() : Sort.by(sortedBy).descending());
+
+        // 메뉴 검색 (조건과 키워드에 맞는 메뉴를 페이지네이션과 함께 조회)
+        Page<Menu> menuPage = menuRepository.searchMenus(condition, keyword, pageable);
+
+        // Page<Menu>를 Page<MenuResponseDto>로 변환
+        return menuPage.map(menu -> MenuResponseDto.builder()
+                .storeId(menu.getStore().getId())
+                .name(menu.getName())
+                .price(menu.getPrice())
+                .description(menu.getDescription())
+                .build());
+    }
+
 
 }
