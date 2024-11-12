@@ -25,10 +25,10 @@ public class OrderRepository {
         return orderQDslRepo.selectOrderList(dto);
     }
 
-    public void deleteOrder(UUID id) {
+    public void softDeleteOrder(UUID orderId) {
 
         Order toDelete
-                = orderJpaRepo.findById(id)
+                = orderJpaRepo.findById(orderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
 
         toDelete.setDeletedAt(LocalDateTime.now());

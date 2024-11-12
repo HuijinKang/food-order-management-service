@@ -31,7 +31,7 @@ public class OrderTransactionalFacade {
                 .toList();
     }
 
-    public void deleteOrder(UUID id) {
-        orderRepo.deleteOrder(id);
+    public void deleteOrder(UUID orderId) {
+        orderRepo.softDeleteOrder(orderId);
     }
 }

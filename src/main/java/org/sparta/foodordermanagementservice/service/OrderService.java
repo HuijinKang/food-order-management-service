@@ -9,5 +9,5 @@ import java.util.UUID;
 public interface OrderService {
     List<OrderDTO> searchOrderList(ReadOrderListDto dto);
 
-    void deleteOrder(UUID id);
+    void deleteOrder(UUID orderId);
 }
