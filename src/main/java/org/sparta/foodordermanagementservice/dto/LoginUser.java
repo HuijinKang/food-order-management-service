@@ -1,9 +1,7 @@
 package org.sparta.foodordermanagementservice.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 
 @Getter

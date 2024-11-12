@@ -2,7 +2,6 @@ package org.sparta.foodordermanagementservice.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.LoginUser;
 
 @Getter

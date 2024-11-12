@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 
 @Getter
@@ -41,5 +40,5 @@ public class SignupRequestDTO {
         this.nickname = nickname;
         this.isPublic = isPublic;
         this.userRole = userRole;
-    };
+    }
 }
