@@ -1,8 +1,8 @@
 package org.sparta.foodordermanagementservice.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
+import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.User;
@@ -12,14 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Repository
-@Transactional
 @RequiredArgsConstructor
-public class PaymentTransactionFacade {
+public class PaymentPersistenceFacade {
 
     private final PaymentRepository paymentRepo;
     private final UserRepository userRepo;
     private final OrderRepository orderRepo;
 
+    @Transactional(readOnly = true)
     public PaymentDTO readPayment(UUID paymentId) {
 
         Payment readPayment
@@ -28,6 +28,7 @@ public class PaymentTransactionFacade {
         return PaymentDTO.from(readPayment);
     }
 
+    @Transactional
     public PaymentDTO createPayment(CreatePaymentDTO dto) {
         //todo 테스트용, 추후 수정
         User relatedUser
@@ -45,6 +46,7 @@ public class PaymentTransactionFacade {
         return PaymentDTO.from(createdPayment);
     }
 
+    @Transactional
     public void deletePayment(UUID paymentId, String deletedBy) {
 
         paymentRepo.softDeletePayment(paymentId, deletedBy);

@@ -3,7 +3,7 @@ package org.sparta.foodordermanagementservice.service;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
-import org.sparta.foodordermanagementservice.repository.PaymentTransactionFacade;
+import org.sparta.foodordermanagementservice.repository.PaymentPersistenceFacade;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -12,18 +12,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
-    private final PaymentTransactionFacade transaction;
+    private final PaymentPersistenceFacade persistence;
 
     @Override
     public PaymentDTO readPayment(UUID paymentId) {
 
-        return transaction.readPayment(paymentId);
+        return persistence.readPayment(paymentId);
     }
 
     @Override
     public PaymentDTO createPayment(CreatePaymentDTO dto) {
 
-        return transaction.createPayment(dto);
+        return persistence.createPayment(dto);
 
     }
 
@@ -32,6 +32,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         String deleter = "admin";/*todo auth완료시 username으로 넣기 */
 
-        transaction.deletePayment(paymentId, deleter);
+        persistence.deletePayment(paymentId, deleter);
     }
 }
