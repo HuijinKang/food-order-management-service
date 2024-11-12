@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -52,6 +53,13 @@ public class MenuController {
     @GetMapping("/{menuId}")
     public ApiResponse<MenuResponseDto> getMenu(@PathVariable UUID menuId) {
         return ApiResponse.ofSuccess(menuService.getMenu(menuId));
+    }
+
+    // 메뉴 목록 조회
+    @GetMapping("/api/menus")
+    public ApiResponse<List<MenuResponseDto>> getMenus(@RequestParam UUID storeId) {
+        List<MenuResponseDto> menuList = menuService.getMenus(storeId);
+        return ApiResponse.ofSuccess(menuList);
     }
 
 }

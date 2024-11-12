@@ -11,7 +11,9 @@ import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.repository.MenuRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,5 +77,17 @@ public class MenuServiceImpl implements MenuService {
                 .build();
     }
 
+    // 메뉴 목록 조회
+    public List<MenuResponseDto> getMenus(UUID storeId) {
+        List<Menu> menuList = menuRepository.findByStoreId(storeId);
+        return menuList.stream()
+                .map(menu -> MenuResponseDto.builder()
+                        .storeId(menu.getStore().getId())
+                        .name(menu.getName())
+                        .price(menu.getPrice())
+                        .description(menu.getDescription())
+                        .build())
+                .collect(Collectors.toList());
+    }
 
 }

@@ -4,6 +4,7 @@ import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.UpdateMenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.response.MenuResponseDto;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface MenuService {
@@ -15,4 +16,6 @@ public interface MenuService {
     void deleteMenu(UUID menuId, String username);
 
     MenuResponseDto getMenu(UUID menuId);
+
+    List<MenuResponseDto> getMenus(UUID storeId);
 }
