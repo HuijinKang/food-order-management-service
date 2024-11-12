@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
+import org.sparta.foodordermanagementservice.dto.request.UpdateUserRequestDTO;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
 import org.sparta.foodordermanagementservice.service.UserService;
@@ -32,4 +33,10 @@ public class UserServiceImpl implements UserService {
                 .nickname(user.getNickname())
                 .build();
     }
+
+    @Override
+    public void updateUser(String username, UpdateUserRequestDTO request) {
+
+    }
+
 }

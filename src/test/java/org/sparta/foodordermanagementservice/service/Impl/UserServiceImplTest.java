@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
+import org.sparta.foodordermanagementservice.dto.request.UpdateUserRequestDTO;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
@@ -71,6 +72,36 @@ class UserServiceImplTest {
     void getUserFailWhenUserNotFound() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(CustomException.class, () -> userService.getUser("notExistingUser"));
+        assertThrows(CustomException.class, () -> userService.getUser("notExistingUsername"));
     }
+
+    @Test
+    @DisplayName("유저 정보 수정 성공")
+    void updateUserSuccess() {
+        UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
+                .nickname("updatedNickname")
+                .email("updatedEmail")
+                .isPublic(false)
+                .password("updatedPassword")
+                .build();
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
+
+        userService.updateUser(testUser.getUsername(), request);
+
+        verify(userRepository, times(1)).findByUsername(anyString());
+        verify(userRepository, times(1)).save(any(User.class));
+
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 실패 - 없는 사용자")
+    void updateUserFailWhenUserNotFound() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, () -> userService.updateUser("notExistingUsername", any(UpdateUserRequestDTO.class)));
+
+        verify(userRepository, times(1)).findByUsername(anyString());
+    }
+
 }
