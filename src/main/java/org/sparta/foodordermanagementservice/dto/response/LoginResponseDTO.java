@@ -6,10 +6,9 @@ import lombok.NoArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.LoginUser;
 
 @Getter
-@NoArgsConstructor
 public class LoginResponseDTO {
-    private String jwtToken;
-    private LoginUser user;
+    private final String jwtToken;
+    private final LoginUser user;
 
     @Builder
     public LoginResponseDTO(String jwtToken, LoginUser user) {

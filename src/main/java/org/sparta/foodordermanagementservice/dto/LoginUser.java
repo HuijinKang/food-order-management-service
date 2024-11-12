@@ -7,13 +7,12 @@ import lombok.NoArgsConstructor;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 
 @Getter
-@NoArgsConstructor
 public class LoginUser{
-    private String username;
-    private String nickname;
-    private String email;
-    private Boolean isPublic;
-    private UserRole userRole;
+    private final String username;
+    private final String nickname;
+    private final String email;
+    private final Boolean isPublic;
+    private final UserRole userRole;
 
     @Builder
     public LoginUser(String username, String nickname, String email, Boolean isPublic, UserRole userRole) {
