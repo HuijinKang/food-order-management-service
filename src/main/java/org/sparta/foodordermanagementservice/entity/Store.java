@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -21,8 +22,11 @@ public class Store {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(nullable = false, length = 100)
+    private String region;
 
     @Column(nullable = false)
     private double latitude;
@@ -32,6 +36,21 @@ public class Store {
 
     @Column(nullable = false, length = 255)
     private String name;
+
+    @ManyToMany
+    @JoinTable(
+            name = "store_category",
+            joinColumns = @JoinColumn(name = "store_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories;
+
+
+    @Column
+    private int totalRating;
+
+    @Column
+    private int reviewCount;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
