@@ -100,10 +100,8 @@ public class MenuServiceImpl implements MenuService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize,
                 isAsc ? Sort.by(sortedBy).ascending() : Sort.by(sortedBy).descending());
 
-        // 메뉴 검색 (조건과 키워드에 맞는 메뉴를 페이지네이션과 함께 조회)
         Page<Menu> menuPage = menuRepository.searchMenus(condition, keyword, pageable);
 
-        // Page<Menu>를 Page<MenuResponseDto>로 변환
         return menuPage.map(menu -> MenuResponseDto.builder()
                 .storeId(menu.getStore().getId())
                 .name(menu.getName())
