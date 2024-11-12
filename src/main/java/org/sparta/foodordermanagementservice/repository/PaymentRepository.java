@@ -30,12 +30,14 @@ public class PaymentRepository {
         return jpaRepo.save(toSave);
     }
 
-    public void deletePayment(UUID paymentId, String deletedBy) {
-        queryFactory
-                .update(qPayment)
-                .set(qPayment.deletedAt, LocalDateTime.now())
-                .set(qPayment.deletedBy, deletedBy)
-                .where(qPayment.id.eq(paymentId))
-                .execute();
+    public void softDeletePayment(UUID paymentId, String deletedBy) {
+
+        Payment target = jpaRepo.findById(paymentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
+
+        target.setDeletedAt(LocalDateTime.now());
+        target.setDeletedBy(deletedBy);
+
+        jpaRepo.save(target);
     }
 }
