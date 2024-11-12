@@ -98,24 +98,13 @@ class UserControllerTest {
     @Test
     @DisplayName("유저 조회 실패 - 접근 권한 없음")
     @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER"})
-    void getUserFailWhenUnauthorized() throws Exception {
-        UserDTO notMasterUser = UserDTO.builder()
-                .username("testuser")
-                .password("testpassword")
-                .email("test@test.com")
-                .userRole(UserRole.CUSTOMER)
-                .status(UserStatus.ACTIVE)
-                .isPublic(true)
-                .nickname("testnickname")
-                .build();
+    void getUserFailWhenForbidden() throws Exception {
 
-        when(userService.getUser(anyString())).thenThrow(new CustomException(ErrorCode.UNAUTHORIZED));
-
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/users/{username}", notMasterUser.getUsername())
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/users/{username}", "notMasterOrManagerUsername")
                         .header("Authorization", "Bearer {ACCESS_TOKEN}"))
-                .andExpect(status().is(ErrorCode.UNAUTHORIZED.getStatus().value()))
+                .andExpect(status().isForbidden())
                 .andDo(print())
-                .andDo(document("get-user-fail-unauthorized",
+                .andDo(document("get-user-fail-forbidden",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         responseFields(
@@ -132,7 +121,7 @@ class UserControllerTest {
 
         when(userService.getUser(anyString())).thenThrow(new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/users/{username}", "notExistingUser")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/users/{username}", "notExistingUsername")
                         .header("Authorization", "Bearer {ACCESS_TOKEN}"))
                 .andExpect(status().is(ErrorCode.USER_NOT_FOUND.getStatus().value()))
                 .andDo(print())

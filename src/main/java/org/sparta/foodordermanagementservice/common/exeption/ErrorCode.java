@@ -16,6 +16,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C004", "Internal Server Error"),
     ENTITY_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C005", "db 저장 실패"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "C011", "잘못된 요청입니다. (%s)"),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "C012", "접근 권한이 없습니다"),
 
     /* 회원가입 */
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "S001", "중복된 아이디입니다."),

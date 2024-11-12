@@ -2,8 +2,8 @@ package org.sparta.foodordermanagementservice.entity;
 
 public enum UserRole {
     CUSTOMER(Authority.CUSTOMER),  // 사용자 권한
-    OWNER(Authority.OWNER),  // 관리자 권한
-    MANAGER(Authority.MANAGER),
+    OWNER(Authority.OWNER),  // 가게 주인 권한
+    MANAGER(Authority.MANAGER), //매니저 권한
     MASTER(Authority.MASTER);  // 관리자 권한
 
 
