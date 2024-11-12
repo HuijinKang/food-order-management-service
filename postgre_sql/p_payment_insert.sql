@@ -16,7 +16,8 @@ begin
 					updated_at,
 					updated_by,
 					order_id,
-					user_id
+					user_id,
+					username
 					)
 		values(
 			uuid_generate_v4(),
@@ -26,11 +27,12 @@ begin
 			'me',
 			null,
 			null,
-			'CANCEL_PG_DENIED',
+			'PG_DENIED_CANCEL',
 			null,
 			null,
 			uuid_generate_v4(),
-			1
+			1,
+			'me'
 		);
 	end loop;
 end $$;
