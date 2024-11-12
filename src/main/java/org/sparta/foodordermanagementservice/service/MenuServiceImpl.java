@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.UpdateMenuRequestDto;
+import org.sparta.foodordermanagementservice.dto.response.MenuResponseDto;
 import org.sparta.foodordermanagementservice.entity.Menu;
 import org.sparta.foodordermanagementservice.entity.MenuStatus;
 import org.sparta.foodordermanagementservice.entity.Store;
@@ -60,5 +61,19 @@ public class MenuServiceImpl implements MenuService {
 
         menu.updateStatus(MenuStatus.DISCONTINUED);
     }
+
+    // 메뉴 단건 조회
+    public MenuResponseDto getMenu(UUID menuId) {
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new RuntimeException("해당하는 메뉴를 찾을 수 없습니다."));
+
+        return MenuResponseDto.builder()
+                .storeId(menu.getStore().getId())
+                .name(menu.getName())
+                .price(menu.getPrice())
+                .description(menu.getDescription())
+                .build();
+    }
+
 
 }
