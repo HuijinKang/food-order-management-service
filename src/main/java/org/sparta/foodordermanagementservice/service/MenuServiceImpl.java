@@ -74,7 +74,7 @@ public class MenuServiceImpl implements MenuService {
                 .orElseThrow(() -> new RuntimeException("해당하는 메뉴를 찾을 수 없습니다."));
 
         return MenuResponseDto.builder()
-                .storeId(menu.getStore().getId())
+//                .storeId(menu.getStore().getId())
                 .name(menu.getName())
                 .price(menu.getPrice())
                 .description(menu.getDescription())
@@ -86,7 +86,7 @@ public class MenuServiceImpl implements MenuService {
         List<Menu> menuList = menuRepository.findByStoreId(storeId);
         return menuList.stream()
                 .map(menu -> MenuResponseDto.builder()
-                        .storeId(menu.getStore().getId())
+//                        .storeId(menu.getStore().getId())
                         .name(menu.getName())
                         .price(menu.getPrice())
                         .description(menu.getDescription())
@@ -103,7 +103,7 @@ public class MenuServiceImpl implements MenuService {
         Page<Menu> menuPage = menuRepository.searchMenus(condition, keyword, pageable);
 
         return menuPage.map(menu -> MenuResponseDto.builder()
-                .storeId(menu.getStore().getId())
+//                .storeId(menu.getStore().getId())
                 .name(menu.getName())
                 .price(menu.getPrice())
                 .description(menu.getDescription())
