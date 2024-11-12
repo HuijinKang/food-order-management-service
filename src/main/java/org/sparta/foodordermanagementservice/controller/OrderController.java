@@ -52,7 +52,7 @@ public class OrderController {
                 .build();
 
         List<OrderDTO> orderList
-                = orderService.searchOrderList(dto);
+                = orderService.readOrderList(dto);
 
         List<OrderListResObj> responseObjList
                 = orderList.stream()

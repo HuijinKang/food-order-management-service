@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Value
 @Builder
-public class PostPaymentDTO {
+public class CreatePaymentDTO {
 
     UUID orderId;
     String username;
@@ -20,9 +20,9 @@ public class PostPaymentDTO {
     int payedPrice;
     String receipt;
 
-    public static PostPaymentDTO from(PostPaymentReq request) {
+    public static CreatePaymentDTO from(PostPaymentReq request) {
 
-        return PostPaymentDTO.builder()
+        return CreatePaymentDTO.builder()
                 .orderId(request.getOrderId())
                 .username(request.getUsername())
                 .status(request.getStatus())

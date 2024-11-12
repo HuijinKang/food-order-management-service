@@ -20,26 +20,25 @@ public class OrderRepository {
     private final OrderJpaRepository orderJpaRepo;
     private final OrderQDslRepository orderQDslRepo;
 
-    public List<Order> selectOrderList(SelectOrderListDTO dto) {
+    public List<Order> readOrderList(SelectOrderListDTO dto) {
 
-        return orderQDslRepo.selectOrderList(dto);
+        return orderQDslRepo.readOrderList(dto);
+    }
+
+    public Order readOrder(UUID orderId) {
+        return orderJpaRepo.findById(orderId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
     }
 
     public void softDeleteOrder(UUID orderId) {
 
-        Order toDelete
-                = orderJpaRepo.findById(orderId)
+        Order order = orderJpaRepo.findById(orderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
 
-        toDelete.setDeletedAt(LocalDateTime.now());
-        toDelete.setDeletedBy("system");//todo auth에서 로그인아이디 받아오도록 수정
+        order.setDeletedAt(LocalDateTime.now());
+        order.setDeletedBy("system");//todo auth에서 로그인아이디 받아오도록 수정
 
-        orderJpaRepo.save(toDelete);
-    }
-
-    public Order selectOrder(UUID orderId) {
-        return orderJpaRepo.findById(orderId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
+        orderJpaRepo.save(order);
     }
 
 }

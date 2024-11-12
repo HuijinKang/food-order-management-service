@@ -18,11 +18,11 @@ public class OrderServiceImpl implements OrderService {
     private final OrderTransactionalFacade orderRepository;
 
     @Override
-    public List<OrderDTO> searchOrderList(ReadOrderListDto dto) {
+    public List<OrderDTO> readOrderList(ReadOrderListDto dto) {
 
         //todo auth 완료시 접근권한 체크할것, 접근 권한 관련 validation클래스 생성해 사용할것
 
-        return orderRepository.selectOrderList(SelectOrderListDTO.from(dto));
+        return orderRepository.readOrderList(SelectOrderListDTO.from(dto));
     }
 
     @Override

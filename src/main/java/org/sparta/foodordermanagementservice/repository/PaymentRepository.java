@@ -19,14 +19,14 @@ public class PaymentRepository {
     private final JPAQueryFactory queryFactory;
     private final QPayment qPayment = QPayment.payment;
 
-    public Payment selectPayment(UUID paymentId) {
+    public Payment readPayment(UUID paymentId) {
 
         return jpaRepo.findById(paymentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
     }
 
 
-    public Payment insertPayment(Payment toSave) {
+    public Payment createPayment(Payment toSave) {
         return jpaRepo.save(toSave);
     }
 

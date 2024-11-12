@@ -19,7 +19,7 @@ public class OrderQDslRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public List<Order> selectOrderList(SelectOrderListDTO dto) {
+    public List<Order> readOrderList(SelectOrderListDTO dto) {
 
         QOrder order = QOrder.order;
 
@@ -35,7 +35,7 @@ public class OrderQDslRepository {
                 : order.userName.eq(dto.getUserName());
 
 
-        List<Order> selectedOrderList
+        List<Order> readOrderList
                 = queryFactory
                 .selectFrom(order)
                 .where(
@@ -48,7 +48,7 @@ public class OrderQDslRepository {
                 .limit(dto.getPageSize())
                 .fetch();
 
-        return selectedOrderList;
+        return readOrderList;
     }
 
 }

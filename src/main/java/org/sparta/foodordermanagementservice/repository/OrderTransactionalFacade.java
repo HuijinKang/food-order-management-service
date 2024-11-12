@@ -21,14 +21,17 @@ public class OrderTransactionalFacade {
     //    private final PaymentRepository paymentRepo;
 
 
-    public List<OrderDTO> selectOrderList(SelectOrderListDTO dto) {
+    public List<OrderDTO> readOrderList(SelectOrderListDTO dto) {
 
-        List<Order> selectedOrderList
-                = orderRepo.selectOrderList(dto);
+        List<Order> readOrderList
+                = orderRepo.readOrderList(dto);
 
-        return selectedOrderList.stream()
+        List<OrderDTO> readOrderDtoList
+                = readOrderList.stream()
                 .map(OrderDTO::from)
                 .toList();
+
+        return readOrderDtoList;
     }
 
     public void deleteOrder(UUID orderId) {
