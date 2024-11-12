@@ -42,7 +42,7 @@ public class MenuController {
 
     // 메뉴 삭제
 //    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
-    @PatchMapping("/{menuId}")
+    @DeleteMapping("/{menuId}")
     public ApiResponse<?> deleteMenu(@PathVariable UUID menuId,
                                      @AuthenticationPrincipal UserDetails userDetails) {
         menuService.deleteMenu(menuId, userDetails.getUsername());
@@ -56,7 +56,7 @@ public class MenuController {
     }
 
     // 메뉴 목록 조회
-    @GetMapping("/api/menus")
+    @GetMapping
     public ApiResponse<List<MenuResponseDto>> getMenus(@RequestParam UUID storeId) {
         List<MenuResponseDto> menuList = menuService.getMenus(storeId);
         return ApiResponse.ofSuccess(menuList);
