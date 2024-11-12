@@ -52,4 +52,13 @@ public class MenuServiceImpl implements MenuService {
         existingMenu.updateStatus(requestDto.getStatus());
     }
 
+    // 메뉴 삭제
+    @Transactional
+    public void deleteMenu(UUID menuId, String username) {
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new RuntimeException("해당하는 메뉴를 찾을 수 없습니다."));
+
+        menu.updateStatus(MenuStatus.DISCONTINUED);
+    }
+
 }

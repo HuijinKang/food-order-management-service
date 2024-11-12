@@ -6,6 +6,8 @@ import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.UpdateMenuRequestDto;
 import org.sparta.foodordermanagementservice.service.MenuService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -33,6 +35,15 @@ public class MenuController {
                                      @RequestParam UUID storeId,
                                      @RequestBody UpdateMenuRequestDto requestDto) {
         menuService.updateMenu(menuId, storeId, requestDto);
+        return ApiResponse.ofSuccess(null);
+    }
+
+    // 메뉴 삭제
+//    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @PatchMapping("/{menuId}")
+    public ApiResponse<?> deleteMenu(@PathVariable UUID menuId,
+                                     @AuthenticationPrincipal UserDetails userDetails) {
+        menuService.deleteMenu(menuId, userDetails.getUsername());
         return ApiResponse.ofSuccess(null);
     }
 

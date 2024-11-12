@@ -10,4 +10,6 @@ public interface MenuService {
     void createMenu(UUID storeId, MenuRequestDto requestDto);
 
     void updateMenu(UUID menuId, UUID storeId, UpdateMenuRequestDto requestDto);
+
+    void deleteMenu(UUID menuId, String username);
 }
