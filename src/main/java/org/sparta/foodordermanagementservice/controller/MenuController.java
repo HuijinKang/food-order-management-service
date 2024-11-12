@@ -69,7 +69,7 @@ public class MenuController {
             @RequestParam String keyword,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "0") int pageNumber,
-            @RequestParam(defaultValue = "name") String sortedBy,
+            @RequestParam(defaultValue = "createdat") String sortedBy,
             @RequestParam(defaultValue = "true") boolean isAsc) {
 
         Page<MenuResponseDto> menuPage = menuService.searchMenus(condition, keyword, pageSize, pageNumber, sortedBy, isAsc);
