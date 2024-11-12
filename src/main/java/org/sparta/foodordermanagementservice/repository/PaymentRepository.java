@@ -1,43 +1,54 @@
 package org.sparta.foodordermanagementservice.repository;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.sparta.foodordermanagementservice.common.exeption.CustomException;
-import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
+import org.sparta.foodordermanagementservice.dto.PaymentDTO;
+import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.Payment;
-import org.sparta.foodordermanagementservice.entity.QPayment;
+import org.sparta.foodordermanagementservice.entity.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
 public class PaymentRepository {
 
-    private final PaymentJpaRepository jpaRepo;
-    private final JPAQueryFactory queryFactory;
-    private final QPayment qPayment = QPayment.payment;
+    private final PaymentDAO paymentDAO;
+//    private final UserDAO userDAO;
+    private final OrderDAO orderDAO;
 
-    public Payment readPayment(UUID paymentId) {
+    @Transactional(readOnly = true)
+    public PaymentDTO readPayment(UUID paymentId) {
 
-        return jpaRepo.findById(paymentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
+        Payment readPayment
+                = paymentDAO.readPayment(paymentId);
+
+        return PaymentDTO.from(readPayment);
     }
 
+    @Transactional
+    public PaymentDTO createPayment(CreatePaymentDTO dto) {
+        //todo 테스트용, 추후 수정
+        User relatedUser
+                = new User(); //userRepo.findByUsername(username);
 
-    public Payment createPayment(Payment toSave) {
-        return jpaRepo.save(toSave);
+        Order relatedOrder
+                = orderDAO.readOrder(dto.getOrderId());
+
+        Payment createInfo
+                = dto.toEntity(relatedOrder, relatedUser);
+
+        Payment createdPayment
+                = paymentDAO.createPayment(createInfo);
+
+        return PaymentDTO.from(createdPayment);
     }
 
-    public void softDeletePayment(UUID paymentId, String deletedBy) {
+    @Transactional
+    public void deletePayment(UUID paymentId, String deletedBy) {
 
-        Payment target = jpaRepo.findById(paymentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
-
-        target.setDeletedAt(LocalDateTime.now());
-        target.setDeletedBy(deletedBy);
-
-        jpaRepo.save(target);
+        paymentDAO.softDeletePayment(paymentId, deletedBy);
     }
 }
