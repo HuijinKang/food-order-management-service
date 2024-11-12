@@ -3,6 +3,7 @@ package org.sparta.foodordermanagementservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
+import org.sparta.foodordermanagementservice.dto.request.UpdateMenuRequestDto;
 import org.sparta.foodordermanagementservice.service.MenuService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,16 @@ public class MenuController {
     public ApiResponse<?> createMenu(@RequestParam(required = false) UUID storeId,
                                      @RequestBody MenuRequestDto requestDto) {
         menuService.createMenu(storeId, requestDto);
+        return ApiResponse.ofSuccess(null);
+    }
 
+    // 메뉴 수정
+//    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @PatchMapping("/{menuId}")
+    public ApiResponse<?> updateMenu(@PathVariable UUID menuId,
+                                     @RequestParam UUID storeId,
+                                     @RequestBody UpdateMenuRequestDto requestDto) {
+        menuService.updateMenu(menuId, storeId, requestDto);
         return ApiResponse.ofSuccess(null);
     }
 

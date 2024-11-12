@@ -38,5 +38,21 @@ public class Menu extends TimeStamped {
 //    @Column(nullable = false, columnDefinition = "TEXT")
 //    private String menuImageUrl;
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updatePrice(int price) {
+        this.price = price;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updateStatus(MenuStatus status) {
+        this.status = status;
+    }
+
 
 }

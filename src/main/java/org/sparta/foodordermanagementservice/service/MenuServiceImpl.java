@@ -1,7 +1,9 @@
 package org.sparta.foodordermanagementservice.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
+import org.sparta.foodordermanagementservice.dto.request.UpdateMenuRequestDto;
 import org.sparta.foodordermanagementservice.entity.Menu;
 import org.sparta.foodordermanagementservice.entity.MenuStatus;
 import org.sparta.foodordermanagementservice.entity.Store;
@@ -17,6 +19,7 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
 //    private final StoreService storeService;
 
+    // 메뉴 등록
     public void createMenu(UUID storeId, MenuRequestDto requestDto) {
 
 //        Store store = storeService.findByStoreId(storeId);
@@ -32,5 +35,21 @@ public class MenuServiceImpl implements MenuService {
         menuRepository.save(menu);
     }
 
+    // 메뉴 수정
+    @Transactional
+    public void updateMenu(UUID menuId, UUID storeId, UpdateMenuRequestDto requestDto) {
+        Menu existingMenu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new RuntimeException("해당하는 메뉴를 찾을 수 없습니다."));
+
+//        Store store = storeService.findByStoreId(storeId);
+//        if (!existingMenu.getStore().equals(store)) {
+//            throw new RuntimeException("해당 가게에 등록된 메뉴가 아닙니다.");
+//        }
+
+        existingMenu.updateName(requestDto.getName());
+        existingMenu.updatePrice(requestDto.getPrice());
+        existingMenu.updateDescription(requestDto.getDescription());
+        existingMenu.updateStatus(requestDto.getStatus());
+    }
 
 }
