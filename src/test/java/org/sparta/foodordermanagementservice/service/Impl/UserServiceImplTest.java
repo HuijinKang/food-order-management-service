@@ -11,18 +11,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
-import org.sparta.foodordermanagementservice.dto.request.LoginRequestDTO;
-import org.sparta.foodordermanagementservice.dto.request.SignupRequestDTO;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
-import org.sparta.foodordermanagementservice.security.JwtUtil;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -65,6 +61,7 @@ class UserServiceImplTest {
         assertEquals(testUser.getNickname(), userDTO.getNickname());
         assertEquals(testUser.getIsPublic(), userDTO.getIsPublic());
         assertEquals(testUser.getUserRole(), userDTO.getUserRole());
+        assertEquals(testUser.getStatus(), userDTO.getStatus());
 
         verify(userRepository, times(1)).findByUsername(anyString());
     }
