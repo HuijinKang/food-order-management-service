@@ -67,7 +67,6 @@ class UserControllerTest {
     void getUserSuccess() throws Exception {
         UserDTO testUser = UserDTO.builder()
                 .username("testuser")
-                .password("testpassword")
                 .email("test@test.com")
                 .userRole(UserRole.MASTER)
                 .status(UserStatus.ACTIVE)
@@ -90,7 +89,6 @@ class UserControllerTest {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과데이터")
                         ).and(
                                 fieldWithPath("data.username").type(JsonFieldType.STRING).description("사용자아이디"),
-                                fieldWithPath("data.password").type(JsonFieldType.STRING).description("비밀번호"),
                                 fieldWithPath("data.status").type(JsonFieldType.STRING).description("상태"),
                                 fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("닉네임"),
                                 fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),

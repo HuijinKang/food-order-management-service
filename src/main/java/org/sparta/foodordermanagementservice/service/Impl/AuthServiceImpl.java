@@ -53,6 +53,7 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         String username = loginRequestDTO.getUsername();

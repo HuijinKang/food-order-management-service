@@ -61,7 +61,6 @@ class UserServiceImplTest {
         UserDTO userDTO = userService.getUser(testUser.getUsername());
 
         assertEquals(testUser.getUsername(), userDTO.getUsername());
-        assertEquals(testUser.getPassword(), userDTO.getPassword());
         assertEquals(testUser.getEmail(), userDTO.getEmail());
         assertEquals(testUser.getNickname(), userDTO.getNickname());
         assertEquals(testUser.getIsPublic(), userDTO.getIsPublic());

@@ -27,7 +27,6 @@ public class UserServiceImpl implements UserService {
 
         return UserDTO.builder()
                 .username(user.getUsername())
-                .password(user.getPassword())
                 .email(user.getEmail())
                 .status(user.getStatus())
                 .isPublic(user.getIsPublic())
