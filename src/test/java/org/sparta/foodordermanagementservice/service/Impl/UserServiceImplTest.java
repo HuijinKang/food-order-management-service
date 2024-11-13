@@ -74,7 +74,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("유저 삭제 성공")
+    @DisplayName("유저 탈퇴 성공")
     void deleteUserSuccess() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
 
@@ -85,7 +85,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("유저 삭제 실패 - 없는 사용자")
+    @DisplayName("유저 탈퇴 실패 - 없는 사용자")
     void deleteUserFailWhenUserNotFound() {
        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 

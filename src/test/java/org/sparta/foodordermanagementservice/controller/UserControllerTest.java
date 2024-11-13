@@ -26,6 +26,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -121,6 +122,103 @@ class UserControllerTest {
                 .andExpect(status().is(ErrorCode.USER_NOT_FOUND.getStatus().value()))
                 .andDo(print())
                 .andDo(document("get-user-fail-user-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("본인 탈퇴 성공")
+    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    void deleteUserOwnSuccess() throws Exception {
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "testUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("delete-user-success-own",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("다른 유저 탈퇴 성공")
+    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    void deleteUserOtherSuccess() throws Exception {
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "otherUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("delete-user-success-other",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("유저 탈퇴 실패 - 없는 사용자")
+    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    void deleteUserFailWhenUserNotFound() throws Exception {
+
+        doThrow(new CustomException(ErrorCode.USER_NOT_FOUND)).when(userService).deleteUser(anyString());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "testUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}"))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andDo(document("delete-user-fail-user-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("유저 탈퇴 실패 - 매니저가 마스터 사용자 탈퇴")
+    @WithMockUser(username = "testuser", roles = {"MANAGER"})
+    void deleteUserFailWhenManagerTryMasterDelete() throws Exception {
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "masterUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}"))
+                .andExpect(status().isForbidden())
+                .andDo(print())
+                .andDo(document("delete-user-fail-manager-try-master-delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("유저 탈퇴 실패 - 마스터 혹은 매니저가 아닌 사용자가 다른 사용자의 탈퇴")
+    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER"})
+    void deleteUserFailWhenForbidden() throws Exception {
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "otherUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}"))
+                .andExpect(status().isForbidden())
+                .andDo(print())
+                .andDo(document("delete-user-fail-user-not-found",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         responseFields(
