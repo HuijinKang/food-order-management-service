@@ -9,7 +9,7 @@ import org.sparta.foodordermanagementservice.entity.UserRole;
 @Getter
 public class UpdateUserRoleRequestDTO {
     @NotNull(message = "역할 입력은 필수입니다.")
-    private UserRole userRole;
+    private final UserRole userRole;
 
     @Builder
     @JsonCreator
