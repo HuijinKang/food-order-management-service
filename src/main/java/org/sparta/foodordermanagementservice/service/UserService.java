@@ -1,7 +1,7 @@
 package org.sparta.foodordermanagementservice.service;
 
-import org.springframework.stereotype.Service;
+import org.sparta.foodordermanagementservice.dto.UserDTO;
 
-@Service
 public interface UserService {
+    UserDTO getUser(String username);
 }
