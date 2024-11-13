@@ -2,6 +2,7 @@ package org.sparta.foodordermanagementservice.service.Impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
+import org.sparta.foodordermanagementservice.entity.UserStatus;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
 
 import java.util.Optional;
@@ -38,16 +40,17 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         testUser = User.builder()
-                .username("testuser")
-                .password("testpassword")
+                .username("testUser")
+                .password("testPassword")
                 .email("test@email.com")
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testuser")
-                .updatedBy("testuser")
+                .createdBy("testUser")
+                .updatedBy("testUser")
                 .build();
     }
+    @Order(1)
     @Test
     @DisplayName("유저 조회 성공")
     void getUserSuccess() {
@@ -90,6 +93,28 @@ class UserServiceImplTest {
        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
         assertThrows(CustomException.class, () -> userService.deleteUser("notExistingUser"));
+
+        verify(userRepository, times(1)).findByUsername(anyString());
+    }
+
+    @Test
+    @DisplayName("유저 탈퇴 실패 - 마스터 사용자 탈퇴")
+    void deleteUserFailWhenUserIsMaster() {
+        User masterUser = User.builder()
+                .username("masterUser")
+                .password("masterPassword")
+                .email("master@email.com")
+                .nickname("masterNickname")
+                .isPublic(false)
+                .userRole(UserRole.MASTER)
+                .status(UserStatus.ACTIVE)
+                .createdBy("masterUser")
+                .updatedBy("masterUser")
+                .build();
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(masterUser));
+
+        assertThrows(CustomException.class, () -> userService.deleteUser(masterUser.getUsername()));
 
         verify(userRepository, times(1)).findByUsername(anyString());
     }

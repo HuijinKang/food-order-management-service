@@ -29,7 +29,8 @@ public enum ErrorCode {
     FAIL_LOGIN(HttpStatus.BAD_REQUEST, "L002", "로그인 실패"),
 
     /* 유저 */
-    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "U001", "사용자가 존재하지 않습니다.");
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "U001", "사용자가 존재하지 않습니다."),
+    CANNOT_DELETE_MASTER_USER(HttpStatus.FORBIDDEN, "U002", "마스터 사용자는 삭제할 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;

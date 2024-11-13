@@ -191,15 +191,17 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("유저 탈퇴 실패 - 매니저가 마스터 사용자 탈퇴")
-    @WithMockUser(username = "testuser", roles = {"MANAGER"})
-    void deleteUserFailWhenManagerTryMasterDelete() throws Exception {
+    @DisplayName("유저 탈퇴 실패 - 마스터 사용자 탈퇴")
+    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    void deleteUserFailWhenDeleteUserIsMaster() throws Exception {
+
+        doThrow(new CustomException(ErrorCode.CANNOT_DELETE_MASTER_USER)).when(userService).deleteUser(anyString());
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "masterUsername")
                         .header("Authorization", "Bearer {ACCESS_TOKEN}"))
                 .andExpect(status().isForbidden())
                 .andDo(print())
-                .andDo(document("delete-user-fail-manager-try-master-delete",
+                .andDo(document("delete-user-fail-delete-user-is-master",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         responseFields(
