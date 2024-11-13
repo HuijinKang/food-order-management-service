@@ -3,7 +3,6 @@ package org.sparta.foodordermanagementservice.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
-import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
 import org.sparta.foodordermanagementservice.dto.request.PostPaymentReq;
 import org.sparta.foodordermanagementservice.dto.response.GetPaymentRes;
@@ -25,23 +24,20 @@ public class PaymentController {
     public ApiResponse<GetPaymentRes> readPayment(@PathVariable UUID id) {
 
         // todo auth check customer, master
-        PaymentDTO readPayment = paymentService.readPayment(id);
+        GetPaymentRes getPaymentRes
+                = paymentService.readPayment(id);
 
-        return ApiResponse.ofSuccess(
-                GetPaymentRes.from(readPayment)
-        );
+        return ApiResponse.ofSuccess(getPaymentRes);
     }
 
     @PostMapping
     public ApiResponse<UUID> createPayment(@RequestBody PostPaymentReq request) {
 
         //todo 권한 인증
-        PaymentDTO createdPayment
+        UUID createdPaymentId
                 = paymentService.createPayment(CreatePaymentDTO.from(request));
 
-        return ApiResponse.ofSuccess(
-                createdPayment.getId()
-        );
+        return ApiResponse.ofSuccess(createdPaymentId);
     }
 
     @DeleteMapping("/{id}")
