@@ -51,4 +51,5 @@ public class UserController {
     private static boolean hasManagerRole(UserDetails userDetails) {
         return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MANAGER));
     }
+
 }

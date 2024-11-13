@@ -443,4 +443,5 @@ class UserControllerTest {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
                         )));
     }
+  
 }

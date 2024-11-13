@@ -6,4 +6,5 @@ import org.sparta.foodordermanagementservice.dto.request.UpdateUserRequestDTO;
 public interface UserService {
     UserDTO getUser(String username);
     void updateUser(String username, UpdateUserRequestDTO request);
+
 }
