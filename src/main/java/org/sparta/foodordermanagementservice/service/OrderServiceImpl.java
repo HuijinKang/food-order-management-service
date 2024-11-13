@@ -1,6 +1,7 @@
 package org.sparta.foodordermanagementservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.dto.OrderDTO;
 import org.sparta.foodordermanagementservice.dto.ReadOrderListDto;
 import org.sparta.foodordermanagementservice.dto.SelectOrderListDTO;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+
+@Slf4j
 
 
 @Service
@@ -22,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
 
         //todo auth 완료시 접근권한 체크할것, 접근 권한 관련 validation클래스 생성해 사용할것
 
+        log.info(dto.toString());
         return repository.readOrderList(SelectOrderListDTO.from(dto));
     }
 

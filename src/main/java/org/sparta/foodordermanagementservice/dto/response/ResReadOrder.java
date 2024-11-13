@@ -1,7 +1,7 @@
 package org.sparta.foodordermanagementservice.dto.response;
 
 
-public class SearchOrderDetailRes {
+public class ResReadOrder {
 
 //    private final UUID storeId;
 //    private final OrderStatus status;

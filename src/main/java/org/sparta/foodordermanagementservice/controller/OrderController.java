@@ -5,11 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.common.PageSizeRule;
-import org.sparta.foodordermanagementservice.dto.OrderDTO;
 import org.sparta.foodordermanagementservice.dto.ReadOrderListDto;
-import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
-import org.sparta.foodordermanagementservice.dto.request.SortedBy;
-import org.sparta.foodordermanagementservice.dto.response.OrderListResObj;
+import org.sparta.foodordermanagementservice.dto.request.ReqReadOrderList;
+import org.sparta.foodordermanagementservice.dto.response.ResReadOrderListObj;
 import org.sparta.foodordermanagementservice.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,50 +26,30 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ApiResponse<List<OrderListResObj>> readOrderList
-            (
-                    @RequestParam OrderListRequestCondition condition,
-                    @RequestParam String key,
-                    @RequestParam int pageSize,
-                    @RequestParam int pageNumber,
-                    @RequestParam SortedBy sortedBy,
-                    @RequestParam boolean isAsc
-            ) {
+    public ApiResponse<List<ResReadOrderListObj>> readOrderList(@ModelAttribute ReqReadOrderList request) {
 
-        if (!PageSizeRule.validate(pageSize))
-            pageSize = PageSizeRule.DEFAULT_PAGE_SIZE;
+        ReadOrderListDto dto = ReadOrderListDto.from(request);
 
-        ReadOrderListDto dto
-                = ReadOrderListDto.builder()
-                .condition(condition)
-                .key(key)
-                .pageSize(pageSize)
-                .pageNumber(pageNumber)
-                .sortedBy(sortedBy)
-                .isAsc(isAsc)
-                .build();
+        if (!PageSizeRule.validate(dto.getPageSize()))
+            dto.setPageSize(PageSizeRule.DEFAULT_PAGE_SIZE);
 
-        List<OrderDTO> orderList
-                = orderService.readOrderList(dto);
-
-        List<OrderListResObj> responseObjList
-                = orderList.stream()
-                .map(OrderListResObj::from)
+        List<ResReadOrderListObj> responseObjList
+                = orderService.readOrderList(dto)
+                .stream()
+                .map(ResReadOrderListObj::from)
                 .collect(Collectors.toList());
 
-        return ApiResponse.ofSuccess(
-                responseObjList
-        );
+        return ApiResponse.ofSuccess(responseObjList);
     }
 
 //    @GetMapping("/{id}")
-//    public ApiResponse<SearchOrderDetailRes> searchOrderDetail(@PathVariable long id) {
+//    public ApiResponse<ResReadOrder> searchOrderDetail(@PathVariable long id) {
 //
 //        OrderDTO searchedOrder
 //                = orderService.searchOrder(id);
 //
-//        SearchOrderDetailRes orderDetailRes
-//                = SearchOrderDetailRes.from(searchedOrder);
+//        ResReadOrder orderDetailRes
+//                = ResReadOrder.from(searchedOrder);
 //
 //        return ApiResponse.ofSuccess(orderDetailRes);
 //    }
@@ -81,8 +59,6 @@ public class OrderController {
 
         orderService.deleteOrder(id);
 
-        return ApiResponse.ofSuccess(
-                null
-        );
+        return ApiResponse.ofSuccess(null);
     }
 }
