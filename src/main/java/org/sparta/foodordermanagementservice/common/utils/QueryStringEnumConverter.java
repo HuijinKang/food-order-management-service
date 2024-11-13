@@ -1,8 +1,9 @@
-package org.sparta.foodordermanagementservice.dto.request;
+package org.sparta.foodordermanagementservice.common.utils;
 
 import lombok.NonNull;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.request.BaseQueryStringEnum;
 import org.springframework.core.convert.converter.Converter;
 
 import java.util.Arrays;

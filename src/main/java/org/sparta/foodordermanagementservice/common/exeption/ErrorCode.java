@@ -15,7 +15,13 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "C003", "Method Not Allowed"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C004", "Internal Server Error"),
     ENTITY_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C005", "db 저장 실패"),
-    BAD_REQUEST(HttpStatus.BAD_REQUEST, "C011", "잘못된 요청입니다."),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "C011", "잘못된 요청입니다. (%s)"),
+
+    /* 회원가입 */
+    DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "S001", "중복된 아이디입니다."),
+    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "S002", "중복된 닉네임입니다."),
+    DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "S003", "중복된 닉네임입니다."),
+    WRONG_ROLE(HttpStatus.BAD_REQUEST, "S004", "회원가입은 고객과 가게 주인만 할 수 있습니다."),
 
     /*로그인*/
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "L001", "로그인이 필요합니다."),
