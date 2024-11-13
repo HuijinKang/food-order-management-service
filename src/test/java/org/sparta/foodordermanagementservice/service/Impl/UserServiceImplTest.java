@@ -78,7 +78,7 @@ class UserServiceImplTest {
     void updateUserRoleSuccess() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
 
-        userService.updateUserRole(anyString(), any(UserRole.class));
+        userService.updateUserRole(testUser.getUsername(), UserRole.MANAGER);
 
         verify(userRepository, times(1)).findByUsername(anyString());
         verify(userRepository, times(1)).save(any(User.class));

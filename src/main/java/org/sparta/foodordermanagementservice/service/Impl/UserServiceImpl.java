@@ -36,6 +36,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void updateUserRole(String username, UserRole role) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        user.setUserRole(role);
+
+        userRepository.save(user);
     }
 }
