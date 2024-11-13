@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.request.ReviewRequestDto;
+import org.sparta.foodordermanagementservice.dto.response.ReviewResponseDto;
 import org.sparta.foodordermanagementservice.service.ReviewService;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,8 +43,14 @@ public class ReviewController {
     @DeleteMapping("/{reviewId}")
     public ApiResponse<?> deleteReview(@PathVariable UUID reviewId,
                                        @AuthenticationPrincipal UserDetails userDetails) {
-        // 리뷰 삭제 서비스 호출
         reviewService.deleteReview(reviewId, userDetails.getUsername());
         return ApiResponse.ofSuccess(null);
+    }
+
+    // 리뷰 단건 조회
+    @GetMapping("/{reviewId}")
+    public ApiResponse<?> getReview(@PathVariable UUID reviewId) {
+        ReviewResponseDto responseDto = reviewService.getReview(reviewId);
+        return ApiResponse.ofSuccess(responseDto);
     }
 }
