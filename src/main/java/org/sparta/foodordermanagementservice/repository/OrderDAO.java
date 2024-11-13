@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
-import org.sparta.foodordermanagementservice.dto.SelectOrderListDTO;
+import org.sparta.foodordermanagementservice.dto.DbReadOrderListDto;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.QOrder;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderSpec;
@@ -27,7 +27,7 @@ public class OrderDAO {
     private final QOrder qOrder = QOrder.order;
     private final JPAQueryFactory queryFactory;
 
-    public List<Order> readOrderList(SelectOrderListDTO dto) {
+    public List<Order> readOrderList(DbReadOrderListDto dto) {
 
         BooleanExpression storeIdEq
                 = dto.getStoreId() == null
