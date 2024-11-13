@@ -3,6 +3,7 @@ package org.sparta.foodordermanagementservice.service;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
+import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,19 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentDTO readPayment(UUID paymentId) {
 
-        return repository.readPayment(paymentId);
+        Payment foundPayment
+                = repository.readPayment(paymentId);
+
+        return PaymentDTO.from(foundPayment);
     }
 
     @Override
     public PaymentDTO createPayment(CreatePaymentDTO dto) {
 
-        return repository.createPayment(dto);
+        Payment createdPayment
+                = repository.createPayment(dto);
 
+        return PaymentDTO.from(createdPayment);
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor(staticName = "from")
-public class SelectOrderListDTO {
+public class DbReadOrderListDto {
 
     private final UUID storeId;
     private final String userName;
@@ -21,7 +21,7 @@ public class SelectOrderListDTO {
     private final SortedBy sortedBy;
     private final boolean isAsc;
 
-    public static SelectOrderListDTO from(ReadOrderListDto dto) {
+    public static DbReadOrderListDto from(ReadOrderListDto dto) {
 
         UUID targetStoreId
                 = dto.getCondition() == OrderListRequestCondition.STORE_ID
@@ -33,7 +33,7 @@ public class SelectOrderListDTO {
                 ? dto.getKey()
                 : null;
 
-        return SelectOrderListDTO.from(
+        return DbReadOrderListDto.from(
                 targetStoreId,
                 targetUserName,
                 dto.getPageSize(),

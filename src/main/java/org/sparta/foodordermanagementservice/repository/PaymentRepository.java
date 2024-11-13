@@ -2,7 +2,6 @@ package org.sparta.foodordermanagementservice.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
-import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.User;
@@ -16,20 +15,17 @@ import java.util.UUID;
 public class PaymentRepository {
 
     private final PaymentDAO paymentDAO;
-//    private final UserDAO userDAO;
+    //    private final UserDAO userDAO;
     private final OrderDAO orderDAO;
 
     @Transactional(readOnly = true)
-    public PaymentDTO readPayment(UUID paymentId) {
+    public Payment readPayment(UUID paymentId) {
 
-        Payment readPayment
-                = paymentDAO.readPayment(paymentId);
-
-        return PaymentDTO.from(readPayment);
+        return paymentDAO.readPayment(paymentId);
     }
 
     @Transactional
-    public PaymentDTO createPayment(CreatePaymentDTO dto) {
+    public Payment createPayment(CreatePaymentDTO dto) {
         //todo 테스트용, 추후 수정
         User relatedUser
                 = new User(); //userRepo.findByUsername(username);
@@ -40,10 +36,7 @@ public class PaymentRepository {
         Payment createInfo
                 = dto.toEntity(relatedOrder, relatedUser);
 
-        Payment createdPayment
-                = paymentDAO.createPayment(createInfo);
-
-        return PaymentDTO.from(createdPayment);
+        return paymentDAO.createPayment(createInfo);
     }
 
     @Transactional
