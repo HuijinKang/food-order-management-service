@@ -5,15 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.common.PageSizeRule;
-import org.sparta.foodordermanagementservice.dto.ReadOrderListDto;
-import org.sparta.foodordermanagementservice.dto.request.ReqReadOrderList;
-import org.sparta.foodordermanagementservice.dto.response.ResReadOrderListObj;
+import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
+import org.sparta.foodordermanagementservice.dto.request.ReqPaginateOrders;
+import org.sparta.foodordermanagementservice.dto.response.ResPagedOrderObj;
 import org.sparta.foodordermanagementservice.service.OrderService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -26,24 +25,25 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ApiResponse<List<ResReadOrderListObj>> readOrderList(@ModelAttribute ReqReadOrderList request) {
+    public ApiResponse<Page<ResPagedOrderObj>> paginateOrders(@ModelAttribute ReqPaginateOrders request) {
 
-        ReadOrderListDto dto = ReadOrderListDto.from(request);
+        if (!PageSizeRule.validate
+                (request.getPageSize())) {
 
-        if (!PageSizeRule.validate(dto.getPageSize()))
-            dto.setPageSize(PageSizeRule.DEFAULT_PAGE_SIZE);
+            request.setPageSize(PageSizeRule.DEFAULT_PAGE_SIZE);
+        }
 
-        List<ResReadOrderListObj> responseObjList
-                = orderService.readOrderList(dto)
-                .stream()
-                .map(ResReadOrderListObj::from)
-                .collect(Collectors.toList());
+        PaginateOrdersDTO dto
+                = PaginateOrdersDTO.from(request);
 
-        return ApiResponse.ofSuccess(responseObjList);
+        Page<ResPagedOrderObj> pagedResObjs
+                = orderService.paginateOrders(dto);
+
+        return ApiResponse.ofSuccess(pagedResObjs);
     }
 
 //    @GetMapping("/{id}")
-//    public ApiResponse<ResReadOrder> searchOrderDetail(@PathVariable long id) {
+//    public ApiResponse<ResReadOrder> readOrderDetail(@PathVariable long id) {
 //
 //        OrderDTO searchedOrder
 //                = orderService.searchOrder(id);

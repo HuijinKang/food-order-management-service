@@ -30,6 +30,30 @@ public class OrderDTO {
     private String deletedBy;
 
 
+    public static OrderDTO from(Order order) {
+        //todo 담당자와 연계해 user,
+        // store 변환함수 builder 인자로 추가
+        UserDTO userDto = new UserDTO();
+        StoreDTO storeDto = new StoreDTO();
+
+        return OrderDTO.builder()
+                .id(order.getId())
+                .userDTO(userDto)
+                .storeDTO(storeDto)
+                .status(order.getStatus())
+                .type(order.getType())
+                .address(order.getAddress())
+                .comment(order.getComment())
+                .totalPrice(order.getTotalPrice())
+                .createdAt(order.getCreatedAt())
+                .createdBy(order.getCreatedBy())
+                .updatedAt(order.getUpdatedAt())
+                .updatedBy(order.getUpdatedBy())
+                .deletedAt(order.getDeletedAt())
+                .deletedBy(order.getDeletedBy())
+                .build();
+    }
+
     @Builder //AllArgsConstructor
     public OrderDTO(UUID id,
                     UserDTO userDTO,
@@ -59,29 +83,5 @@ public class OrderDTO {
         this.updatedBy = updatedBy;
         this.deletedAt = deletedAt;
         this.deletedBy = deletedBy;
-    }
-
-    public static OrderDTO from(Order order) {
-        //todo 담당자와 연계해 user,
-        // store 변환함수 builder 인자로 추가
-        UserDTO userDto = new UserDTO();
-        StoreDTO storeDto = new StoreDTO();
-
-        return OrderDTO.builder()
-                .id(order.getId())
-                .userDTO(userDto)
-                .storeDTO(storeDto)
-                .status(order.getStatus())
-                .type(order.getType())
-                .address(order.getAddress())
-                .comment(order.getComment())
-                .totalPrice(order.getTotalPrice())
-                .createdAt(order.getCreatedAt())
-                .createdBy(order.getCreatedBy())
-                .updatedAt(order.getUpdatedAt())
-                .updatedBy(order.getUpdatedBy())
-                .deletedAt(order.getDeletedAt())
-                .deletedBy(order.getDeletedBy())
-                .build();
     }
 }

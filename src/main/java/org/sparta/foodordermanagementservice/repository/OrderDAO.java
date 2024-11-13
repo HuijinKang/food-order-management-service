@@ -3,9 +3,10 @@ package org.sparta.foodordermanagementservice.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
-import org.sparta.foodordermanagementservice.dto.SelectOrderListDTO;
+import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.QOrder;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderSpec;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-
+@Slf4j
 
 @Repository
 @RequiredArgsConstructor
@@ -24,38 +25,55 @@ public class OrderDAO {
 
     private final OrderJpaRepository orderJpaRepo;
 
-    private final QOrder qOrder = QOrder.order;
+    private final QOrder order = QOrder.order;
     private final JPAQueryFactory queryFactory;
 
-    public List<Order> readOrderList(SelectOrderListDTO dto) {
+    public long countTotalPages(PaginateOrdersDTO dto) {
 
-        BooleanExpression storeIdEq
-                = dto.getStoreId() == null
-                ? null
-                : qOrder.store.id.eq(dto.getStoreId());
-
-        BooleanExpression userNameEq
-                = dto.getUserName() == null
-                ? null
-//                : order.user.username.eq(dto.getUserName()); //todo 테스트용, user 구현되면 이걸로 쓰기
-                : qOrder.userName.eq(dto.getUserName());
-
-
-        List<Order> readOrderList
-                = queryFactory
-                .selectFrom(qOrder)
+        return queryFactory
+                .selectFrom(order)
                 .where(
-                        storeIdEq,
-                        userNameEq,
-                        qOrder.deletedAt.isNull()
+                        storeIdEq(dto.getStoreId()),
+                        userNameEq(dto.getUserName()),
+                        order.deletedAt.isNull()
                 )
                 .orderBy(OrderSpec.of(dto.getSortedBy(), dto.isAsc()))
-                .offset(dto.getPageSize() * (dto.getPageNumber() - 1))
+                .fetch()
+                .size();
+    }
+
+    public List<Order> readCurrentPage(PaginateOrdersDTO dto) {
+
+        return queryFactory
+                .selectFrom(order)
+                .where(
+                        storeIdEq(dto.getStoreId()),
+                        userNameEq(dto.getUserName()),
+                        order.deletedAt.isNull()
+                )
+                .orderBy(OrderSpec.of(dto.getSortedBy(), dto.isAsc()))
+                .offset(dto.getPageSize() * dto.getPageNumber())
                 .limit(dto.getPageSize())
                 .fetch();
 
-        return readOrderList;
     }
+
+    protected BooleanExpression storeIdEq(UUID storeId) {
+
+        if (storeId == null) return null;
+
+        return order.store.id.eq(storeId);
+    }
+
+
+    protected BooleanExpression userNameEq(String userName) {
+
+        if (userName == null) return null;
+
+//      return order.user.username.eq(dto.getUserName()); //todo 임시, user 구현되면 이걸로 쓰기
+        return order.userName.eq(userName);
+    }
+
 
     public Order readOrder(UUID orderId) {
         return orderJpaRepo.findById(orderId)
@@ -72,5 +90,4 @@ public class OrderDAO {
 
         orderJpaRepo.save(order);
     }
-
 }

@@ -1,7 +1,7 @@
 
 
 -- init
-ALTER TABLE p_payment
+ALTER TABLE p_order
 DISABLE TRIGGER ALL;
 
 

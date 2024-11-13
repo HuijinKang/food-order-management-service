@@ -2,28 +2,26 @@ package org.sparta.foodordermanagementservice.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
-import org.sparta.foodordermanagementservice.dto.request.ReqReadOrderList;
+import org.sparta.foodordermanagementservice.dto.request.ReqPaginateOrders;
 import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 
 @ToString //todo test용
 
 @Getter
-public class ReadOrderListDto {
+public class PaginateOrdersDTO {
 
     private final OrderListRequestCondition condition;
     private final String key;
-    @Setter
-    private int pageSize;
+    private final int pageSize;
     private final int pageNumber;
     private final SortedBy sortedBy;
     private final boolean isAsc;
 
-    public static ReadOrderListDto from(ReqReadOrderList request) {
+    public static PaginateOrdersDTO from(ReqPaginateOrders request) {
 
-        return ReadOrderListDto.builder()
+        return PaginateOrdersDTO.builder()
                 .condition(request.getCondition())
                 .key(request.getKey())
                 .pageSize(request.getPageSize())
@@ -34,7 +32,7 @@ public class ReadOrderListDto {
     }
 
     @Builder
-    public ReadOrderListDto
+    public PaginateOrdersDTO
             (
                     OrderListRequestCondition condition,
                     String key,

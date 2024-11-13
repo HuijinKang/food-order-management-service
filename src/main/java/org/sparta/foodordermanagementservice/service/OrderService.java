@@ -1,13 +1,13 @@
 package org.sparta.foodordermanagementservice.service;
 
-import org.sparta.foodordermanagementservice.dto.OrderDTO;
-import org.sparta.foodordermanagementservice.dto.ReadOrderListDto;
+import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
+import org.sparta.foodordermanagementservice.dto.response.ResPagedOrderObj;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface OrderService {
-    List<OrderDTO> readOrderList(ReadOrderListDto dto);
+    Page<ResPagedOrderObj> paginateOrders(PaginateOrdersDTO dto);
 
     void deleteOrder(UUID orderId);
 }

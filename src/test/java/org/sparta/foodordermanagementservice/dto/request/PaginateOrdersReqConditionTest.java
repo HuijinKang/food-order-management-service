@@ -7,19 +7,19 @@ import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @SuppressWarnings("unused")
 
-class OrderListRequestConditionTest {
+class PaginateOrdersReqConditionTest {
 
     @Test
     void test1() {
-        OrderListRequestCondition.Converter converter = new OrderListRequestCondition.Converter();
+        PaginateOrdersReqCondition.Converter converter = new PaginateOrdersReqCondition.Converter();
 
-        OrderListRequestCondition condition
+        PaginateOrdersReqCondition condition
                 = converter.convert("storeId");
-        assertThat(condition).isEqualTo(OrderListRequestCondition.STORE_ID);
+        assertThat(condition).isEqualTo(PaginateOrdersReqCondition.STORE_ID);
 
         condition
                 = converter.convert("userName");
-        assertThat(condition).isEqualTo(OrderListRequestCondition.USER_NAME);
+        assertThat(condition).isEqualTo(PaginateOrdersReqCondition.USER_NAME);
 
         try {
             condition = converter.convert("no words");

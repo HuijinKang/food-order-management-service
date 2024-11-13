@@ -38,6 +38,6 @@
 			'WAIT',
 			'bones'
 		);
-	end loop;
-end $$;
+-- 	end loop;
+-- end $$;
 
