@@ -5,6 +5,7 @@ import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
 import org.sparta.foodordermanagementservice.entity.User;
+import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
 import org.sparta.foodordermanagementservice.service.UserService;
 import org.springframework.stereotype.Service;
@@ -30,5 +31,11 @@ public class UserServiceImpl implements UserService {
                 .userRole(user.getUserRole())
                 .nickname(user.getNickname())
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public void updateUserRole(String username, UserRole role) {
+
     }
 }
