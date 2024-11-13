@@ -5,6 +5,7 @@ import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
 import org.sparta.foodordermanagementservice.entity.User;
+import org.sparta.foodordermanagementservice.entity.UserStatus;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
 import org.sparta.foodordermanagementservice.service.UserService;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deleteUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        user.setStatus(UserStatus.LEAVE);
+        userRepository.save(user);
     }
 }

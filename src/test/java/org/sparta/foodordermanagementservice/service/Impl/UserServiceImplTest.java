@@ -87,12 +87,11 @@ class UserServiceImplTest {
     @Test
     @DisplayName("유저 삭제 실패 - 없는 사용자")
     void deleteUserFailWhenUserNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
+       when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        userService.deleteUser(testUser.getUsername());
+        assertThrows(CustomException.class, () -> userService.deleteUser("notExistingUser"));
 
         verify(userRepository, times(1)).findByUsername(anyString());
-        verify(userRepository, times(1)).save(any(User.class));
     }
 
 }
