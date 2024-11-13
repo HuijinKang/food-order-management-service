@@ -31,4 +31,10 @@ public class UserServiceImpl implements UserService {
                 .nickname(user.getNickname())
                 .build();
     }
+
+    @Transactional
+    @Override
+    public void deleteUser(String username) {
+
+    }
 }

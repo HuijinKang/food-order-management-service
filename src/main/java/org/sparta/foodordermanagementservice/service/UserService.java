@@ -4,4 +4,5 @@ import org.sparta.foodordermanagementservice.dto.UserDTO;
 
 public interface UserService {
     UserDTO getUser(String username);
+    void deleteUser(String username);
 }

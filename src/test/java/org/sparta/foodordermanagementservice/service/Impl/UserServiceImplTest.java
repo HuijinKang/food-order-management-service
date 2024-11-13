@@ -72,4 +72,27 @@ class UserServiceImplTest {
 
         assertThrows(CustomException.class, () -> userService.getUser("notExistingUser"));
     }
+
+    @Test
+    @DisplayName("유저 삭제 성공")
+    void deleteUserSuccess() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
+
+        userService.deleteUser(testUser.getUsername());
+
+        verify(userRepository, times(1)).findByUsername(anyString());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("유저 삭제 실패 - 없는 사용자")
+    void deleteUserFailWhenUserNotFound() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
+
+        userService.deleteUser(testUser.getUsername());
+
+        verify(userRepository, times(1)).findByUsername(anyString());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
 }
