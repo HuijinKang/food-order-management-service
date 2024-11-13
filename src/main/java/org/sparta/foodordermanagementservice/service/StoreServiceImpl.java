@@ -58,20 +58,27 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<Store> getSearchStoreList(String keyword, String condition, int pageSize, int pageNumber, String sortBy, boolean isAsc) {
+    public Page<Store> getSearchStoreList(String keyword, int pageSize, int pageNumber, String sortBy, boolean isAsc) {
+//        Sort sort = Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+//        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+//
+//        Page<Store> resultPage;
+//        if ("category".equalsIgnoreCase(condition)) {
+//            resultPage = storeRepository.findByCategoriesNameContaining(keyword, pageRequest);
+//        } else if ("name".equalsIgnoreCase(condition)) {
+//            resultPage = storeRepository.findByNameContaining(keyword, pageRequest);
+//        } else {
+//            throw new IllegalArgumentException("지원하지 않는 검색 조건입니다.");
+//        }
+//
+//        return resultPage.getContent();
+
+        // 정렬 설정
         Sort sort = Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
-        Page<Store> resultPage;
-        if ("category".equalsIgnoreCase(condition)) {
-            resultPage = storeRepository.findByCategoriesNameContaining(keyword, pageRequest);
-        } else if ("name".equalsIgnoreCase(condition)) {
-            resultPage = storeRepository.findByNameContaining(keyword, pageRequest);
-        } else {
-            throw new IllegalArgumentException("지원하지 않는 검색 조건입니다.");
-        }
-
-        return resultPage.getContent();
+        // 가게 이름이나 카테고리를 키워드로 검색
+        return storeRepository.searchStores(keyword, keyword, pageRequest);
     }
 
     @Override

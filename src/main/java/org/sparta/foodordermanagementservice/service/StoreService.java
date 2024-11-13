@@ -4,6 +4,7 @@ import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 import org.sparta.foodordermanagementservice.dto.request.StoreRequest;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +20,7 @@ public interface StoreService {
     public Store getStoreById(UUID storeId);
 
     // 가게 검색
-    public List<Store> getSearchStoreList(String keyword, String condition, int pageSize, int pageNumber, String sortBy, boolean isAsc);
+    public Page<Store> getSearchStoreList(String keyword, int pageSize, int pageNumber, String sortBy, boolean isAsc);
 
     // 가게 등록
     public Store registerStore(StoreRequest storeRequest, User user);

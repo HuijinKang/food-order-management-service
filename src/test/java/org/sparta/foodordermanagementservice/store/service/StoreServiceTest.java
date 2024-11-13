@@ -12,12 +12,17 @@ import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.CategoryRepository;
 import org.sparta.foodordermanagementservice.repository.StoreRepository;
 import org.sparta.foodordermanagementservice.service.StoreServiceImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class StoreServiceTest {
@@ -31,101 +36,126 @@ public class StoreServiceTest {
     @InjectMocks
     private StoreServiceImpl storeService;
 
+    private List<Store> mockStores;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        List<Store> mockStores = new ArrayList<>();
-
-        // 10km 이내의 가게들
-        mockStores.add(createStore("Store A", 37.5700, 126.9800)); // 약 0.5km 거리
-        mockStores.add(createStore("Store B", 37.5750, 126.9850)); // 약 1km 거리
-        mockStores.add(createStore("Store C", 37.5765, 126.9700)); // 약 2km 거리
-
-        // 10km 밖의 가게들
-        mockStores.add(createStore("Store D", 37.6340, 127.0907)); // 약 15km 거리
-        mockStores.add(createStore("Store E", 37.6600, 127.0800)); // 약 20km 거리
-
-        // storeRepository의 findAll 메서드가 mockStores를 반환
+        mockStores = createMockStores();
         when(storeRepository.findAll()).thenReturn(mockStores);
     }
 
-    // test 목표: 가게 등록 메서드 테스트
+    @Test
+    void testGetSearchStoreList() {
+        Category italianCategory = createCategory("Italian");
+        Store store1 = createStore("Italian Pizza Place", 37.5700, 126.9800, Set.of(italianCategory));
+        Store store2 = createStore("Pasta House", 37.5750, 126.9850, Set.of(italianCategory));
+
+        List<Store> stores = List.of(store1, store2);
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Store> storePage = new PageImpl<>(stores, pageRequest, stores.size());
+
+        when(storeRepository.searchStores(anyString(), anyString(), any(PageRequest.class))).thenReturn(storePage);
+
+        Page<Store> result = storeService.getSearchStoreList("Italian", 10, 0, "createdAt", false);
+
+        assertEquals(2, result.getTotalElements());
+        assertEquals("Italian Pizza Place", result.getContent().get(0).getName());
+        assertEquals("Pasta House", result.getContent().get(1).getName());
+    }
+
     @Test
     void testRegisterStore() {
-        // 테스트용 카테고리 ID 생성
         UUID categoryId1 = UUID.randomUUID();
         UUID categoryId2 = UUID.randomUUID();
 
-        StoreRequest requestDto = new StoreRequest();
-        requestDto.setRegion("Seoul");
-        requestDto.setLatitude(37.5665);
-        requestDto.setLongitude(126.9780);
-        requestDto.setName("Pizza Hut");
-        requestDto.setCategory(List.of(categoryId1, categoryId2));
+        StoreRequest requestDto = StoreRequest.builder()
+                .region("Seoul")
+                .latitude(37.5665)
+                .longitude(126.9780)
+                .name("Pizza Hut")
+                .category(List.of(categoryId1, categoryId2))
+                .build();
 
-        // Mock 카테고리 생성 및 설정
-        Category category1 = new Category();
-        category1.setId(categoryId1);
-        category1.setName("양식");
-
-        Category category2 = new Category();
-        category2.setId(categoryId2);
-        category2.setName("햄버거");
+        Category category1 = createCategory(categoryId1, "양식");
+        Category category2 = createCategory(categoryId2, "햄버거");
 
         when(categoryRepository.findById(categoryId1)).thenReturn(Optional.of(category1));
         when(categoryRepository.findById(categoryId2)).thenReturn(Optional.of(category2));
-
         when(storeRepository.save(any(Store.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // 테스트 실행
         Store registeredStore = storeService.registerStore(requestDto, new User());
 
-        // 저장된 가게 정보 검증
         assertEquals("Seoul", registeredStore.getRegion());
         assertEquals(37.5665, registeredStore.getLatitude());
         assertEquals(126.9780, registeredStore.getLongitude());
         assertEquals("Pizza Hut", registeredStore.getName());
-
-        // 카테고리 검증
-        Set<Category> categories = registeredStore.getCategories();
-        assertEquals(2, categories.size());
-        assertEquals(Set.of(category1, category2), categories);
+        assertEquals(Set.of(category1, category2), registeredStore.getCategories());
 
         verify(categoryRepository, times(1)).findById(categoryId1);
         verify(categoryRepository, times(1)).findById(categoryId2);
         verify(storeRepository, times(1)).save(any(Store.class));
     }
 
-
-    // test 목표: 내 위치에서 10km 이내의 가게들만 나오게.
     @Test
     void testGetStoresWithinRadius() {
-        // 클라이언트 위치 설정 (서울 시청)
         double clientLatitude = 37.5665;
         double clientLongitude = 126.9780;
 
-        // 10km 이내의 가게만 반환되는지 테스트
         List<Store> result = storeService.getStoresWithinRadius(clientLatitude, clientLongitude);
 
-        // 예상 결과: 10km 이내 가게가 3개
         assertEquals(3, result.size());
         assertEquals("Store A", result.get(0).getName());
         assertEquals("Store B", result.get(1).getName());
         assertEquals("Store C", result.get(2).getName());
     }
 
-    // 테스트용 가게 객체 생성
+    private List<Store> createMockStores() {
+        return List.of(
+                createStore("Store A", 37.5700, 126.9800),
+                createStore("Store B", 37.5750, 126.9850),
+                createStore("Store C", 37.5765, 126.9700),
+                createStore("Store D", 37.6340, 127.0907),
+                createStore("Store E", 37.6600, 127.0800)
+        );
+    }
+
     private Store createStore(String name, double latitude, double longitude) {
+        return createStore(name, latitude, longitude, new HashSet<>());
+    }
+
+    private Store createStore(String name, double latitude, double longitude, Set<Category> categories) {
         return Store.builder()
                 .id(UUID.randomUUID())
-                .user(null)
-                .region("Seoul")
+                .name(name)
                 .latitude(latitude)
                 .longitude(longitude)
-                .name(name)
+                .region("Test Region")
+                .categories(categories)
                 .totalRating(5)
                 .reviewCount(10)
+                .createdAt(LocalDateTime.now())
+                .createdBy("test")
+                .updatedAt(LocalDateTime.now())
+                .updatedBy("test")
+                .build();
+    }
+
+    private Category createCategory(String name) {
+        return Category.builder()
+                .id(UUID.randomUUID())
+                .name(name)
+                .createdAt(LocalDateTime.now())
+                .createdBy("test")
+                .updatedAt(LocalDateTime.now())
+                .updatedBy("test")
+                .build();
+    }
+
+    private Category createCategory(UUID id, String name) {
+        return Category.builder()
+                .id(id)
+                .name(name)
                 .createdAt(LocalDateTime.now())
                 .createdBy("test")
                 .updatedAt(LocalDateTime.now())
