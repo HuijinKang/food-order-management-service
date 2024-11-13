@@ -8,12 +8,11 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_review")
-public class Review {
+public class Review extends TimeStamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,18 +31,6 @@ public class Review {
 
     @Column(length = 255)
     private String content;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, length = 100)
-    private String createdBy;
-
-    @Column
-    private LocalDateTime updatedAt;
-
-    @Column(length = 100)
-    private String updatedBy;
 
     @Column
     private LocalDateTime deletedAt;
