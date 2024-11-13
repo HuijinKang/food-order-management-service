@@ -5,6 +5,7 @@ import org.sparta.foodordermanagementservice.entity.Review;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.ReviewRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -27,5 +28,18 @@ public class ReviewServiceImpl implements ReviewService {
                 .build();
 
         reviewRepository.save(review);
+    }
+
+    // 리뷰 수정
+    @Transactional
+    public void updateReview(UUID reviewId, ReviewRequestDto requestDto, String username) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰를 찾을 수 없습니다."));
+
+        if (!review.getUser().getUsername().equals(username)) {
+            throw new IllegalArgumentException("본인이 작성한 리뷰만 수정할 수 있습니다.");
+        }
+
+        review.update(requestDto);
     }
 }

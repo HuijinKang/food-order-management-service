@@ -8,4 +8,6 @@ import java.util.UUID;
 @Service
 public interface ReviewService {
     void createReview(UUID storeId, ReviewRequestDto requestDto, String username);
+
+    void updateReview(UUID reviewId, ReviewRequestDto requestDto, String username);
 }

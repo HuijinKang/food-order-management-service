@@ -26,4 +26,13 @@ public class ReviewController {
         reviewService.createReview(storeId, requestDto, userDetails.getUsername());
         return ApiResponse.ofSuccess(null);
     }
+
+    // 리뷰 수정
+    @PutMapping("/{reviewId}")
+    public ApiResponse<?> updateReview(@PathVariable UUID reviewId,
+                                       @Valid @RequestBody ReviewRequestDto requestDto,
+                                       @AuthenticationPrincipal UserDetails userDetails) {
+        reviewService.updateReview(reviewId, requestDto, userDetails.getUsername());
+        return ApiResponse.ofSuccess(null);
+    }
 }

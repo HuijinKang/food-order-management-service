@@ -2,6 +2,7 @@ package org.sparta.foodordermanagementservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.sparta.foodordermanagementservice.dto.request.ReviewRequestDto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,4 +38,9 @@ public class Review extends TimeStamped{
 
     @Column(length = 100)
     private String deletedBy;
+
+    public void update(ReviewRequestDto requestDto) {
+        this.rating = requestDto.getRating();
+        this.content = requestDto.getContent();
+    }
 }
