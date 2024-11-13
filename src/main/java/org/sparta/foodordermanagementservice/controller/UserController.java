@@ -3,13 +3,11 @@ package org.sparta.foodordermanagementservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
+import org.sparta.foodordermanagementservice.dto.request.UpdateUserRoleRequestDTO;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.service.UserService;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +21,13 @@ public class UserController {
         UserDTO userDTO = userService.getUser(username);
 
         return ApiResponse.ofSuccess(userDTO);
+    }
+
+    @PatchMapping("/role/{username}")
+    @Secured(UserRole.Authority.MASTER)
+    public ApiResponse<Void> updateUserRole(@PathVariable("username") String username,
+                                            @RequestBody UpdateUserRoleRequestDTO request) {
+
+        return ApiResponse.ofSuccess(null);
     }
 }
