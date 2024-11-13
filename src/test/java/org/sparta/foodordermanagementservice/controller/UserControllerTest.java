@@ -139,8 +139,8 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "master", roles = {"MASTER"})
     @DisplayName("유저 권한 수정 성공")
+    @WithMockUser(username = "master", roles = {"MASTER"})
     void updateUserRoleSuccess() throws Exception {
         UpdateUserRoleRequestDTO request = UpdateUserRoleRequestDTO.builder()
                 .userRole(UserRole.MANAGER)

@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
@@ -26,7 +27,11 @@ public class UserController {
     @PatchMapping("/role/{username}")
     @Secured(UserRole.Authority.MASTER)
     public ApiResponse<Void> updateUserRole(@PathVariable("username") String username,
-                                            @RequestBody UpdateUserRoleRequestDTO request) {
+                                            @Valid @RequestBody UpdateUserRoleRequestDTO request) {
+
+        UserRole role = request.getUserRole();
+
+        userService.updateUserRole(username, role);
 
         return ApiResponse.ofSuccess(null);
     }
