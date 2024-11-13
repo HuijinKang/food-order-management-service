@@ -4,6 +4,7 @@ import org.sparta.foodordermanagementservice.dto.request.ReviewRequestDto;
 import org.sparta.foodordermanagementservice.entity.Review;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
+import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.repository.ReviewRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,4 +43,24 @@ public class ReviewServiceImpl implements ReviewService {
 
         review.update(requestDto);
     }
+
+    // 리뷰 삭제
+    public void deleteReview(UUID reviewId, String username) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰를 찾을 수 없습니다."));
+
+//        if (!review.getUser().getUsername().equals(username) && !isMaster(username)) {
+//            throw new IllegalArgumentException("본인이 작성한 리뷰 또는 관리자만 삭제할 수 있습니다.");
+//        }
+
+        reviewRepository.delete(review);
+    }
+
+    // 관리자 권한 체크 (ROLE_MASTER만 관리자)
+//    private boolean isMaster(String username) {
+//        User user = userService.findByUsername(username);
+//        return user.getUserRole() == UserRole.MASTER;
+//    }
+
+
 }
