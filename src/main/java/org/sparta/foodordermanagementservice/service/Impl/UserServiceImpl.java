@@ -5,6 +5,7 @@ import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
 import org.sparta.foodordermanagementservice.entity.User;
+import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.entity.UserStatus;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
 import org.sparta.foodordermanagementservice.service.UserService;
@@ -38,6 +39,10 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if(user.getUserRole().equals(UserRole.MASTER)) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_MASTER_USER);
+        }
 
         user.setStatus(UserStatus.LEAVE);
         userRepository.save(user);
