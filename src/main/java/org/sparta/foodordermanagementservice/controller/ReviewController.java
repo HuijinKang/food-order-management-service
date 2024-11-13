@@ -3,9 +3,11 @@ package org.sparta.foodordermanagementservice.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
+import org.sparta.foodordermanagementservice.dto.request.ReviewListRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.ReviewRequestDto;
 import org.sparta.foodordermanagementservice.dto.response.ReviewResponseDto;
 import org.sparta.foodordermanagementservice.service.ReviewService;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,5 +54,13 @@ public class ReviewController {
     public ApiResponse<?> getReview(@PathVariable UUID reviewId) {
         ReviewResponseDto responseDto = reviewService.getReview(reviewId);
         return ApiResponse.ofSuccess(responseDto);
+    }
+
+    // 가게 리뷰 목록 조회
+    @GetMapping
+    public ApiResponse<?> getReviewList(@RequestParam UUID storeId,
+                                        @RequestBody ReviewListRequestDto requestDto) {
+        Page<ReviewResponseDto> responsePage = reviewService.getReviewList(storeId, requestDto);
+        return ApiResponse.ofSuccess(responsePage);
     }
 }

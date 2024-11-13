@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.service;
 
+import org.sparta.foodordermanagementservice.dto.request.ReviewListRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.ReviewRequestDto;
 import org.sparta.foodordermanagementservice.dto.response.ReviewResponseDto;
 import org.sparta.foodordermanagementservice.entity.Review;
@@ -7,9 +8,12 @@ import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.repository.ReviewRepository;
+import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ReviewServiceImpl implements ReviewService {
 
@@ -68,8 +72,26 @@ public class ReviewServiceImpl implements ReviewService {
                 .build();
     }
 
+    // 가게 리뷰 목록 조회
+    public Page<ReviewResponseDto> getReviewList(UUID storeId, ReviewListRequestDto requestDto) {
+        Pageable pageable = PageRequest.of(requestDto.getPageNumber(), requestDto.getPageSize(),
+                requestDto.isAsc() ? Sort.by("created_at").ascending() : Sort.by("created_at").descending());
+
+
+        Page<Review> reviewPage = reviewRepository.findByStoreId(storeId, pageable);
+
+        List<ReviewResponseDto> reviewList = reviewPage.getContent().stream()
+                .map(review -> ReviewResponseDto.builder()
+                        .rating(review.getRating())
+                        .content(review.getContent())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(reviewList, pageable, reviewPage.getTotalElements());
+    }
+
     // 관리자 권한 체크 (ROLE_MASTER만 관리자)
-//    private boolean isMaster(String username) {
+//    private boolean isMaster(String username) {x
 //        User user = userService.findByUsername(username);
 //        return user.getUserRole() == UserRole.MASTER;
 //    }
