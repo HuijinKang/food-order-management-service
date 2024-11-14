@@ -77,7 +77,7 @@ public class StoreServiceImpl implements StoreService {
         // 가게 이름 중복 체크
         checkStoreNameDuplication(storeRegistrationRequestDTO.getName());
 
-        // 카테고리 ID 목록으로 Category 엔티티 조회
+        // 삭제되지 않은 카테고리 ID 목록으로 Category 엔티티 조회
         Set<Category> categories = getCategoriesByIds(storeRegistrationRequestDTO.getCategory());
 
         Store store = Store.builder()
@@ -147,8 +147,17 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public Set<Category> getCategoriesByIds(List<UUID> categoryIds) {
         return categoryIds.stream()
-                .map(categoryId -> categoryRepository.findById(categoryId)
-                        .orElseThrow(() -> new IllegalArgumentException("Category not found: " + categoryId)))
+                .map(categoryId -> {
+                    Category category = categoryRepository.findById(categoryId)
+                            .orElseThrow(() -> new IllegalArgumentException("Category not found: " + categoryId));
+
+                    // 삭제된 카테고리 여부 확인
+                    if (category.getDeletedAt() != null || category.getDeletedBy() != null) {
+                        throw new IllegalArgumentException("Category is deleted and cannot be used: " + categoryId);
+                    }
+
+                    return category;
+                })
                 .collect(Collectors.toSet());
     }
 

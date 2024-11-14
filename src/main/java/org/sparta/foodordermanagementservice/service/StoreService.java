@@ -34,7 +34,7 @@ public interface StoreService {
     // 가게 이름 중복 체크
     void checkStoreNameDuplication(String storeName);
 
-    // 카테고리 중복 체크
+    // 카테고리 중복 체크 및 사용 가능 여부 검증
     Set<Category> getCategoriesByIds(List<UUID> categoryIds);
 
     // Entity -> DTO
