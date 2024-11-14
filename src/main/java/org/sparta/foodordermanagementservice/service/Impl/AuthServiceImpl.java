@@ -24,6 +24,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final JwtUtil jwtUtil;
 
+    @Transactional
     @Override
     public void signup(SignupRequestDTO requestDTO) {
         String username = requestDTO.getUsername();
@@ -48,12 +49,13 @@ public class AuthServiceImpl implements AuthService {
                 .isPublic(requestDTO.getIsPublic())
                 .status(UserStatus.ACTIVE)
                 .userRole(requestDTO.getUserRole())
+                .createdBy(username)
+                .updatedBy(username)
                 .build();
 
         userRepository.save(user);
     }
 
-    @Transactional
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         String username = loginRequestDTO.getUsername();

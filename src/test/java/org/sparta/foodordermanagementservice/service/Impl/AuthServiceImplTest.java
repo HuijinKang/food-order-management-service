@@ -159,7 +159,7 @@ class AuthServiceImplTest {
     @DisplayName("로그인 실패 - 없는 사용자")
     void loginFailWhenUserNotFound() {
         LoginRequestDTO notExistentUser = LoginRequestDTO.builder()
-                .username("notExistentUser")
+                .username("notExistingUser")
                 .password("password")
                 .build();
 
