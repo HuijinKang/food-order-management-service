@@ -9,7 +9,9 @@ import org.sparta.foodordermanagementservice.dto.request.UpdateCategoryRequestDT
 import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.CategoryRepository;
+import org.sparta.foodordermanagementservice.security.UserDetailsImpl;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -24,6 +26,9 @@ public class CategoryServiceImplTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
+    @Mock
+    private UserDetailsImpl userDetails;
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -146,4 +151,34 @@ public class CategoryServiceImplTest {
 
         verify(categoryRepository, never()).save(any(Category.class));
     }
+
+    @Test
+    public void deleteCategory_Success() {
+        // Given
+        UUID categoryId = UUID.randomUUID();
+        Category category = Category.builder()
+                .id(categoryId)
+                .name("Sample Category")
+                .createdAt(LocalDateTime.now())
+                .createdBy("admin")
+                .updatedAt(LocalDateTime.now())
+                .updatedBy("admin")
+                .build();
+
+        // UserDetails 모킹 설정
+        when(userDetails.getUsername()).thenReturn("testUser");
+
+        // CategoryRepository 모킹 설정
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+
+        // When
+        Category deletedCategory = categoryService.deleteCategory(categoryId, userDetails);
+
+        // Then
+        assertNotNull(deletedCategory.getDeletedAt());
+        assertEquals("testUser", deletedCategory.getDeletedBy());
+        verify(categoryRepository, times(1)).save(category);
+    }
+
 }

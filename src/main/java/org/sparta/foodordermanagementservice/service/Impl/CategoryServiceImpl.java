@@ -6,6 +6,7 @@ import org.sparta.foodordermanagementservice.dto.request.UpdateCategoryRequestDT
 import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.CategoryRepository;
+import org.sparta.foodordermanagementservice.security.UserDetailsImpl;
 import org.sparta.foodordermanagementservice.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,8 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category updateCategory(UUID categoryId, UpdateCategoryRequestDTO updateCategoryRequestDTO, User user) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + categoryId));
+        Category category = getCategoryById(categoryId);
 
         // 이름 업데이트 요청이 있는 경우 중복 체크 및 업데이트
         if (updateCategoryRequestDTO.getName() != null && !updateCategoryRequestDTO.getName().equals(category.getName())) {
@@ -54,6 +54,16 @@ public class CategoryServiceImpl implements CategoryService {
             category.setUpdatedAt(LocalDateTime.now());
             category.setUpdatedBy(user.getUsername());
         }
+
+        return categoryRepository.save(category);
+    }
+
+    @Override
+    public Category deleteCategory(UUID categoryId, UserDetailsImpl userDetails) {
+        Category category = getCategoryById(categoryId);
+
+        category.setDeletedAt(LocalDateTime.now());
+        category.setDeletedBy(userDetails.getUsername());
 
         return categoryRepository.save(category);
     }

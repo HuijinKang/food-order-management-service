@@ -22,6 +22,7 @@ public class CategoryController {
 
     // 카테고리 조회
     @GetMapping("/{categoryId}")
+    @Secured({UserRole.Authority.MASTER})
     public ApiResponse<Category> getCategoryById(@PathVariable UUID categoryId) {
         return ApiResponse.ofSuccess(categoryService.getCategoryById(categoryId));
     }
@@ -41,5 +42,12 @@ public class CategoryController {
                                                 @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ApiResponse.ofSuccess(categoryService.updateCategory(categoryId, updateCategoryRequestDTO, userDetails.getUser()));
+    }
+
+    // 카테고리 삭제
+    @DeleteMapping("/{categoryId}")
+    @Secured({UserRole.Authority.MASTER})
+    public ApiResponse<Category> deleteCategory(@PathVariable UUID categoryId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ApiResponse.ofSuccess(categoryService.deleteCategory(categoryId, userDetails));
     }
 }
