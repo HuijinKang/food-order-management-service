@@ -25,7 +25,10 @@ public enum ErrorCode {
 
     /*로그인*/
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "L001", "로그인이 필요합니다."),
-    FAIL_LOGIN(HttpStatus.BAD_REQUEST, "L002", "로그인 실패");
+    FAIL_LOGIN(HttpStatus.BAD_REQUEST, "L002", "로그인 실패"),
+
+    /* 유저 */
+    DELETED_USER(HttpStatus.FORBIDDEN, "U004", "탈퇴한 사용자입니다.");
 
 
     private final HttpStatus status;
