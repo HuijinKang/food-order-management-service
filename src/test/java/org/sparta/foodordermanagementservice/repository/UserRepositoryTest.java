@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.sparta.foodordermanagementservice.config.TestConfig;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
+import org.sparta.foodordermanagementservice.entity.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,7 +24,7 @@ class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    void findByUsername() {
+    void findByUsernameSuccess() {
         User testUser = User.builder()
                 .username("testUser")
                 .password("testPassword")
@@ -46,8 +47,58 @@ class UserRepositoryTest {
         assertThat(savedUser.get().getEmail()).isEqualTo("test@email.com");
         assertThat(savedUser.get().getNickname()).isEqualTo("testNickname");
         assertThat(savedUser.get().getIsPublic()).isEqualTo(true);
+        assertThat(savedUser.get().getStatus()).isEqualTo(UserStatus.ACTIVE);
         assertThat(savedUser.get().getUserRole()).isEqualTo(UserRole.CUSTOMER);
 
+    }
+
+    @Test
+    void findByUsernameAndStatusSuccess() {
+        User testUser = User.builder()
+                .username("testUser")
+                .password("testPassword")
+                .email("test@email.com")
+                .nickname("testNickname")
+                .isPublic(true)
+                .userRole(UserRole.CUSTOMER)
+                .createdBy("testUser")
+                .updatedBy("testUser")
+                .build();
+
+        userRepository.save(testUser);
+
+        Optional<User> savedUser = userRepository.findByUsernameAndStatus(testUser.getUsername(), testUser.getStatus());
+
+        assertThat(savedUser.isPresent()).isTrue();
+        assertThat(savedUser.get().getId()).isNotNull();
+        assertThat(savedUser.get().getUsername()).isEqualTo("testUser");
+        assertThat(savedUser.get().getPassword()).isEqualTo("testPassword");
+        assertThat(savedUser.get().getEmail()).isEqualTo("test@email.com");
+        assertThat(savedUser.get().getNickname()).isEqualTo("testNickname");
+        assertThat(savedUser.get().getIsPublic()).isEqualTo(true);
+        assertThat(savedUser.get().getStatus()).isEqualTo(UserStatus.ACTIVE);
+        assertThat(savedUser.get().getUserRole()).isEqualTo(UserRole.CUSTOMER);
+    }
+
+    @Test
+    void findByUsernameAndStatusFailWhenStatusIsLeave() {
+        User testUser = User.builder()
+                .username("testUser")
+                .password("testPassword")
+                .email("test@email.com")
+                .nickname("testNickname")
+                .isPublic(true)
+                .status(UserStatus.LEAVE)
+                .userRole(UserRole.CUSTOMER)
+                .createdBy("testUser")
+                .updatedBy("testUser")
+                .build();
+
+        userRepository.save(testUser);
+
+        Optional<User> savedUser = userRepository.findByUsernameAndStatus(testUser.getUsername(), UserStatus.ACTIVE);
+
+        assertThat(savedUser.isPresent()).isFalse();
     }
 
     @Test

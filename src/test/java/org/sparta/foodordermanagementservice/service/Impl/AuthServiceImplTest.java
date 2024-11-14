@@ -17,8 +17,10 @@ import org.sparta.foodordermanagementservice.dto.request.SignupRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.LoginResponseDTO;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
+import org.sparta.foodordermanagementservice.entity.UserStatus;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
 import org.sparta.foodordermanagementservice.security.JwtUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -157,14 +159,17 @@ class AuthServiceImplTest {
     @DisplayName("로그인 실패 - 없는 사용자")
     void loginFailWhenUserNotFound() {
         LoginRequestDTO notExistentUser = LoginRequestDTO.builder()
-                .username("notExistentUser")
+                .username("notExistingUser")
                 .password("password")
                 .build();
 
         when(userRepository.findByUsername(anyString()))
                 .thenReturn(Optional.empty());
 
-        assertThrows(CustomException.class, () -> authService.login(notExistentUser));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.login(notExistentUser));
+
+        assertEquals(ErrorCode.FAIL_LOGIN, exception.getErrorCode());
+
         verify(userRepository, times(1)).findByUsername(anyString());
 
     }
@@ -172,7 +177,7 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("로그인 실패 - 비밀번호 불일치")
     void loginFailWhenPasswordIsInvalid() {
-        LoginRequestDTO IncorrectPasswordUser = LoginRequestDTO.builder()
+        LoginRequestDTO incorrectPasswordUser = LoginRequestDTO.builder()
                 .username("testUser")
                 .password("incorrectPassword")
                 .build();
@@ -180,8 +185,40 @@ class AuthServiceImplTest {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
-        assertThrows(CustomException.class, () -> authService.login(IncorrectPasswordUser));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.login(incorrectPasswordUser));
 
+        assertEquals(ErrorCode.FAIL_LOGIN, exception.getErrorCode());
+
+        verify(passwordEncoder, times(1)).matches(anyString(),anyString());
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 탈퇴한 회원")
+    void loginFailWhenDeletedUser() {
+        LoginRequestDTO IncorrectPasswordUser = LoginRequestDTO.builder()
+                .username("testUser")
+                .password("correctPassword")
+                .build();
+        User deletedUser = User.builder()
+                .username("deletedUser")
+                .password("deletedPassword")
+                .email("deletedUser@email.com")
+                .nickname("deletedUser")
+                .isPublic(true)
+                .status(UserStatus.LEAVE)
+                .userRole(UserRole.CUSTOMER)
+                .createdBy("deletedUser")
+                .updatedBy("deletedUser")
+                .build();
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(deletedUser));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+
+        CustomException exception = assertThrows(CustomException.class, () -> authService.login(IncorrectPasswordUser));
+
+        assertEquals(ErrorCode.DELETED_USER, exception.getErrorCode());
+
+        verify(userRepository, times(1)).findByUsername(anyString());
         verify(passwordEncoder, times(1)).matches(anyString(),anyString());
 
     }

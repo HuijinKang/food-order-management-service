@@ -24,6 +24,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    @Transactional
     @Override
     public void signup(SignupRequestDTO requestDTO) {
         String username = requestDTO.getUsername();
@@ -48,12 +49,13 @@ public class AuthServiceImpl implements AuthService {
                 .isPublic(requestDTO.getIsPublic())
                 .status(UserStatus.ACTIVE)
                 .userRole(requestDTO.getUserRole())
+                .createdBy(username)
+                .updatedBy(username)
                 .build();
 
         userRepository.save(user);
     }
 
-    @Transactional
     @Override
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         String username = loginRequestDTO.getUsername();
@@ -64,6 +66,10 @@ public class AuthServiceImpl implements AuthService {
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorCode.FAIL_LOGIN);
+        }
+
+        if(user.getStatus().equals(UserStatus.LEAVE)){
+            throw new CustomException(ErrorCode.DELETED_USER);
         }
 
         String jwtToken = jwtUtil.createAccessToken(username, user.getUserRole());
