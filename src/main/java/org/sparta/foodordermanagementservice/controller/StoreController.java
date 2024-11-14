@@ -61,9 +61,8 @@ public class StoreController {
     // 가게 삭제
     @DeleteMapping("/{storeId}")
     @Secured({UserRole.Authority.MASTER})
-    public ApiResponse<Void> deleteStore(@PathVariable UUID storeId) {
-        storeService.deleteStore(storeId);
-
-        return ApiResponse.ofSuccess(null);
+    public ApiResponse<Store> deleteStore(@PathVariable UUID storeId,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ApiResponse.ofSuccess(storeService.deleteStore(storeId, userDetails.getUser()));
     }
 }

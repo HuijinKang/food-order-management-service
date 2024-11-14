@@ -26,7 +26,7 @@ public interface StoreService {
     StoreUpdateResponseDTO updateStore(UUID storeId, StoreUpdateRequestDTO storeUpdateRequestDTO, User user);
 
     // 가게 삭제
-    void deleteStore(UUID storeId);
+    Store deleteStore(UUID storeId, User user);
 
     // 가게가 존재하는 지 체크
     void checkStoreExists(UUID storeId);

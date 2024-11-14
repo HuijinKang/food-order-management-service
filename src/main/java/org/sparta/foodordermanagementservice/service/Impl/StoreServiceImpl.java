@@ -121,12 +121,17 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public void deleteStore(UUID storeId) {
+    public Store deleteStore(UUID storeId, User user) {
         // 가게 존재 여부 확인
         checkStoreExists(storeId);
 
+        Store store = getStoreById(storeId);
+
+        store.setDeletedAt(LocalDateTime.now());
+        store.setDeletedBy(user.getUsername());
+
         // 가게 삭제
-        storeRepository.deleteById(storeId);
+        return storeRepository.save(store);
     }
 
     @Override
