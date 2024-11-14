@@ -9,6 +9,7 @@ import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
 import org.sparta.foodordermanagementservice.dto.request.UpdateUserRequestDTO;
+import org.sparta.foodordermanagementservice.dto.request.UpdateUserRoleRequestDTO;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.entity.UserStatus;
 import org.sparta.foodordermanagementservice.service.UserService;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -62,16 +64,16 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"MANAGER", "MASTER"})
     @DisplayName("유저 조회 성공")
     void getUserSuccess() throws Exception {
         UserDTO testUser = UserDTO.builder()
-                .username("testuser")
+                .username("testUser")
                 .email("test@test.com")
                 .userRole(UserRole.MASTER)
                 .status(UserStatus.ACTIVE)
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .build();
 
         when(userService.getUser(anyString())).thenReturn(testUser);
@@ -99,7 +101,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 조회 실패 - 접근 권한 없음")
-    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER"})
+    @WithMockUser(username = "testUser", roles = {"CUSTOMER", "OWNER"})
     void getUserFailWhenForbidden() throws Exception {
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/users/{username}", "notMasterOrManagerUsername")
@@ -118,7 +120,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 조회 실패 - 없는 사용자")
-    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"MANAGER", "MASTER"})
     void getUserFailWhenUserNotFound() throws Exception {
 
         when(userService.getUser(anyString())).thenThrow(new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -443,5 +445,94 @@ class UserControllerTest {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
                         )));
     }
-  
+
+
+    @Test
+    @DisplayName("유저 권한 수정 성공")
+    @WithMockUser(username = "master", roles = {"MASTER"})
+    void updateUserRoleSuccess() throws Exception {
+        UpdateUserRoleRequestDTO request = UpdateUserRoleRequestDTO.builder()
+                .userRole(UserRole.MANAGER)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/users/role/{username}", "testUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("patch-user-role-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("userRole").type(JsonFieldType.STRING).description("변경할 사용자 역할")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @WithMockUser(username = "master", roles = {"MASTER"})
+    @DisplayName("유저 권한 수정 실패 - 없는 사용자")
+    void updateUserRoleFailWhenUserNotFound() throws Exception {
+        UpdateUserRoleRequestDTO request = UpdateUserRoleRequestDTO.builder()
+                .userRole(UserRole.MANAGER)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        doThrow(new CustomException(ErrorCode.USER_NOT_FOUND)).when(userService).updateUserRole(anyString(), any(UserRole.class));
+
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/users/role/{username}", "notExistingUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andDo(document("patch-user-role-fail-user-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("userRole").type(JsonFieldType.STRING).description("변경할 사용자 역할")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @WithMockUser(username = "notMaster", roles = {"MANAGER", "OWNER", "CUSTOMER"})
+    @DisplayName("유저 권한 수정 실패 - 마스터가 아닌 사용자가 권한 수정")
+    void updateUserRoleFailWhenForbidden() throws Exception {
+        UpdateUserRoleRequestDTO request = UpdateUserRoleRequestDTO.builder()
+                .userRole(UserRole.MANAGER)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/users/role/{username}", "testUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isForbidden())
+                .andDo(print())
+                .andDo(document("patch-user-role-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("userRole").type(JsonFieldType.STRING).description("변경할 사용자 역할")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
 }

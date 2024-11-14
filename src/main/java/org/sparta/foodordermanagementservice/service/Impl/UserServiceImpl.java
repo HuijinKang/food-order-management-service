@@ -6,6 +6,7 @@ import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
 import org.sparta.foodordermanagementservice.dto.request.UpdateUserRequestDTO;
 import org.sparta.foodordermanagementservice.entity.User;
+import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
 import org.sparta.foodordermanagementservice.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,4 +51,15 @@ public class UserServiceImpl implements UserService {
 
     }
 
+
+    @Transactional
+    @Override
+    public void updateUserRole(String username, UserRole role) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        user.setUserRole(role);
+
+        userRepository.save(user);
+    }
 }

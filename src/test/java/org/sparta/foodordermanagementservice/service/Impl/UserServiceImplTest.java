@@ -107,4 +107,25 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).findByUsername(anyString());
     }
 
+    @Test
+    @DisplayName("유저 권한 수정 성공")
+    void updateUserRoleSuccess() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
+
+        userService.updateUserRole(testUser.getUsername(), UserRole.MANAGER);
+
+        verify(userRepository, times(1)).findByUsername(anyString());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("유저 권한 수정 실패 - 없는 사용자")
+    void updateUserRoleFailWhenUserNotFound() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, () -> userService.updateUserRole(testUser.getUsername(), any(UserRole.class)));
+
+        verify(userRepository, times(1)).findByUsername(anyString());
+    }
+
 }
