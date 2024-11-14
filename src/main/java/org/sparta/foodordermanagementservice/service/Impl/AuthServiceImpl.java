@@ -66,6 +66,10 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(ErrorCode.FAIL_LOGIN);
         }
 
+        if(user.getStatus().equals(UserStatus.LEAVE)){
+            throw new CustomException(ErrorCode.DELETED_USER);
+        }
+
         String jwtToken = jwtUtil.createAccessToken(username, user.getUserRole());
 
         return LoginResponseDTO
