@@ -65,7 +65,7 @@ class AuthControllerTest {
     void signupSuccess() throws Exception {
 
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testUser")
+                .username("testuser")
                 .password("testPassword")
                 .email("test@email.com")
                 .isPublic(true)
@@ -551,7 +551,7 @@ class AuthControllerTest {
     @DisplayName("로그인 성공")
     void loginSuccess() throws  Exception {
         LoginRequestDTO request = LoginRequestDTO.builder()
-                .username("testUser")
+                .username("testuser")
                 .password("testPassword")
                 .build();
         LoginUser testUser  = LoginUser.builder()
