@@ -3,17 +3,23 @@ package org.sparta.foodordermanagementservice.service.Impl;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.request.CategoryRegistrationRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.UpdateCategoryRequestDTO;
+import org.sparta.foodordermanagementservice.dto.response.CategoryStoreListDTO;
+import org.sparta.foodordermanagementservice.dto.response.StoreSearchResponseDTO;
 import org.sparta.foodordermanagementservice.entity.Category;
+import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.CategoryRepository;
 import org.sparta.foodordermanagementservice.security.UserDetailsImpl;
 import org.sparta.foodordermanagementservice.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +31,19 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found with id: " + categoryId));
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryStoreListDTO> getStoresByCategory(String categoryName) {
+        // 카테고리 조회
+        Category category = categoryRepository.findByNameIgnoreCase(categoryName)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found: " + categoryName));
+
+        // 해당 카테고리에 속하는 가게 목록을 DTO로 변환
+        return category.getStores().stream()
+                .filter(store -> store.getDeletedAt() == null) // 삭제되지 않은 가게만 반환
+                .map(this::toStoreResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -74,5 +93,20 @@ public class CategoryServiceImpl implements CategoryService {
         if (nameExists) {
             throw new IllegalArgumentException("Category name already exists: " + name);
         }
+    }
+
+    @Override
+    public CategoryStoreListDTO toStoreResponseDTO(Store store) {
+        return CategoryStoreListDTO.builder()
+                .id(store.getId())
+                .name(store.getName())
+                .region(store.getRegion())
+                .latitude(store.getLatitude())
+                .longitude(store.getLongitude())
+                .createdAt(store.getCreatedAt())
+                .createdBy(store.getCreatedBy())
+                .updatedAt(store.getUpdatedAt())
+                .updatedBy(store.getUpdatedBy())
+                .build();
     }
 }
