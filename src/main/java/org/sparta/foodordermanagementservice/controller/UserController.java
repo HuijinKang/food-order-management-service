@@ -64,7 +64,7 @@ public class UserController {
         if(username.equals(userDetails.getUsername())
                 || hasManagerRole(userDetails)
                 || hasMasterRole(userDetails)) {
-            userService.deleteUser(username);
+            userService.deleteUser(username, userDetails.getUsername());
         } else {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
@@ -73,7 +73,7 @@ public class UserController {
     }
 
     private static boolean hasMasterRole(UserDetails userDetails) {
-        return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MANAGER));
+        return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MASTER));
     }
 
     private static boolean hasManagerRole(UserDetails userDetails) {

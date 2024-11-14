@@ -135,7 +135,7 @@ class UserServiceImplTest {
     void deleteUserSuccess() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
 
-        userService.deleteUser(testUser.getUsername());
+        userService.deleteUser(testUser.getUsername(), testUser.getUsername());
 
         verify(userRepository, times(1)).findByUsername(anyString());
         verify(userRepository, times(1)).save(any(User.class));
@@ -146,7 +146,7 @@ class UserServiceImplTest {
     void deleteUserFailWhenUserNotFound() {
        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(CustomException.class, () -> userService.deleteUser("notExistingUser"));
+        assertThrows(CustomException.class, () -> userService.deleteUser("notExistingUser", testUser.getUsername()));
 
         verify(userRepository, times(1)).findByUsername(anyString());
     }
@@ -168,7 +168,7 @@ class UserServiceImplTest {
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(masterUser));
 
-        assertThrows(CustomException.class, () -> userService.deleteUser(masterUser.getUsername()));
+        assertThrows(CustomException.class, () -> userService.deleteUser(masterUser.getUsername(), masterUser.getUsername()));
 
         verify(userRepository, times(1)).findByUsername(anyString());
     }

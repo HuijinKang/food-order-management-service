@@ -578,7 +578,7 @@ class UserControllerTest {
     @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
     void deleteUserFailWhenUserNotFound() throws Exception {
 
-        doThrow(new CustomException(ErrorCode.USER_NOT_FOUND)).when(userService).deleteUser(anyString());
+        doThrow(new CustomException(ErrorCode.USER_NOT_FOUND)).when(userService).deleteUser(anyString(), anyString());
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "testUsername")
                         .header("Authorization", "Bearer {ACCESS_TOKEN}"))
@@ -599,7 +599,7 @@ class UserControllerTest {
     @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
     void deleteUserFailWhenDeleteUserIsMaster() throws Exception {
 
-        doThrow(new CustomException(ErrorCode.CANNOT_DELETE_MASTER_USER)).when(userService).deleteUser(anyString());
+        doThrow(new CustomException(ErrorCode.CANNOT_DELETE_MASTER_USER)).when(userService).deleteUser(anyString(), anyString());
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "masterUsername")
                         .header("Authorization", "Bearer {ACCESS_TOKEN}"))

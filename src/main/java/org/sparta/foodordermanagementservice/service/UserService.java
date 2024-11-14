@@ -8,5 +8,5 @@ public interface UserService {
     UserDTO getUser(String username);
     void updateUser(String username, UpdateUserRequestDTO request);
     void updateUserRole(String username, UserRole role);
-    void deleteUser(String username);
+    void deleteUser(String username, String deletedBy);
 }
