@@ -1,7 +1,6 @@
 package org.sparta.foodordermanagementservice.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Set;

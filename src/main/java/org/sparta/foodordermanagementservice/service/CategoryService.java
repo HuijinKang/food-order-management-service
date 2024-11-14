@@ -3,7 +3,6 @@ package org.sparta.foodordermanagementservice.service;
 import org.sparta.foodordermanagementservice.dto.request.CategoryRegistrationRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.UpdateCategoryRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.CategoryStoreListDTO;
-import org.sparta.foodordermanagementservice.dto.response.StoreSearchResponseDTO;
 import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
