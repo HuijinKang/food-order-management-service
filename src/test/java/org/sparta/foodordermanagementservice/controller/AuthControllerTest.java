@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.LoginUser;
@@ -66,11 +65,11 @@ class AuthControllerTest {
     void signupSuccess() throws Exception {
 
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testuser")
-                .password("testpassword")
+                .username("testUser")
+                .password("testPassword")
                 .email("test@email.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -106,11 +105,11 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 아이디에 특수문자 존재")
     void signupFailWhenUsernameHasSpecialCharacter() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("!testuser")
-                .password("testpassword")
+                .username("!testUser")
+                .password("testPassword")
                 .email("test@email.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -146,11 +145,11 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 아이디에 대문자 존재")
     void signupFailWhenUsernameHasUppercaseLetters() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("Testuser")
-                .password("testpassword")
+                .username("testUser")
+                .password("testPassword")
                 .email("test@email.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -187,10 +186,10 @@ class AuthControllerTest {
     void signupFailWhenUsernameIsLessThanFourCharacters() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
                 .username("use")
-                .password("testpassword")
+                .password("testPassword")
                 .email("test@email.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -226,11 +225,11 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 아이디 길이 10자 초과")
     void signupFailWhenUsernameIsMoreThanTenCharacters() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testusernam")
-                .password("testpassword")
+                .username("testUsernam")
+                .password("testPassword")
                 .email("test@email.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -266,11 +265,11 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 비밀번호에 허용되지 않은 문자 존재")
     void signupFailWhenPasswordHasInvalidCharacter() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testuser")
-                .password("testpassword테")
+                .username("testUser")
+                .password("testPassword테")
                 .email("test@email.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -306,11 +305,11 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 비밀번호 길이 8자 미만")
     void signupFailWhenPasswordIsLessThanEightCharacters() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testuser")
-                .password("testpas")
+                .username("testUser")
+                .password("testPas")
                 .email("test@email.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -346,11 +345,11 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 비밀번호 길이 15자 초과")
     void signupFailWhenPasswordIsMoreThanFifteenCharacters() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testuser")
-                .password("testpasswordtest")
+                .username("testUser")
+                .password("testPasswordtest")
                 .email("test@email.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -386,11 +385,11 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 잘못된 이메일 형식")
     void signupFailWhenInvalidEmailFormat() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testuser")
-                .password("testpassword")
+                .username("testUser")
+                .password("testPassword")
                 .email("testemail.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
@@ -426,17 +425,17 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 아이디 중복")
     void signupFailWhenUsernameIsDuplicated() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testuser")
-                .password("testpassword")
+                .username("testUser")
+                .password("testPassword")
                 .email("test@email.com")
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
                 .build();
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        // signup이 void 타입이라 doThrow 사용
+        // signup 이 void 타입이라 doThrow 사용
         doThrow(new CustomException(ErrorCode.DUPLICATE_USERNAME)).when(authService).signup(any(SignupRequestDTO.class));
 
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/auths/signup")
@@ -469,10 +468,10 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 닉네임 중복")
     void signupFailWhenNicknameIsDuplicated() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testuser")
-                .password("testpassword")
+                .username("testUser")
+                .password("testPassword")
                 .email("test@email.com")
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
                 .build();
@@ -512,10 +511,10 @@ class AuthControllerTest {
     @DisplayName("회원가입 실패 - 잘못된 역할 요청")
     void signupFailWhenWrongRoleRequest() throws Exception {
         SignupRequestDTO request = SignupRequestDTO.builder()
-                .username("testuser")
-                .password("testpassword")
+                .username("testUser")
+                .password("testPassword")
                 .email("test@email.com")
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.MASTER)
                 .build();
@@ -552,14 +551,14 @@ class AuthControllerTest {
     @DisplayName("로그인 성공")
     void loginSuccess() throws  Exception {
         LoginRequestDTO request = LoginRequestDTO.builder()
-                .username("testuser")
-                .password("testpassword")
+                .username("testUser")
+                .password("testPassword")
                 .build();
         LoginUser testUser  = LoginUser.builder()
                 .username(request.getUsername())
                 .email("test@email.com")
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .userRole(UserRole.CUSTOMER)
                 .build();
         LoginResponseDTO loginResponseDTO = LoginResponseDTO.builder()
@@ -606,8 +605,8 @@ class AuthControllerTest {
     @DisplayName("로그인 실패 - 없는 사용자")
     void loginFailWhenUserNotFound() throws  Exception {
         LoginRequestDTO request = LoginRequestDTO.builder()
-                .username("nottestuser")
-                .password("testpassword")
+                .username("notTestUser")
+                .password("testPassword")
                 .build();
 
         String requestJson = objectMapper.writeValueAsString(request);
@@ -639,8 +638,8 @@ class AuthControllerTest {
     @DisplayName("로그인 실패 - 비밀번호 불일치")
     void loginFailWhenPasswordIsIncorrect() throws  Exception {
         LoginRequestDTO request = LoginRequestDTO.builder()
-                .username("testuser")
-                .password("nottestpassword")
+                .username("testUser")
+                .password("notTestPassword")
                 .build();
 
         String requestJson = objectMapper.writeValueAsString(request);
