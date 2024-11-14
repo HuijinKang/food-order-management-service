@@ -1,37 +1,47 @@
 package org.sparta.foodordermanagementservice.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class GeminiRequestDTO {
-    private List<Content> contents;
 
-    @Getter @Setter
-    public static class Content {
-        private Parts parts;
+    private final List<Content> contents;
+
+    @JsonCreator
+    public GeminiRequestDTO(@JsonProperty("contents") List<Content> contents) {
+        this.contents = contents;
     }
 
-    @Getter @Setter
-    public static class Parts {
-        private String text;
+    @Getter
+    public static class Content {
+        private final Parts parts;
 
+        @JsonCreator
+        public Content(@JsonProperty("parts") Parts parts) {
+            this.parts = parts;
+        }
+    }
+
+    @Getter
+    public static class Parts {
+        private final String text;
+
+        // Parts 클래스의 생성자
+        @JsonCreator
+        public Parts(@JsonProperty("text") String text) {
+            this.text = text;
+        }
     }
 
     @Builder
-    public GeminiRequestDTO(String question) {
-        this.contents = new ArrayList<>();
-        Content content = new Content();
-        Parts parts = new Parts();
-
-        parts.setText(question);
-        content.setParts(parts);
-
-        this.contents.add(content);
-
+    public static GeminiRequestDTO createGeminiRequestDTO(String question) {
+        Parts parts = new Parts(question);
+        Content content = new Content(parts);
+        return new GeminiRequestDTO(Collections.singletonList(content));
     }
 }
