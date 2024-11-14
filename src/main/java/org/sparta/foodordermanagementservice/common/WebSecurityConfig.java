@@ -1,9 +1,9 @@
 package org.sparta.foodordermanagementservice.common;
 
-import org.sparta.foodordermanagementservice.security.UserDetailsServiceImpl;
-import org.sparta.foodordermanagementservice.security.JwtUtil;
-import org.sparta.foodordermanagementservice.security.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
+import org.sparta.foodordermanagementservice.security.JwtAuthorizationFilter;
+import org.sparta.foodordermanagementservice.security.JwtUtil;
+import org.sparta.foodordermanagementservice.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
