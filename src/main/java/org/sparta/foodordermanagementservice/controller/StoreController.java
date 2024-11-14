@@ -23,7 +23,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/stores")
 public class StoreController {
-
     private final StoreService storeService;
 
     // 주문 가능한 가게 조회
