@@ -13,6 +13,10 @@ public record ApiResponse<T>(
 		return new ApiResponse<>(null, code.getDescription(), code.getCode());
 	}
 
+	public static ApiResponse<Void> ofError(ErrorCode code, String message) {
+		return new ApiResponse<>(null, message, code.getCode());
+	}
+
 
 	public static <T> ApiResponse<T> ofSuccess(T data) {
 		return new ApiResponse<>(data, "OK", "S001");

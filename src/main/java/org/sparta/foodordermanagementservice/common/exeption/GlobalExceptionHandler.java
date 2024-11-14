@@ -5,11 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestControllerAdvice
@@ -30,10 +33,10 @@ public class GlobalExceptionHandler {
     }
 
 
-//    @ExceptionHandler(BadCredentialsException.class)
-//    protected ResponseEntity<ApiResponse<Void>> handleBadCredentialsException() {
-//        return new ResponseEntity<>(ApiResponse.ofError(ErrorCode.FAIL_LOGIN), ErrorCode.FAIL_LOGIN.getStatus());
-//    }
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity<ApiResponse<Void>> handleBadCredentialsException() {
+        return new ResponseEntity<>(ApiResponse.ofError(ErrorCode.FAIL_LOGIN), ErrorCode.FAIL_LOGIN.getStatus());
+    }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
