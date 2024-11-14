@@ -17,10 +17,8 @@ import org.sparta.foodordermanagementservice.dto.request.SignupRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.LoginResponseDTO;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
-import org.sparta.foodordermanagementservice.entity.UserStatus;
 import org.sparta.foodordermanagementservice.repository.UserRepository;
 import org.sparta.foodordermanagementservice.security.JwtUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -38,7 +36,7 @@ class AuthServiceImplTest {
     private UserRepository userRepository;
 
     @Mock
-    private PasswordEncoder encoder;
+    private PasswordEncoder passwordEncoder;
 
     @Spy
     private ModelMapper modelMapper;
@@ -139,7 +137,7 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("로그인 성공")
     void loginSuccess() {
-        when(encoder.matches(anyString(), anyString())).thenReturn(true);
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtil.createAccessToken(anyString(), any(UserRole.class))).thenReturn("testToken");
         when(userRepository.findByUsername(validLoginRequest.getUsername()))
                 .thenReturn(Optional.of(testUser));
@@ -151,7 +149,7 @@ class AuthServiceImplTest {
 
         verify(userRepository, times(1)).findByUsername(anyString());
         verify(jwtUtil, times(1)).createAccessToken(anyString(), any(UserRole.class));
-        verify(encoder, times(1)).matches(anyString(),anyString());
+        verify(passwordEncoder, times(1)).matches(anyString(),anyString());
 
     }
 
@@ -180,11 +178,11 @@ class AuthServiceImplTest {
                 .build();
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
-        when(encoder.matches(anyString(), anyString())).thenReturn(false);
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
         assertThrows(CustomException.class, () -> authService.login(IncorrectPasswordUser));
 
-        verify(encoder, times(1)).matches(anyString(),anyString());
+        verify(passwordEncoder, times(1)).matches(anyString(),anyString());
 
     }
 }
