@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findByNameIgnoreCase(categoryName)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found: " + categoryName));
 
-        // 해당 카테고리에 속하는 가게 목록을 DTO로 변환
+        // 해당 카테고리에 속하는 가게 목록 DTO로 변환
         return category.getStores().stream()
                 .filter(store -> store.getDeletedAt() == null) // 삭제되지 않은 가게만 반환
                 .map(this::toStoreResponseDTO)
