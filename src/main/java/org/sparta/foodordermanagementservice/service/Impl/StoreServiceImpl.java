@@ -3,7 +3,6 @@ package org.sparta.foodordermanagementservice.service.Impl;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.request.StoreRegistrationRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.StoreUpdateRequestDTO;
-import org.sparta.foodordermanagementservice.dto.response.StoreSearchResponseDTO;
 import org.sparta.foodordermanagementservice.dto.response.StoreUpdateResponseDTO;
 import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.Store;
@@ -12,6 +11,7 @@ import org.sparta.foodordermanagementservice.repository.CategoryRepository;
 import org.sparta.foodordermanagementservice.repository.StoreRepository;
 import org.sparta.foodordermanagementservice.service.StoreService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -31,46 +31,44 @@ public class StoreServiceImpl implements StoreService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public List<StoreSearchResponseDTO> getStoresWithinRadius(double latitude, double longitude) {
-        List<Store> allStores = storeRepository.findAll();
-
-        return allStores.stream()
-                .filter(store -> calculateDistance(latitude, longitude, store.getLatitude(), store.getLongitude()) <= 10)   // 10km
-                .map(this::toStoreSearchResponseDTO) // Store 엔티티를 StoreDTO로 변환
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        final int EARTH_RADIUS = 6371; // 지구 반경 (km)
-
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
-
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return EARTH_RADIUS * c;
-    }
-
-    @Override
     public Store getStoreById(UUID storeId) {
         return storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("Store not found with id: " + storeId));
     }
 
     @Override
-    public Page<Store> getSearchStoreList(String keyword, int pageSize, int pageNumber, String sortBy, boolean isAsc) {
+    public Page<Store> getSearchStoreList(String keyword, double latitude, double longitude, int pageSize, int pageNumber, String sortBy, boolean isAsc) {
+        // 키워드 검증
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new IllegalArgumentException("Keyword cannot be null or empty.");
+        }
 
         // 정렬 설정
         Sort sort = Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
-        // 가게 이름이나 카테고리를 키워드로 검색
-        return storeRepository.searchStores(keyword, keyword, pageRequest);
+        // 키워드로 가게 이름이나 카테고리를 검색하여 삭제된 가게는 제외
+        List<Store> searchResults = storeRepository.searchStores(keyword, pageRequest).getContent();
+
+        // 거리 필터링을 적용하여 10km 이내의 가게만 포함
+        List<Store> filteredStores = searchResults.stream()
+                .filter(store -> calculateDistance(latitude, longitude, store.getLatitude(), store.getLongitude()) <= 10)
+                .collect(Collectors.toList());
+
+        // 페이지 객체로 변환하여 반환
+        return new PageImpl<>(filteredStores, pageRequest, filteredStores.size());
+    }
+
+    // 거리 계산 로직
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int EARTH_RADIUS_KM = 6371;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS_KM * c;
     }
 
     @Override
@@ -152,24 +150,6 @@ public class StoreServiceImpl implements StoreService {
                 .map(categoryId -> categoryRepository.findById(categoryId)
                         .orElseThrow(() -> new IllegalArgumentException("Category not found: " + categoryId)))
                 .collect(Collectors.toSet());
-    }
-
-    @Override
-    public StoreSearchResponseDTO toStoreSearchResponseDTO(Store store) {
-        Set<String> categoryNames = store.getCategories().stream()
-                .map(Category::getName)
-                .collect(Collectors.toSet());
-
-        return new StoreSearchResponseDTO(
-                store.getId(),
-                store.getName(),
-                store.getRegion(),
-                store.getLatitude(),
-                store.getLongitude(),
-                categoryNames,
-                store.getTotalRating(),
-                store.getReviewCount()
-        );
     }
 
     @Override

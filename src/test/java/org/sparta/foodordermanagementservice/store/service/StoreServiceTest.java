@@ -6,24 +6,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.sparta.foodordermanagementservice.dto.request.StoreRegistrationRequestDTO;
-import org.sparta.foodordermanagementservice.dto.response.StoreSearchResponseDTO;
 import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.CategoryRepository;
 import org.sparta.foodordermanagementservice.repository.StoreRepository;
 import org.sparta.foodordermanagementservice.service.Impl.StoreServiceImpl;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class StoreServiceTest {
@@ -44,25 +38,6 @@ public class StoreServiceTest {
         MockitoAnnotations.openMocks(this);
         mockStores = createMockStores();
         when(storeRepository.findAll()).thenReturn(mockStores);
-    }
-
-    @Test
-    void testGetSearchStoreList() {
-        Category italianCategory = createCategory("Italian");
-        Store store1 = createStore("Italian Pizza Place", 37.5700, 126.9800, Set.of(italianCategory));
-        Store store2 = createStore("Pasta House", 37.5750, 126.9850, Set.of(italianCategory));
-
-        List<Store> stores = List.of(store1, store2);
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Store> storePage = new PageImpl<>(stores, pageRequest, stores.size());
-
-        when(storeRepository.searchStores(anyString(), anyString(), any(PageRequest.class))).thenReturn(storePage);
-
-        Page<Store> result = storeService.getSearchStoreList("Italian", 10, 0, "createdAt", false);
-
-        assertEquals(2, result.getTotalElements());
-        assertEquals("Italian Pizza Place", result.getContent().get(0).getName());
-        assertEquals("Pasta House", result.getContent().get(1).getName());
     }
 
     @Test
@@ -98,19 +73,6 @@ public class StoreServiceTest {
         verify(storeRepository, times(1)).save(any(Store.class));
     }
 
-    @Test
-    void testGetStoresWithinRadius() {
-        double clientLatitude = 37.5665;
-        double clientLongitude = 126.9780;
-
-        List<StoreSearchResponseDTO> result = storeService.getStoresWithinRadius(clientLatitude, clientLongitude);
-
-        assertEquals(3, result.size());
-        assertEquals("Store A", result.get(0).getName());
-        assertEquals("Store B", result.get(1).getName());
-        assertEquals("Store C", result.get(2).getName());
-    }
-
     private List<Store> createMockStores() {
         return List.of(
                 createStore("Store A", 37.5700, 126.9800),
@@ -135,17 +97,6 @@ public class StoreServiceTest {
                 .categories(categories)
                 .totalRating(5)
                 .reviewCount(10)
-                .createdAt(LocalDateTime.now())
-                .createdBy("test")
-                .updatedAt(LocalDateTime.now())
-                .updatedBy("test")
-                .build();
-    }
-
-    private Category createCategory(String name) {
-        return Category.builder()
-                .id(UUID.randomUUID())
-                .name(name)
                 .createdAt(LocalDateTime.now())
                 .createdBy("test")
                 .updatedAt(LocalDateTime.now())

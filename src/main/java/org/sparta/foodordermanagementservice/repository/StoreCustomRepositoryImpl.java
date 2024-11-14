@@ -21,39 +21,38 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<Store> searchStores(String categoryKeyword, String nameKeyword, Pageable pageable) {
+    public Page<Store> searchStores(String keyword, Pageable pageable) {
         QStore store = QStore.store;
         QCategory category = QCategory.category;
 
-        // 조건을 조합하여 검색 수행
         List<Store> results = queryFactory
                 .selectDistinct(store)
                 .from(store)
                 .leftJoin(store.categories, category)
-                .where(categoryContains(categoryKeyword).or(nameContains(nameKeyword)))
+                .where(
+                        store.deletedAt.isNull()    // 삭제되지 않은 가게만 포함
+                                .and(category.deletedAt.isNull())   // 삭제되지 않은 카테고리만 포함
+                                .and(store.name.containsIgnoreCase(keyword)
+                                        .or(category.name.containsIgnoreCase(keyword)))
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(toOrderSpecifiers(pageable.getSort(), store))
                 .fetch();
 
-        Long total = queryFactory
+        long total = queryFactory
                 .select(store.countDistinct())
                 .from(store)
                 .leftJoin(store.categories, category)
-                .where(categoryContains(categoryKeyword).or(nameContains(nameKeyword)))
+                .where(
+                        store.deletedAt.isNull() // 삭제되지 않은 가게만 포함
+                                .and(category.deletedAt.isNull())   // 삭제되지 않은 카테고리만 포함
+                                .and(store.name.containsIgnoreCase(keyword)
+                                        .or(category.name.containsIgnoreCase(keyword)))
+                )
                 .fetchOne();
 
-        return new PageImpl<>(results, pageable, total != null ? total : 0);
-    }
-
-    // 카테고리 이름이 키워드와 일치하는지 확인하는 조건
-    private BooleanExpression categoryContains(String categoryKeyword) {
-        return (categoryKeyword != null && !categoryKeyword.isEmpty()) ? QCategory.category.name.containsIgnoreCase(categoryKeyword) : null;
-    }
-
-    // 가게 이름이 키워드와 일치하는지 확인하는 조건
-    private BooleanExpression nameContains(String nameKeyword) {
-        return (nameKeyword != null && !nameKeyword.isEmpty()) ? QStore.store.name.containsIgnoreCase(nameKeyword) : null;
+        return new PageImpl<>(results, pageable, total);
     }
 
     // 정렬 기준 생성 로직

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.request.StoreRegistrationRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.StoreUpdateRequestDTO;
-import org.sparta.foodordermanagementservice.dto.response.StoreSearchResponseDTO;
 import org.sparta.foodordermanagementservice.dto.response.StoreUpdateResponseDTO;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.UserRole;
@@ -16,7 +15,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,27 +23,22 @@ import java.util.UUID;
 public class StoreController {
     private final StoreService storeService;
 
-    // 주문 가능한 가게 조회
-    @GetMapping("/nearby")
-    public ApiResponse<List<StoreSearchResponseDTO>> getNearbyStores(@RequestParam double latitude,
-                                                                     @RequestParam double longitude) {
-        return ApiResponse.ofSuccess(storeService.getStoresWithinRadius(latitude, longitude));
-    }
-
     // 가게 단건 조회
     @GetMapping("/{storeId}")
     public ApiResponse<Store> getStoreById(@PathVariable UUID storeId) {
         return ApiResponse.ofSuccess(storeService.getStoreById(storeId));
     }
 
-    // 가게 검색
+    // 10km 이내 가게명 및 카테고리명으로 검색
     @GetMapping("/search")
     public ApiResponse<Page<Store>> searchStore(@RequestParam String keyword,
+                                                @RequestParam double latitude,
+                                                @RequestParam double longitude,
                                                 @RequestParam(defaultValue = "10") int pageSize,
                                                 @RequestParam(defaultValue = "0") int pageNumber,
                                                 @RequestParam(defaultValue = "createdAt") String sortedBy,
                                                 @RequestParam(defaultValue = "true") boolean isAsc) {
-        return ApiResponse.ofSuccess(storeService.getSearchStoreList(keyword, pageSize, pageNumber, sortedBy, isAsc));
+        return ApiResponse.ofSuccess(storeService.getSearchStoreList(keyword, latitude, longitude, pageSize, pageNumber, sortedBy, isAsc));
     }
 
     // 가게 등록
