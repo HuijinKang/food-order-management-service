@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.UserDTO;
+import org.sparta.foodordermanagementservice.dto.request.UpdateUserRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.UpdateUserRoleRequestDTO;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.entity.UserStatus;
@@ -26,6 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
+import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,10 +50,10 @@ class UserControllerTest {
     private UserService userService;
 
     @Autowired
-    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
@@ -135,6 +138,314 @@ class UserControllerTest {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
                         )));
     }
+
+    @Test
+    @DisplayName("내 정보 수정 성공")
+    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    void updateMyUserSuccess() throws Exception {
+        UserDTO testUser = UserDTO.builder()
+                .username("testuser")
+                .password("testpassword")
+                .email("test@test.com")
+                .userRole(UserRole.CUSTOMER)
+                .status(UserStatus.ACTIVE)
+                .isPublic(true)
+                .nickname("testnickname")
+                .build();
+        UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
+                .nickname("updatenickname")
+                .password("updatepassword")
+                .email("update@email.com")
+                .isPublic(false)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", testUser.getUsername())
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("put-user-success-my",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("isPublic").type(JsonFieldType.BOOLEAN).description("정보공개여부")
+                                        )
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("다른 사용자 정보 수정 성공")
+    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    void updateOtherUserSuccess() throws Exception {
+        UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
+                .nickname("updatenickname")
+                .password("updatepassword")
+                .email("update@email.com")
+                .isPublic(false)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "otherUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("put-user-success-other",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("isPublic").type(JsonFieldType.BOOLEAN).description("정보공개여부")
+                                )
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 실패 - 없는 사용자")
+    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    void updateUserFailWhenUserNotFound() throws Exception {
+        UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
+                .nickname("updatenickname")
+                .password("updatepassword")
+                .email("update@email.com")
+                .isPublic(false)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        doThrow(new CustomException(ErrorCode.USER_NOT_FOUND)).when(userService).updateUser(anyString(), any(UpdateUserRequestDTO.class));
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "notExistingUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().is(ErrorCode.USER_NOT_FOUND.getStatus().value()))
+                .andDo(print())
+                .andDo(document("put-user-fail-user-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("isPublic").type(JsonFieldType.BOOLEAN).description("정보공개여부")
+                                        )
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 실패 - 마스터 혹은 매니저가 아닌 사용자 다른 사용자의 정보 수정")
+    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER"})
+    void updateUserFailWhenForbidden() throws Exception {
+        UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
+                .nickname("updatenickname")
+                .password("updatepassword")
+                .email("update@email.com")
+                .isPublic(false)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "otherUsername")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isForbidden())
+                .andDo(print())
+                .andDo(document("put-user-fail-forbidden",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("isPublic").type(JsonFieldType.BOOLEAN).description("정보공개여부")
+                                )
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 실패 - 잘못된 이메일 형식")
+    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    void updateUserFailWhenInvalidEmailFormat() throws Exception {
+        UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
+                .nickname("updatenickname")
+                .password("updatepassword")
+                .email("updateemail.com")
+                .isPublic(false)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testuser")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andDo(document("put-user-fail-invalid-email-format",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("isPublic").type(JsonFieldType.BOOLEAN).description("정보공개여부")
+                                        )
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 실패 - 비밀번호에 허용되지 않은 문자 존재")
+    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    void updateUserFailWhenPasswordHasInvalidCharacter() throws Exception {
+        UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
+                .nickname("updatenickname")
+                .password("updatepassword테")
+                .email("update@email.com")
+                .isPublic(false)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testuser")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andDo(document("put-user-fail-password-has-invalid-character",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("isPublic").type(JsonFieldType.BOOLEAN).description("정보공개여부")
+                                        )
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 실패 - 비밀번호 길이 8자 미만")
+    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    void updateUserFailWhenPasswordIsLessThanEightCharacters() throws Exception {
+        UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
+                .nickname("updatenickname")
+                .password("updatep")
+                .email("updateemail.com")
+                .isPublic(false)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testuser")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andDo(document("put-user-fail-password-is-less-than-eight-characters",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("isPublic").type(JsonFieldType.BOOLEAN).description("정보공개여부")
+                                        )
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 실패 - 비밀번호 길이 15자 초과")
+    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    void updateUserFailWhenPasswordIsMoreThanFifteenCharacters() throws Exception {
+        UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
+                .nickname("updatenickname")
+                .password("updatepasswordup")
+                .email("updateemail.com")
+                .isPublic(false)
+                .build();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testuser")
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest())
+                .andDo(print())
+                .andDo(document("put-user-fail-password-is-more-than-fifteen-characters",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                List.of(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("isPublic").type(JsonFieldType.BOOLEAN).description("정보공개여부")
+                                        )
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과메세지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과데이터")
+                        )));
+    }
+
 
     @Test
     @DisplayName("유저 권한 수정 성공")
