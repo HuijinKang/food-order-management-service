@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
-    private final PasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
     @Transactional
@@ -43,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
         }
         User user = User.builder()
                 .username(username)
-                .password(encoder.encode(password))
+                .password(passwordEncoder.encode(password))
                 .nickname(nickname)
                 .email(email)
                 .isPublic(requestDTO.getIsPublic())
@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.FAIL_LOGIN));
 
-        if (!encoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorCode.FAIL_LOGIN);
         }
 

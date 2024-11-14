@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -33,6 +34,7 @@ public class SignupRequestDTO {
     private final UserRole userRole;
 
     @Builder
+    @JsonCreator
     public SignupRequestDTO(String username, String password, String email, String nickname, Boolean isPublic, UserRole userRole) {
         this.username = username;
         this.password = password;
