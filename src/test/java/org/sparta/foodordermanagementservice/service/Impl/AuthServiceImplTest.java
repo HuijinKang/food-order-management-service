@@ -182,8 +182,41 @@ class AuthServiceImplTest {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
         when(encoder.matches(anyString(), anyString())).thenReturn(false);
 
-        assertThrows(CustomException.class, () -> authService.login(IncorrectPasswordUser));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.login(IncorrectPasswordUser));
 
+        assertEquals(ErrorCode.FAIL_LOGIN, exception.getErrorCode());
+
+        verify(encoder, times(1)).matches(anyString(),anyString());
+
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 탈퇴한 회원")
+    void loginFailWhenDeletedUser() {
+        LoginRequestDTO IncorrectPasswordUser = LoginRequestDTO.builder()
+                .username("testUser")
+                .password("correctPassword")
+                .build();
+        User deletedUser = User.builder()
+                .username("deletedUser")
+                .password("deletedPassword")
+                .email("deletedUser@email.com")
+                .nickname("deletedUser")
+                .isPublic(true)
+                .status(UserStatus.LEAVE)
+                .userRole(UserRole.CUSTOMER)
+                .createdBy("deletedUser")
+                .updatedBy("deletedUser")
+                .build();
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(deletedUser));
+        when(encoder.matches(anyString(), anyString())).thenReturn(true);
+
+        CustomException exception = assertThrows(CustomException.class, () -> authService.login(IncorrectPasswordUser));
+
+        assertEquals(ErrorCode.DELETED_USER, exception.getErrorCode());
+
+        verify(userRepository, times(1)).findByUsername(anyString());
         verify(encoder, times(1)).matches(anyString(),anyString());
 
     }
