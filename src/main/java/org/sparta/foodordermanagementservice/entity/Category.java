@@ -25,7 +25,7 @@ public class Category {
     @ManyToMany(mappedBy = "categories")
     private Set<Store> stores;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
