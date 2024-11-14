@@ -25,51 +25,51 @@ public class StoreCustomRepositoryImpl implements StoreCustomRepository {
         QStore store = QStore.store;
         QCategory category = QCategory.category;
 
+        // 조건을 조합하여 검색 수행
         List<Store> results = queryFactory
                 .selectDistinct(store)
                 .from(store)
                 .leftJoin(store.categories, category)
-                .where(
-                        categoryContains(categoryKeyword),
-                        nameContains(nameKeyword)
-                )
+                .where(categoryContains(categoryKeyword).or(nameContains(nameKeyword)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(toOrderSpecifiers(pageable.getSort(), store))
                 .fetch();
 
-        long total = queryFactory
+        Long total = queryFactory
                 .select(store.countDistinct())
                 .from(store)
                 .leftJoin(store.categories, category)
-                .where(
-                        categoryContains(categoryKeyword),
-                        nameContains(nameKeyword)
-                )
+                .where(categoryContains(categoryKeyword).or(nameContains(nameKeyword)))
                 .fetchOne();
 
-        return new PageImpl<>(results, pageable, total);
+        return new PageImpl<>(results, pageable, total != null ? total : 0);
     }
 
+    // 카테고리 이름이 키워드와 일치하는지 확인하는 조건
     private BooleanExpression categoryContains(String categoryKeyword) {
-        return categoryKeyword != null ? QCategory.category.name.containsIgnoreCase(categoryKeyword) : null;
+        return (categoryKeyword != null && !categoryKeyword.isEmpty()) ? QCategory.category.name.containsIgnoreCase(categoryKeyword) : null;
     }
 
+    // 가게 이름이 키워드와 일치하는지 확인하는 조건
     private BooleanExpression nameContains(String nameKeyword) {
-        return nameKeyword != null ? QStore.store.name.containsIgnoreCase(nameKeyword) : null;
+        return (nameKeyword != null && !nameKeyword.isEmpty()) ? QStore.store.name.containsIgnoreCase(nameKeyword) : null;
     }
 
+    // 정렬 기준 생성 로직
     private OrderSpecifier<?>[] toOrderSpecifiers(Sort sort, QStore store) {
         return sort.stream()
                 .map(order -> {
                     Order direction = order.isAscending() ? Order.ASC : Order.DESC;
-                    switch (order.getProperty()) {
-                        case "createdAt":
-                            return new OrderSpecifier<>(direction, store.createdAt);
-                        case "updatedAt":
-                            return new OrderSpecifier<>(direction, store.updatedAt);
-                        default:
-                            throw new IllegalArgumentException("Invalid sort field: " + order.getProperty());
+                    String property = order.getProperty();
+
+                    // 지원하는 정렬 필드 확인
+                    if ("createdAt".equals(property)) {
+                        return new OrderSpecifier<>(direction, store.createdAt);
+                    } else if ("updatedAt".equals(property)) {
+                        return new OrderSpecifier<>(direction, store.updatedAt);
+                    } else {
+                        throw new IllegalArgumentException("Invalid sort field: " + property);
                     }
                 })
                 .toArray(OrderSpecifier[]::new);

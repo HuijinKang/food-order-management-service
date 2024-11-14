@@ -10,10 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, UUID>, StoreCustomRepository {
-
-//    // 카테고리 이름으로 검색
-//    Page<Store> findByCategoriesNameContaining(String keyword, Pageable pageable);
-//
-//    // 가게 이름으로 검색
-//    Page<Store> findByNameContaining(String keyword, Pageable pageable);
+    // 가게 이름 중복 체크
+    boolean existsByName(String name);
 }

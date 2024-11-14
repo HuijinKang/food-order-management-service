@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Table(name = "p_store")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Store {
 
     @Id

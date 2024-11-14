@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.sparta.foodordermanagementservice.dto.request.StoreRequest;
+import org.sparta.foodordermanagementservice.dto.request.StoreRegistrationRequestDTO;
+import org.sparta.foodordermanagementservice.dto.response.StoreSearchResponseDTO;
 import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.CategoryRepository;
 import org.sparta.foodordermanagementservice.repository.StoreRepository;
-import org.sparta.foodordermanagementservice.service.StoreServiceImpl;
+import org.sparta.foodordermanagementservice.service.Impl.StoreServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -69,7 +70,7 @@ public class StoreServiceTest {
         UUID categoryId1 = UUID.randomUUID();
         UUID categoryId2 = UUID.randomUUID();
 
-        StoreRequest requestDto = StoreRequest.builder()
+        StoreRegistrationRequestDTO requestDto = StoreRegistrationRequestDTO.builder()
                 .region("Seoul")
                 .latitude(37.5665)
                 .longitude(126.9780)
@@ -102,7 +103,7 @@ public class StoreServiceTest {
         double clientLatitude = 37.5665;
         double clientLongitude = 126.9780;
 
-        List<Store> result = storeService.getStoresWithinRadius(clientLatitude, clientLongitude);
+        List<StoreSearchResponseDTO> result = storeService.getStoresWithinRadius(clientLatitude, clientLongitude);
 
         assertEquals(3, result.size());
         assertEquals("Store A", result.get(0).getName());

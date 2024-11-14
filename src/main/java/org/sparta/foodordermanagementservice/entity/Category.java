@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @JsonIgnore // 순환 참조 방지
     @ManyToMany(mappedBy = "categories")
     private Set<Store> stores;
 
