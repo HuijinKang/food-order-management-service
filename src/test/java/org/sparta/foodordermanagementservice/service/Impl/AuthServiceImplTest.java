@@ -51,14 +51,14 @@ class AuthServiceImplTest {
     @BeforeEach
     void setUp() {
          testUser = User.builder()
-                .username("testuser")
-                .password("testpassword")
+                .username("testUser")
+                .password("testPassword")
                 .email("test@email.com")
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testuser")
-                .updatedBy("testuser")
+                .createdBy("testUser")
+                .updatedBy("testUser")
                 .build();
         validSignUpRequest = SignupRequestDTO.builder()
                 .username(testUser.getUsername())
@@ -173,7 +173,7 @@ class AuthServiceImplTest {
     @DisplayName("로그인 실패 - 비밀번호 불일치")
     void loginFailWhenPasswordIsInvalid() {
         LoginRequestDTO IncorrectPasswordUser = LoginRequestDTO.builder()
-                .username("testuser")
+                .username("testUser")
                 .password("incorrectPassword")
                 .build();
 

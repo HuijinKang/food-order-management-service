@@ -141,19 +141,19 @@ class UserControllerTest {
 
     @Test
     @DisplayName("내 정보 수정 성공")
-    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
     void updateMyUserSuccess() throws Exception {
         UserDTO testUser = UserDTO.builder()
-                .username("testuser")
+                .username("testUser")
                 .email("test@test.com")
                 .userRole(UserRole.CUSTOMER)
                 .status(UserStatus.ACTIVE)
                 .isPublic(true)
-                .nickname("testnickname")
+                .nickname("testNickname")
                 .build();
         UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
-                .nickname("updatenickname")
-                .password("updatepassword")
+                .nickname("updateNickname")
+                .password("updatePassword")
                 .email("update@email.com")
                 .isPublic(false)
                 .build();
@@ -186,11 +186,11 @@ class UserControllerTest {
 
     @Test
     @DisplayName("다른 사용자 정보 수정 성공")
-    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"MANAGER", "MASTER"})
     void updateOtherUserSuccess() throws Exception {
         UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
-                .nickname("updatenickname")
-                .password("updatepassword")
+                .nickname("updateNickname")
+                .password("updatePassword")
                 .email("update@email.com")
                 .isPublic(false)
                 .build();
@@ -223,11 +223,11 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 정보 수정 실패 - 없는 사용자")
-    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"MANAGER", "MASTER"})
     void updateUserFailWhenUserNotFound() throws Exception {
         UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
-                .nickname("updatenickname")
-                .password("updatepassword")
+                .nickname("updateNickname")
+                .password("updatePassword")
                 .email("update@email.com")
                 .isPublic(false)
                 .build();
@@ -262,11 +262,11 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 정보 수정 실패 - 마스터 혹은 매니저가 아닌 사용자 다른 사용자의 정보 수정")
-    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER"})
+    @WithMockUser(username = "testUser", roles = {"CUSTOMER", "OWNER"})
     void updateUserFailWhenForbidden() throws Exception {
         UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
-                .nickname("updatenickname")
-                .password("updatepassword")
+                .nickname("updateNickname")
+                .password("updatePassword")
                 .email("update@email.com")
                 .isPublic(false)
                 .build();
@@ -299,18 +299,18 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 정보 수정 실패 - 잘못된 이메일 형식")
-    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
     void updateUserFailWhenInvalidEmailFormat() throws Exception {
         UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
-                .nickname("updatenickname")
-                .password("updatepassword")
-                .email("updateemail.com")
+                .nickname("updateNickname")
+                .password("updatePassword")
+                .email("updateEmail.com")
                 .isPublic(false)
                 .build();
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testuser")
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testUser")
                         .header("Authorization", "Bearer {ACCESS_TOKEN}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
@@ -336,18 +336,18 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 정보 수정 실패 - 비밀번호에 허용되지 않은 문자 존재")
-    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
     void updateUserFailWhenPasswordHasInvalidCharacter() throws Exception {
         UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
-                .nickname("updatenickname")
-                .password("updatepassword테")
+                .nickname("updateNickname")
+                .password("updatePassword테")
                 .email("update@email.com")
                 .isPublic(false)
                 .build();
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testuser")
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testUser")
                         .header("Authorization", "Bearer {ACCESS_TOKEN}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
@@ -373,18 +373,18 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 정보 수정 실패 - 비밀번호 길이 8자 미만")
-    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
     void updateUserFailWhenPasswordIsLessThanEightCharacters() throws Exception {
         UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
-                .nickname("updatenickname")
-                .password("updatep")
-                .email("updateemail.com")
+                .nickname("updateNickname")
+                .password("updateP")
+                .email("updateEmail.com")
                 .isPublic(false)
                 .build();
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testuser")
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testUser")
                         .header("Authorization", "Bearer {ACCESS_TOKEN}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
@@ -410,18 +410,18 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 정보 수정 실패 - 비밀번호 길이 15자 초과")
-    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
     void updateUserFailWhenPasswordIsMoreThanFifteenCharacters() throws Exception {
         UpdateUserRequestDTO request = UpdateUserRequestDTO.builder()
-                .nickname("updatenickname")
-                .password("updatepasswordup")
-                .email("updateemail.com")
+                .nickname("updateNickname")
+                .password("updatePasswordup")
+                .email("updateEmail.com")
                 .isPublic(false)
                 .build();
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testuser")
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/api/users/{username}", "testUser")
                         .header("Authorization", "Bearer {ACCESS_TOKEN}")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
@@ -537,7 +537,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("본인 탈퇴 성공")
-    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"CUSTOMER", "OWNER", "MANAGER", "MASTER"})
     void deleteUserOwnSuccess() throws Exception {
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "testUsername")
@@ -556,7 +556,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("다른 유저 탈퇴 성공")
-    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"MANAGER", "MASTER"})
     void deleteUserOtherSuccess() throws Exception {
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "otherUsername")
@@ -575,7 +575,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 탈퇴 실패 - 없는 사용자")
-    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"MANAGER", "MASTER"})
     void deleteUserFailWhenUserNotFound() throws Exception {
 
         doThrow(new CustomException(ErrorCode.USER_NOT_FOUND)).when(userService).deleteUser(anyString(), anyString());
@@ -596,7 +596,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 탈퇴 실패 - 마스터 사용자 탈퇴")
-    @WithMockUser(username = "testuser", roles = {"MANAGER", "MASTER"})
+    @WithMockUser(username = "testUser", roles = {"MANAGER", "MASTER"})
     void deleteUserFailWhenDeleteUserIsMaster() throws Exception {
 
         doThrow(new CustomException(ErrorCode.CANNOT_DELETE_MASTER_USER)).when(userService).deleteUser(anyString(), anyString());
@@ -617,7 +617,7 @@ class UserControllerTest {
 
     @Test
     @DisplayName("유저 탈퇴 실패 - 마스터 혹은 매니저가 아닌 사용자가 다른 사용자의 탈퇴")
-    @WithMockUser(username = "testuser", roles = {"CUSTOMER", "OWNER"})
+    @WithMockUser(username = "testUser", roles = {"CUSTOMER", "OWNER"})
     void deleteUserFailWhenForbidden() throws Exception {
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/users/{username}", "otherUsername")

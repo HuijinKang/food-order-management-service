@@ -15,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import static org.sparta.foodordermanagementservice.common.utils.RoleUtils.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/users")
@@ -72,11 +74,4 @@ public class UserController {
         return ApiResponse.ofSuccess(null);
     }
 
-    private static boolean hasMasterRole(UserDetails userDetails) {
-        return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MASTER));
-    }
-
-    private static boolean hasManagerRole(UserDetails userDetails) {
-        return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MANAGER));
-    }
 }
