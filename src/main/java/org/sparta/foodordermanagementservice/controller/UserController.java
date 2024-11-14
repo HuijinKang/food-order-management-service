@@ -45,15 +45,6 @@ public class UserController {
         return ApiResponse.ofSuccess(null);
     }
 
-    private static boolean hasMasterRole(UserDetails userDetails) {
-        return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MANAGER));
-    }
-
-    private static boolean hasManagerRole(UserDetails userDetails) {
-        return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MANAGER));
-    }
-
-
     @PatchMapping("/role/{username}")
     @Secured(UserRole.Authority.MASTER)
     public ApiResponse<Void> updateUserRole(@PathVariable("username") String username,
@@ -64,5 +55,28 @@ public class UserController {
         userService.updateUserRole(username, role);
 
         return ApiResponse.ofSuccess(null);
+    }
+
+    @DeleteMapping("/{username}")
+    @PutMapping("/{username}")
+    public ApiResponse<Void> updateUser(@PathVariable("username") String username,
+                                           @AuthenticationPrincipal UserDetails userDetails) {
+        if(username.equals(userDetails.getUsername())
+                || hasManagerRole(userDetails)
+                || hasMasterRole(userDetails)) {
+            userService.deleteUser(username);
+        } else {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        return ApiResponse.ofSuccess(null);
+    }
+
+    private static boolean hasMasterRole(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MANAGER));
+    }
+
+    private static boolean hasManagerRole(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MANAGER));
     }
 }
