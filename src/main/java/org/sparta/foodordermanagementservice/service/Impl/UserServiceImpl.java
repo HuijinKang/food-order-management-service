@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -66,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void deleteUser(String username) {
+    public void deleteUser(String username, String deletedBy) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -75,6 +77,9 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setStatus(UserStatus.LEAVE);
+        user.setDeletedBy(deletedBy);
+        user.setDeletedAt(LocalDateTime.now());
+
         userRepository.save(user);
     }
 }

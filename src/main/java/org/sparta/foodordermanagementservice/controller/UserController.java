@@ -64,7 +64,7 @@ public class UserController {
         if(username.equals(userDetails.getUsername())
                 || hasManagerRole(userDetails)
                 || hasMasterRole(userDetails)) {
-            userService.deleteUser(username);
+            userService.deleteUser(username, userDetails.getUsername());
         } else {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
