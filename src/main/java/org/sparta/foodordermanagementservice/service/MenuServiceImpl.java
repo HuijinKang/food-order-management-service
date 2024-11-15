@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,11 +28,16 @@ public class MenuServiceImpl implements MenuService {
 
     private final MenuRepository menuRepository;
     private final StoreService storeService;
+    private final ImageService imageService;
 
     // 메뉴 등록
+    @Transactional
+    @Override
     public void createMenu(UUID storeId, MenuRequestDto requestDto) {
 
         Store store = storeService.findByStoreId(storeId);
+
+        String menuImageUrl = imageService.uploadFile(requestDto.getFile());
 
         Menu menu = Menu.builder()
                 .store(store)
@@ -39,6 +45,7 @@ public class MenuServiceImpl implements MenuService {
                 .price(requestDto.getPrice())
                 .description(requestDto.getDescription())
                 .status(MenuStatus.ACTIVE)
+                .menuImageUrl(menuImageUrl)
                 .build();
 
         menuRepository.save(menu);
@@ -46,6 +53,7 @@ public class MenuServiceImpl implements MenuService {
 
     // 메뉴 수정
     @Transactional
+    @Override
     public void updateMenu(UUID menuId, UUID storeId, UpdateMenuRequestDto requestDto) {
         Menu existingMenu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
@@ -67,6 +75,7 @@ public class MenuServiceImpl implements MenuService {
 
     // 메뉴 삭제
     @Transactional
+    @Override
     public void deleteMenu(UUID menuId, String username) {
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
@@ -79,6 +88,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     // 메뉴 단건 조회
+    @Override
     public MenuResponseDto getMenu(UUID menuId) {
         Menu menu = menuRepository.findByIdAndStatusNot(menuId, MenuStatus.DISCONTINUED)
                 .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
@@ -92,6 +102,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     // 메뉴 목록 조회
+    @Override
     public List<MenuResponseDto> getMenus(UUID storeId) {
         List<Menu> menuList = menuRepository.findByStoreIdAndStatusNot(storeId, MenuStatus.DISCONTINUED);
         return menuList.stream()
@@ -105,6 +116,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     // 메뉴 검색
+    @Override
     public Page<MenuResponseDto> searchMenus(String condition, String keyword, int pageSize,
                                              int pageNumber, String sortedBy, boolean isAsc) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize,

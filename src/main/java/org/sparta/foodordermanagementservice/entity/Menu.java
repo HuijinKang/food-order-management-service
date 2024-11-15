@@ -34,8 +34,8 @@ public class Menu extends BaseEntity {
     @Column(nullable = true)
     private String description;
 
-//    @Column(nullable = false, columnDefinition = "TEXT")
-//    private String menuImageUrl;
+    @Column(nullable = true, columnDefinition = "TEXT")
+    private String menuImageUrl;
 
     public void updateName(String name) {
         this.name = name;

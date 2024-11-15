@@ -28,7 +28,7 @@ public class MenuController {
     @Secured({UserRole.Authority.OWNER, UserRole.Authority.MASTER})
     @PostMapping
     public ApiResponse<?> createMenu(@RequestParam UUID storeId,
-                                     @RequestBody MenuRequestDto requestDto) {
+                                     @ModelAttribute MenuRequestDto requestDto) {
         menuService.createMenu(storeId, requestDto);
         return ApiResponse.ofSuccess(null);
     }
