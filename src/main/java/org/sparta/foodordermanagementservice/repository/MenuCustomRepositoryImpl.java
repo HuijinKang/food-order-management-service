@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.entity.Menu;
+import org.sparta.foodordermanagementservice.entity.MenuStatus;
 import org.sparta.foodordermanagementservice.entity.QMenu;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,7 +23,8 @@ public class MenuCustomRepositoryImpl implements MenuCustomRepository {
     public Page<Menu> searchMenus(String condition, String keyword, Pageable pageable) {
         QMenu menu = QMenu.menu;
 
-        BooleanExpression conditionExpression = buildConditionExpression(condition, keyword);
+        BooleanExpression conditionExpression = buildConditionExpression(condition, keyword)
+                .and(menu.status.ne(MenuStatus.DISCONTINUED));
 
         List<Menu> result = queryFactory.selectFrom(menu)
                 .where(conditionExpression)

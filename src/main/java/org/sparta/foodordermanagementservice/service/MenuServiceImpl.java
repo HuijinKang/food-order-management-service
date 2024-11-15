@@ -2,6 +2,8 @@ package org.sparta.foodordermanagementservice.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.sparta.foodordermanagementservice.common.exeption.CustomException;
+import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.UpdateMenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.response.MenuResponseDto;
@@ -46,11 +48,15 @@ public class MenuServiceImpl implements MenuService {
     @Transactional
     public void updateMenu(UUID menuId, UUID storeId, UpdateMenuRequestDto requestDto) {
         Menu existingMenu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new RuntimeException("해당하는 메뉴를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
+
+        if (existingMenu.getStatus() == MenuStatus.DISCONTINUED) {
+            throw new CustomException(ErrorCode.MENU_UPDATE_FAILED);
+        }
 
         Store store = storeService.findByStoreId(storeId);
         if (!existingMenu.getStore().equals(store)) {
-            throw new RuntimeException("해당 가게에 등록된 메뉴가 아닙니다.");
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         existingMenu.updateName(requestDto.getName());
@@ -63,7 +69,11 @@ public class MenuServiceImpl implements MenuService {
     @Transactional
     public void deleteMenu(UUID menuId, String username) {
         Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new RuntimeException("해당하는 메뉴를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
+
+        if (menu.getStatus() == MenuStatus.DISCONTINUED) {
+            throw new CustomException(ErrorCode.MENU_DELETE_FAILED);
+        }
 
         menu.updateStatus(MenuStatus.DISCONTINUED);
     }
@@ -71,7 +81,7 @@ public class MenuServiceImpl implements MenuService {
     // 메뉴 단건 조회
     public MenuResponseDto getMenu(UUID menuId) {
         Menu menu = menuRepository.findByIdAndStatusNot(menuId, MenuStatus.DISCONTINUED)
-                .orElseThrow(() -> new RuntimeException("해당하는 메뉴를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
 
         return MenuResponseDto.builder()
                 .storeId(menu.getStore().getId())

@@ -3,10 +3,13 @@ package org.sparta.foodordermanagementservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
+import org.sparta.foodordermanagementservice.dto.request.SearchRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.UpdateMenuRequestDto;
 import org.sparta.foodordermanagementservice.dto.response.MenuResponseDto;
+import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.service.MenuService;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -22,16 +25,16 @@ public class MenuController {
     private final MenuService menuService;
 
     // 메뉴 등록
-//    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @Secured({UserRole.Authority.OWNER, UserRole.Authority.MASTER})
     @PostMapping
-    public ApiResponse<?> createMenu(@RequestParam(required = false) UUID storeId,
+    public ApiResponse<?> createMenu(@RequestParam UUID storeId,
                                      @RequestBody MenuRequestDto requestDto) {
         menuService.createMenu(storeId, requestDto);
         return ApiResponse.ofSuccess(null);
     }
 
     // 메뉴 수정
-//    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @Secured({UserRole.Authority.OWNER, UserRole.Authority.MASTER})
     @PatchMapping("/{menuId}")
     public ApiResponse<?> updateMenu(@PathVariable UUID menuId,
                                      @RequestParam UUID storeId,
@@ -41,7 +44,7 @@ public class MenuController {
     }
 
     // 메뉴 삭제
-//    @PreAuthorize("hasAnyRole('OWNER', 'MASTER')")
+    @Secured({UserRole.Authority.OWNER, UserRole.Authority.MASTER})
     @DeleteMapping("/{menuId}")
     public ApiResponse<?> deleteMenu(@PathVariable UUID menuId,
                                      @AuthenticationPrincipal UserDetails userDetails) {
@@ -65,14 +68,15 @@ public class MenuController {
     // 메뉴 검색
     @GetMapping("/search")
     public ApiResponse<Page<MenuResponseDto>> searchMenus(
-            @RequestParam String condition,
-            @RequestParam String keyword,
-            @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "0") int pageNumber,
-            @RequestParam(defaultValue = "createdat") String sortedBy,
-            @RequestParam(defaultValue = "true") boolean isAsc) {
-
-        Page<MenuResponseDto> menuPage = menuService.searchMenus(condition, keyword, pageSize, pageNumber, sortedBy, isAsc);
+            @ModelAttribute SearchRequestDto searchRequestDto) {
+        Page<MenuResponseDto> menuPage = menuService.searchMenus(
+                searchRequestDto.getCondition(),
+                searchRequestDto.getKeyword(),
+                searchRequestDto.getPageSize(),
+                searchRequestDto.getPageNumber(),
+                searchRequestDto.getSortedBy(),
+                searchRequestDto.isAsc()
+        );
         return ApiResponse.ofSuccess(menuPage);
     }
 

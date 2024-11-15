@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.request.ReviewListRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.ReviewRequestDto;
 import org.sparta.foodordermanagementservice.dto.response.ReviewResponseDto;
@@ -9,12 +10,15 @@ import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.repository.ReviewRepository;
 import org.springframework.data.domain.*;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Service
+@RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
     private ReviewRepository reviewRepository;
