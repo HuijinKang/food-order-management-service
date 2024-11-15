@@ -172,15 +172,15 @@ public class StoreServiceImpl implements StoreService {
                 .map(Category::getName)
                 .collect(Collectors.toSet());
 
-        return new StoreUpdateResponseDTO(
-                store.getId(),
-                store.getName(),
-                store.getRegion(),
-                store.getLatitude(),
-                store.getLongitude(),
-                categoryNames,
-                store.getUpdatedAt(),
-                store.getUpdatedBy()
-        );
+        return StoreUpdateResponseDTO.builder()
+                .id(store.getId())
+                .name(store.getName())
+                .region(store.getRegion())
+                .latitude(store.getLatitude())
+                .longitude(store.getLongitude())
+                .categories(categoryNames)
+                .updatedAt(store.getUpdatedAt())
+                .updatedBy(store.getUpdatedBy())
+                .build();
     }
 }
