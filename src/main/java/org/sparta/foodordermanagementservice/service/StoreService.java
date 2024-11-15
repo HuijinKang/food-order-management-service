@@ -39,4 +39,6 @@ public interface StoreService {
 
     // Entity -> DTO
     StoreUpdateResponseDTO toStoreUpdateResponseDTO(Store store);
+
+    Store findByStoreId(UUID storeId);
 }
