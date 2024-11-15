@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter // 테스트시 필요
-public class UpdateCategoryRequestDTO {
+public class CategoryUpdateRequestDTO {
     private String name;
 }

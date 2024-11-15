@@ -5,7 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.sparta.foodordermanagementservice.dto.request.CategoryRegistrationRequestDTO;
-import org.sparta.foodordermanagementservice.dto.request.UpdateCategoryRequestDTO;
+import org.sparta.foodordermanagementservice.dto.request.CategoryUpdateRequestDTO;
 import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.CategoryRepository;
@@ -101,7 +101,7 @@ public class CategoryServiceImplTest {
                 .updatedBy("admin")
                 .build();
 
-        UpdateCategoryRequestDTO updateRequest = new UpdateCategoryRequestDTO();
+        CategoryUpdateRequestDTO updateRequest = new CategoryUpdateRequestDTO();
         updateRequest.setName("New Category Name");
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
@@ -127,7 +127,7 @@ public class CategoryServiceImplTest {
                 .updatedBy("admin")
                 .build();
 
-        UpdateCategoryRequestDTO updateRequest = new UpdateCategoryRequestDTO();
+        CategoryUpdateRequestDTO updateRequest = new CategoryUpdateRequestDTO();
         updateRequest.setName("Duplicate Category Name");
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
@@ -141,7 +141,7 @@ public class CategoryServiceImplTest {
     @Test
     public void updateCategory_CategoryNotFound() {
         UUID categoryId = UUID.randomUUID();
-        UpdateCategoryRequestDTO updateRequest = new UpdateCategoryRequestDTO();
+        CategoryUpdateRequestDTO updateRequest = new CategoryUpdateRequestDTO();
         updateRequest.setName("New Category Name");
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());

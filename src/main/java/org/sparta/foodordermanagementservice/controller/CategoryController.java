@@ -3,7 +3,7 @@ package org.sparta.foodordermanagementservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.request.CategoryRegistrationRequestDTO;
-import org.sparta.foodordermanagementservice.dto.request.UpdateCategoryRequestDTO;
+import org.sparta.foodordermanagementservice.dto.request.CategoryUpdateRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.CategoryStoreListDTO;
 import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.UserRole;
@@ -24,7 +24,7 @@ public class CategoryController {
 
     // 카테고리 조회
     @GetMapping("/{categoryId}")
-    @Secured({UserRole.Authority.MASTER})
+    @Secured({UserRole.Authority.MASTER, UserRole.Authority.MANAGER})
     public ApiResponse<Category> getCategoryById(@PathVariable UUID categoryId) {
         return ApiResponse.ofSuccess(categoryService.getCategoryById(categoryId));
     }
@@ -48,9 +48,9 @@ public class CategoryController {
     @PatchMapping("/{categoryId}")
     @Secured({UserRole.Authority.MASTER})
     public ApiResponse<Category> updateCategory(@PathVariable UUID categoryId,
-                                                @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO,
+                                                @RequestBody CategoryUpdateRequestDTO categoryUpdateRequestDTO,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ApiResponse.ofSuccess(categoryService.updateCategory(categoryId, updateCategoryRequestDTO, userDetails.getUser()));
+        return ApiResponse.ofSuccess(categoryService.updateCategory(categoryId, categoryUpdateRequestDTO, userDetails.getUser()));
     }
 
     // 카테고리 삭제

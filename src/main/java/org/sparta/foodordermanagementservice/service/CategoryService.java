@@ -1,7 +1,7 @@
 package org.sparta.foodordermanagementservice.service;
 
 import org.sparta.foodordermanagementservice.dto.request.CategoryRegistrationRequestDTO;
-import org.sparta.foodordermanagementservice.dto.request.UpdateCategoryRequestDTO;
+import org.sparta.foodordermanagementservice.dto.request.CategoryUpdateRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.CategoryStoreListDTO;
 import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.Store;
@@ -22,7 +22,7 @@ public interface CategoryService {
     Category registerCategory(CategoryRegistrationRequestDTO registrationRequestDTO, User user);
 
     // 카테고리 수정
-    Category updateCategory(UUID categoryId, UpdateCategoryRequestDTO updateCategoryRequestDTO, User user);
+    Category updateCategory(UUID categoryId, CategoryUpdateRequestDTO categoryUpdateRequestDTO, User user);
 
     // 카테고리 삭제
     Category deleteCategory(UUID categoryId, UserDetailsImpl userDetails);
