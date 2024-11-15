@@ -24,15 +24,15 @@ import java.util.stream.Collectors;
 public class MenuServiceImpl implements MenuService {
 
     private final MenuRepository menuRepository;
-//    private final StoreService storeService;
+    private final StoreService storeService;
 
     // 메뉴 등록
     public void createMenu(UUID storeId, MenuRequestDto requestDto) {
 
-//        Store store = storeService.findByStoreId(storeId);
+        Store store = storeService.findByStoreId(storeId);
 
         Menu menu = Menu.builder()
-//                .store(store)
+                .store(store)
                 .name(requestDto.getName())
                 .price(requestDto.getPrice())
                 .description(requestDto.getDescription())
@@ -48,10 +48,10 @@ public class MenuServiceImpl implements MenuService {
         Menu existingMenu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new RuntimeException("해당하는 메뉴를 찾을 수 없습니다."));
 
-//        Store store = storeService.findByStoreId(storeId);
-//        if (!existingMenu.getStore().equals(store)) {
-//            throw new RuntimeException("해당 가게에 등록된 메뉴가 아닙니다.");
-//        }
+        Store store = storeService.findByStoreId(storeId);
+        if (!existingMenu.getStore().equals(store)) {
+            throw new RuntimeException("해당 가게에 등록된 메뉴가 아닙니다.");
+        }
 
         existingMenu.updateName(requestDto.getName());
         existingMenu.updatePrice(requestDto.getPrice());
@@ -70,11 +70,11 @@ public class MenuServiceImpl implements MenuService {
 
     // 메뉴 단건 조회
     public MenuResponseDto getMenu(UUID menuId) {
-        Menu menu = menuRepository.findById(menuId)
+        Menu menu = menuRepository.findByIdAndStatusNot(menuId, MenuStatus.DISCONTINUED)
                 .orElseThrow(() -> new RuntimeException("해당하는 메뉴를 찾을 수 없습니다."));
 
         return MenuResponseDto.builder()
-//                .storeId(menu.getStore().getId())
+                .storeId(menu.getStore().getId())
                 .name(menu.getName())
                 .price(menu.getPrice())
                 .description(menu.getDescription())
@@ -83,10 +83,10 @@ public class MenuServiceImpl implements MenuService {
 
     // 메뉴 목록 조회
     public List<MenuResponseDto> getMenus(UUID storeId) {
-        List<Menu> menuList = menuRepository.findByStoreId(storeId);
+        List<Menu> menuList = menuRepository.findByStoreIdAndStatusNot(storeId, MenuStatus.DISCONTINUED);
         return menuList.stream()
                 .map(menu -> MenuResponseDto.builder()
-//                        .storeId(menu.getStore().getId())
+                        .storeId(menu.getStore().getId())
                         .name(menu.getName())
                         .price(menu.getPrice())
                         .description(menu.getDescription())
@@ -103,7 +103,7 @@ public class MenuServiceImpl implements MenuService {
         Page<Menu> menuPage = menuRepository.searchMenus(condition, keyword, pageable);
 
         return menuPage.map(menu -> MenuResponseDto.builder()
-//                .storeId(menu.getStore().getId())
+                .storeId(menu.getStore().getId())
                 .name(menu.getName())
                 .price(menu.getPrice())
                 .description(menu.getDescription())
