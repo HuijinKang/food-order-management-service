@@ -53,5 +53,8 @@ public class Menu extends BaseEntity {
         this.status = status;
     }
 
+    public void updateMenuImageUrl(String menuImageUrl) {
+        this.menuImageUrl = menuImageUrl;
+    }
 
 }

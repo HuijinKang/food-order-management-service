@@ -38,7 +38,7 @@ public class MenuController {
     @PatchMapping("/{menuId}")
     public ApiResponse<?> updateMenu(@PathVariable UUID menuId,
                                      @RequestParam UUID storeId,
-                                     @RequestBody UpdateMenuRequestDto requestDto) {
+                                     @ModelAttribute UpdateMenuRequestDto requestDto) {
         menuService.updateMenu(menuId, storeId, requestDto);
         return ApiResponse.ofSuccess(null);
     }

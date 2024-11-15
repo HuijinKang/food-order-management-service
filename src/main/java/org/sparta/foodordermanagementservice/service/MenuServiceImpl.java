@@ -67,6 +67,15 @@ public class MenuServiceImpl implements MenuService {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
+        if (requestDto.getUpdateFile() != null && !requestDto.getUpdateFile().isEmpty()) {
+            if (existingMenu.getMenuImageUrl() != null) {
+                imageService.deleteFile(existingMenu.getMenuImageUrl());
+            }
+
+            String newImageUrl = imageService.uploadFile(requestDto.getUpdateFile());
+            existingMenu.updateMenuImageUrl(newImageUrl);
+        }
+
         existingMenu.updateName(requestDto.getName());
         existingMenu.updatePrice(requestDto.getPrice());
         existingMenu.updateDescription(requestDto.getDescription());
