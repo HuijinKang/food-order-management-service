@@ -16,6 +16,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C004", "Internal Server Error"),
     ENTITY_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C005", "db 저장 실패"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "C011", "잘못된 요청입니다. (%s)"),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "C012", "접근 권한이 없습니다"),
 
     /* 회원가입 */
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "S001", "중복된 아이디입니다."),
@@ -28,8 +29,9 @@ public enum ErrorCode {
     FAIL_LOGIN(HttpStatus.BAD_REQUEST, "L002", "로그인 실패"),
 
     /* 유저 */
-    DELETED_USER(HttpStatus.FORBIDDEN, "U004", "탈퇴한 사용자입니다.");
-
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "U001", "사용자가 존재하지 않습니다."),
+    CANNOT_DELETE_MASTER_USER(HttpStatus.FORBIDDEN, "U002", "마스터 사용자는 삭제할 수 없습니다."),
+    DELETED_USER(HttpStatus.FORBIDDEN, "U003", "탈퇴한 사용자입니다.");
 
     private final HttpStatus status;
     private final String code;

@@ -38,7 +38,7 @@ class AuthServiceImplTest {
     private UserRepository userRepository;
 
     @Mock
-    private PasswordEncoder encoder;
+    private PasswordEncoder passwordEncoder;
 
     @Spy
     private ModelMapper modelMapper;
@@ -139,7 +139,7 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("로그인 성공")
     void loginSuccess() {
-        when(encoder.matches(anyString(), anyString())).thenReturn(true);
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtil.createAccessToken(anyString(), any(UserRole.class))).thenReturn("testToken");
         when(userRepository.findByUsername(validLoginRequest.getUsername()))
                 .thenReturn(Optional.of(testUser));
@@ -151,7 +151,7 @@ class AuthServiceImplTest {
 
         verify(userRepository, times(1)).findByUsername(anyString());
         verify(jwtUtil, times(1)).createAccessToken(anyString(), any(UserRole.class));
-        verify(encoder, times(1)).matches(anyString(),anyString());
+        verify(passwordEncoder, times(1)).matches(anyString(),anyString());
 
     }
 
@@ -177,20 +177,19 @@ class AuthServiceImplTest {
     @Test
     @DisplayName("로그인 실패 - 비밀번호 불일치")
     void loginFailWhenPasswordIsInvalid() {
-        LoginRequestDTO IncorrectPasswordUser = LoginRequestDTO.builder()
+        LoginRequestDTO incorrectPasswordUser = LoginRequestDTO.builder()
                 .username("testUser")
                 .password("incorrectPassword")
                 .build();
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(testUser));
-        when(encoder.matches(anyString(), anyString())).thenReturn(false);
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
-        CustomException exception = assertThrows(CustomException.class, () -> authService.login(IncorrectPasswordUser));
+        CustomException exception = assertThrows(CustomException.class, () -> authService.login(incorrectPasswordUser));
 
         assertEquals(ErrorCode.FAIL_LOGIN, exception.getErrorCode());
 
-        verify(encoder, times(1)).matches(anyString(),anyString());
-
+        verify(passwordEncoder, times(1)).matches(anyString(),anyString());
     }
 
     @Test
@@ -213,14 +212,14 @@ class AuthServiceImplTest {
                 .build();
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(deletedUser));
-        when(encoder.matches(anyString(), anyString())).thenReturn(true);
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class, () -> authService.login(IncorrectPasswordUser));
 
         assertEquals(ErrorCode.DELETED_USER, exception.getErrorCode());
 
         verify(userRepository, times(1)).findByUsername(anyString());
-        verify(encoder, times(1)).matches(anyString(),anyString());
+        verify(passwordEncoder, times(1)).matches(anyString(),anyString());
 
     }
 }

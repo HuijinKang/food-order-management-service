@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
@@ -17,6 +18,7 @@ public class LoginRequestDTO {
     private final String password;
 
     @Builder
+    @JsonCreator
     public LoginRequestDTO(String username, String password) {
         this.username = username;
         this.password = password;
