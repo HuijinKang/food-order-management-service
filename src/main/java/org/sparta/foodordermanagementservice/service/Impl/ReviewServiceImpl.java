@@ -1,4 +1,4 @@
-package org.sparta.foodordermanagementservice.service;
+package org.sparta.foodordermanagementservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
@@ -11,6 +11,9 @@ import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.repository.ReviewRepository;
+import org.sparta.foodordermanagementservice.service.ReviewService;
+import org.sparta.foodordermanagementservice.service.StoreService;
+import org.sparta.foodordermanagementservice.service.UserService;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
