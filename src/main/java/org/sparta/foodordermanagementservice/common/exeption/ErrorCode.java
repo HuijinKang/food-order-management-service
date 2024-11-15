@@ -36,7 +36,12 @@ public enum ErrorCode {
      /* 메뉴 */
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "해당 메뉴를 찾을 수 없습니다."),
     MENU_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "M002", "메뉴 수정에 실패했습니다."),
-    MENU_DELETE_FAILED(HttpStatus.FORBIDDEN, "M003", "이미 삭제된 메뉴입니다.");
+    MENU_DELETE_FAILED(HttpStatus.FORBIDDEN, "M003", "이미 삭제된 메뉴입니다."),
+
+    // 리뷰 관련 에러 코드
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "해당 리뷰를 찾을 수 없습니다."),
+    REVIEW_PERMISSION_DENIED(HttpStatus.FORBIDDEN, "R002", "본인이 작성한 리뷰만 수정/삭제할 수 있습니다.");
+
 
     private final HttpStatus status;
     private final String code;

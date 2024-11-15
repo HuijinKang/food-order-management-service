@@ -6,6 +6,7 @@ import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.request.ReviewListRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.ReviewRequestDto;
 import org.sparta.foodordermanagementservice.dto.response.ReviewResponseDto;
+import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.service.ReviewService;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -24,7 +25,7 @@ public class ReviewController {
 
     // 리뷰 작성
     @PostMapping
-    public ApiResponse<?> createReview(@RequestParam(required = false) UUID storeId,
+    public ApiResponse<?> createReview(@RequestParam UUID storeId,
                                        @RequestBody @Valid ReviewRequestDto requestDto,
                                        @AuthenticationPrincipal UserDetails userDetails) {
         reviewService.createReview(storeId, requestDto, userDetails.getUsername());
@@ -32,7 +33,7 @@ public class ReviewController {
     }
 
     // 리뷰 수정
-    @PutMapping("/{reviewId}")
+    @PatchMapping("/{reviewId}")
     public ApiResponse<?> updateReview(@PathVariable UUID reviewId,
                                        @Valid @RequestBody ReviewRequestDto requestDto,
                                        @AuthenticationPrincipal UserDetails userDetails) {
@@ -41,7 +42,7 @@ public class ReviewController {
     }
 
     // 리뷰 삭제
-    @Secured({"ROLE_CUSTOMER", "ROLE_MASTER"})
+    @Secured({UserRole.Authority.CUSTOMER, UserRole.Authority.MASTER})
     @DeleteMapping("/{reviewId}")
     public ApiResponse<?> deleteReview(@PathVariable UUID reviewId,
                                        @AuthenticationPrincipal UserDetails userDetails) {
