@@ -59,7 +59,7 @@ public class ReviewController {
     // 가게 리뷰 목록 조회
     @GetMapping
     public ApiResponse<?> getReviewList(@RequestParam UUID storeId,
-                                        @RequestBody ReviewListRequestDto requestDto) {
+                                        @ModelAttribute ReviewListRequestDto requestDto) {
         Page<ReviewResponseDto> responsePage = reviewService.getReviewList(storeId, requestDto);
         return ApiResponse.ofSuccess(responsePage);
     }
