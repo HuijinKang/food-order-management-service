@@ -3,6 +3,7 @@ package org.sparta.foodordermanagementservice.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
@@ -15,8 +16,8 @@ import java.util.UUID;
 public class OrderDTO {
 
     private UUID id;
-    private UserDTO userDTO;
-    private StoreDTO storeDTO;
+    private String userName;
+    private UUID storeId;
     private OrderStatus status;
     private OrderType type;
     private String address;
@@ -26,20 +27,18 @@ public class OrderDTO {
     private String createdBy;
     private LocalDateTime updatedAt;
     private String updatedBy;
+    @Setter
     private LocalDateTime deletedAt;
+    @Setter
     private String deletedBy;
 
 
     public static OrderDTO from(Order order) {
-        //todo 담당자와 연계해 user,
-        // store 변환함수 builder 인자로 추가
-        UserDTO userDto = new UserDTO();
-        StoreDTO storeDto = new StoreDTO();
 
         return OrderDTO.builder()
                 .id(order.getId())
-                .userDTO(userDto)
-                .storeDTO(storeDto)
+                .userName(order.getUserName())
+                .storeId(order.getId())
                 .status(order.getStatus())
                 .type(order.getType())
                 .address(order.getAddress())
@@ -56,8 +55,8 @@ public class OrderDTO {
 
     @Builder //AllArgsConstructor
     public OrderDTO(UUID id,
-                    UserDTO userDTO,
-                    StoreDTO storeDTO,
+                    String userName,
+                    UUID storeId,
                     OrderStatus status,
                     OrderType type,
                     String address,
@@ -70,8 +69,8 @@ public class OrderDTO {
                     LocalDateTime deletedAt,
                     String deletedBy) {
         this.id = id;
-        this.userDTO = userDTO;
-        this.storeDTO = storeDTO;
+        this.userName = userName;
+        this.storeId = storeId;
         this.status = status;
         this.type = type;
         this.address = address;
