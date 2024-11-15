@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_review")
-public class Review extends TimeStamped{
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
