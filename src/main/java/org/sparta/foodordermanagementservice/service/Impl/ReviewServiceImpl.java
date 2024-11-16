@@ -59,11 +59,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     // 리뷰 삭제
-    public void deleteReview(UUID reviewId, String username) {
+    public void deleteReview(UUID reviewId, String username, boolean isMaster) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
-        if (!review.getUser().getUsername().equals(username) && !isMaster(username)) {
+        if (!review.getUser().getUsername().equals(username) && !isMaster) {
             throw new CustomException(ErrorCode.REVIEW_PERMISSION_DENIED);
         }
 
@@ -98,12 +98,4 @@ public class ReviewServiceImpl implements ReviewService {
 
         return new PageImpl<>(reviewList, pageable, reviewPage.getTotalElements());
     }
-
-    // 관리자 권한 체크 (ROLE_MASTER만 관리자)
-    private boolean isMaster(String username) {
-        User user = userService.findByUsername(username);
-        return user.getUserRole() == UserRole.MASTER;
-    }
-
-
 }

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static org.sparta.foodordermanagementservice.common.utils.RoleUtils.hasMasterRole;
+
 @RestController
 @RequestMapping("api/reviews")
 @RequiredArgsConstructor
@@ -46,9 +48,14 @@ public class ReviewController {
     @DeleteMapping("/{reviewId}")
     public ApiResponse<?> deleteReview(@PathVariable UUID reviewId,
                                        @AuthenticationPrincipal UserDetails userDetails) {
-        reviewService.deleteReview(reviewId, userDetails.getUsername());
+        if (hasMasterRole(userDetails)) {
+            reviewService.deleteReview(reviewId, userDetails.getUsername(), true);
+        } else {
+            reviewService.deleteReview(reviewId, userDetails.getUsername(), false);
+        }
         return ApiResponse.ofSuccess(null);
     }
+
 
     // 리뷰 단건 조회
     @GetMapping("/{reviewId}")
