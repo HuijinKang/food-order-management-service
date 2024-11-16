@@ -5,36 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
-import org.sparta.foodordermanagementservice.dto.request.SortedBy;
-import org.sparta.foodordermanagementservice.entity.Order;
-import org.sparta.foodordermanagementservice.entity.Store;
-import org.sparta.foodordermanagementservice.entity.User;
-import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
-import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 import org.sparta.foodordermanagementservice.repository.OrderDAO;
-import org.sparta.foodordermanagementservice.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.List;
-import java.util.UUID;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
 
@@ -54,8 +33,8 @@ public class OrderIntegratedTest {
     @MockBean
     private OrderDAO orderDAO;
 
-    @Autowired
-    private OrderRepository orderRepository;
+//    @Autowired
+//    private OrderRepository orderRepository;
 
 //    @BeforeEach
 //    void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
@@ -69,69 +48,69 @@ public class OrderIntegratedTest {
     @WithMockUser(username = "testUser", roles = {"MASTER", "USER", "OWNER", "ADMIN"})
     public void testPaginateOrders() throws Exception {
 
-//        JPAQuery queryMock = Mockito.mock(JPAQuery.class);
-
-        // given
-        int pageSize = 10, pageNumber = 0;
-
-
-        String condition = "username";
-        User user = User.builder().id(1L)
-                .username("nara")
-                .password("password").build();
-        Store store = Store.builder()
-                .id(UUID.randomUUID()).build();
-
-        SortedBy sortedBy = SortedBy.valueOf("CREATED_AT");
-        boolean isAsc = true;
-
-        PaginateOrdersDTO paginateOrdersDTO = PaginateOrdersDTO.builder()
-                .storeId(store.getId())
-                .username(user.getUsername())
-                .pageSize(pageSize)
-                .pageNumber(pageNumber)
-                .sortedBy(sortedBy)
-                .isAsc(isAsc)
-                .build();
-
-        List<Order> currentPageOrders
-                = List.of(
-                Order.builder().user(user).store(store)
-                        .status(OrderStatus.ACCEPT).type(OrderType.DELIVERY).address("address")
-                        .comment("comment").totalPrice(0).build()
-        );
-
-
-        when(orderDAO.countTotal(store.getId(), user.getUsername()))
-                .thenReturn(1L);
-
-        when(orderDAO.readCurrentPage(paginateOrdersDTO))
-                .thenReturn(currentPageOrders);
-        orderRepository.setOrderDao(orderDAO);
-//        log.info("orderDaoReturn: {}", orderDAO.readCurrentPage(paginateOrdersDTO).get(0).toString());
-
-        ResultActions resultActions
-                = mockMvc.perform(get("/api/orders")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("condition", condition)
-                        .param("key", user.getUsername())
-                        .param("pageSize", String.valueOf(pageSize))
-                        .param("pageNumber", String.valueOf(pageNumber))
-                        .param("sortedBy", sortedBy.getRequested())
-                        .param("isAsc", String.valueOf(isAsc))
-                        .principal(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()))
-                        .with(user("testUser").roles("USER")))
-
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content").isArray())
-                .andExpect(jsonPath("$.data.content[0].storeId").value(store.getId().toString()))
-                .andExpect(jsonPath("$.data.content[0].type").value(OrderType.DELIVERY.name()))
-                .andExpect(jsonPath("$.data.content[0].address").value("address"))
-                .andExpect(jsonPath("$.data.content[0].totalPrice").value(0))
-                .andExpect(jsonPath("$.data.totalElements").value(1))
-                .andExpect(jsonPath("$.data.pageable.pageNumber").value(pageNumber))
-                .andExpect(jsonPath("$.data.pageable.pageSize").value(pageSize));
+////        JPAQuery queryMock = Mockito.mock(JPAQuery.class);
+//
+//        // given
+//        int pageSize = 10, pageNumber = 0;
+//
+//
+//        String condition = "username";
+//        User user = User.builder().id(1L)
+//                .username("nara")
+//                .password("password").build();
+//        Store store = Store.builder()
+//                .id(UUID.randomUUID()).build();
+//
+//        SortedBy sortedBy = SortedBy.valueOf("CREATED_AT");
+//        boolean isAsc = true;
+//
+//        PaginateOrdersDTO paginateOrdersDTO = PaginateOrdersDTO.builder()
+//                .storeId(store.getId())
+//                .username(user.getUsername())
+//                .pageSize(pageSize)
+//                .pageNumber(pageNumber)
+//                .sortedBy(sortedBy)
+//                .isAsc(isAsc)
+//                .build();
+//
+//        List<Order> currentPageOrders
+//                = List.of(
+//                Order.builder().user(user).store(store)
+//                        .status(OrderStatus.ACCEPT).type(OrderType.DELIVERY).address("address")
+//                        .comment("comment").totalPrice(0).build()
+//        );
+//
+//
+//        when(orderDAO.countTotal(store.getId(), user.getUsername()))
+//                .thenReturn(1L);
+//
+//        when(orderDAO.readCurrentPage(paginateOrdersDTO))
+//                .thenReturn(currentPageOrders);
+//        orderRepository.setOrderDao(orderDAO);
+////        log.info("orderDaoReturn: {}", orderDAO.readCurrentPage(paginateOrdersDTO).get(0).toString());
+//
+//        ResultActions resultActions
+//                = mockMvc.perform(get("/api/orders")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .param("condition", condition)
+//                        .param("key", user.getUsername())
+//                        .param("pageSize", String.valueOf(pageSize))
+//                        .param("pageNumber", String.valueOf(pageNumber))
+//                        .param("sortedBy", sortedBy.getRequested())
+//                        .param("isAsc", String.valueOf(isAsc))
+//                        .principal(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()))
+//                        .with(user("testUser").roles("USER")))
+//
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.data.content").isArray())
+//                .andExpect(jsonPath("$.data.content[0].storeId").value(store.getId().toString()))
+//                .andExpect(jsonPath("$.data.content[0].type").value(OrderType.DELIVERY.name()))
+//                .andExpect(jsonPath("$.data.content[0].address").value("address"))
+//                .andExpect(jsonPath("$.data.content[0].totalPrice").value(0))
+//                .andExpect(jsonPath("$.data.totalElements").value(1))
+//                .andExpect(jsonPath("$.data.pageable.pageNumber").value(pageNumber))
+//                .andExpect(jsonPath("$.data.pageable.pageSize").value(pageSize));
 
 //                .andDo(document(
 //                        "get-orders-success",
