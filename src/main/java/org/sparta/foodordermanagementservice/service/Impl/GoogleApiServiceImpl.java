@@ -1,8 +1,6 @@
 package org.sparta.foodordermanagementservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
-import org.sparta.foodordermanagementservice.common.exeption.CustomException;
-import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.request.GeminiRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.MenuDescriptionGenerateRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.GeminiResponseDTO;
@@ -10,8 +8,8 @@ import org.sparta.foodordermanagementservice.dto.response.MenuDescriptionGenerat
 import org.sparta.foodordermanagementservice.entity.AiApiLog;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.AiApiLogRepository;
-import org.sparta.foodordermanagementservice.repository.UserRepository;
 import org.sparta.foodordermanagementservice.service.GoogleApiService;
+import org.sparta.foodordermanagementservice.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,7 @@ import java.util.Objects;
 @Transactional(readOnly = true)
 public class GoogleApiServiceImpl implements GoogleApiService {
     private final AiApiLogRepository aiApiLogRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final RestTemplate restTemplate;
 
     @Value("${google.api.key}")
@@ -58,14 +56,12 @@ public class GoogleApiServiceImpl implements GoogleApiService {
     @Transactional
     @Override
     public void saveRecord(String username, MenuDescriptionGenerateRequestDTO request, MenuDescriptionGenerateResponseDTO response) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = userService.findByUsername(username);
 
         AiApiLog record = AiApiLog.builder()
                 .user(user)
                 .question(request.getQuestion())
                 .answer(response.getAnswer())
-                .createdBy(user.getUsername())
-                .updatedBy(user.getUsername())
                 .build();
 
         aiApiLogRepository.save(record);
