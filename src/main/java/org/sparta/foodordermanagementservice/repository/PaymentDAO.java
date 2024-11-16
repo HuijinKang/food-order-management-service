@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.UpdatePaymentDTO;
 import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.QPayment;
 import org.springframework.stereotype.Repository;
@@ -37,6 +38,18 @@ public class PaymentDAO {
 
         target.setDeletedAt(LocalDateTime.now());
         target.setDeletedBy(deletedBy);
+
+        jpaRepo.save(target);
+    }
+
+    public void update(UUID id, UpdatePaymentDTO dto) {
+
+        Payment target = jpaRepo.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
+
+        target.setStatus(dto.getStatus());
+        target.setPayedPrice(dto.getPayedPrice());
+        target.setReceipt(dto.getReceipt());
 
         jpaRepo.save(target);
     }

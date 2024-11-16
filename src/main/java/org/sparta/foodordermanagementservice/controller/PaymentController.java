@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
-import org.sparta.foodordermanagementservice.dto.request.PostPaymentReq;
+import org.sparta.foodordermanagementservice.dto.ReqPatchPayment;
+import org.sparta.foodordermanagementservice.dto.UpdatePaymentDTO;
+import org.sparta.foodordermanagementservice.dto.request.ReqPostPayment;
 import org.sparta.foodordermanagementservice.dto.response.GetPaymentRes;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.service.PaymentService;
@@ -34,13 +36,24 @@ public class PaymentController {
 
     @PostMapping
     @Secured(UserRole.Authority.MASTER)
-    public ApiResponse<UUID> createPayment(@RequestBody PostPaymentReq request) {
+    public ApiResponse<UUID> createPayment(@RequestBody ReqPostPayment request) {
 
         UUID createdPaymentId
                 = paymentService.createPayment(CreatePaymentDTO.from(request));
 
         return ApiResponse.ofSuccess(createdPaymentId);
     }
+
+    @PatchMapping("/{id}")
+    @Secured(UserRole.Authority.MASTER)
+    public ApiResponse<Void> updatePayment(@PathVariable UUID id,
+                                           @RequestBody ReqPatchPayment request) {
+
+        paymentService.updatePayment(id, UpdatePaymentDTO.from(request));
+
+        return ApiResponse.ofSuccess(null);
+    }
+
 
     @DeleteMapping("/{id}")
     @Secured(UserRole.Authority.MASTER)

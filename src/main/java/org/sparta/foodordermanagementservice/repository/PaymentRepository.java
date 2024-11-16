@@ -2,6 +2,7 @@ package org.sparta.foodordermanagementservice.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
+import org.sparta.foodordermanagementservice.dto.UpdatePaymentDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.User;
@@ -26,7 +27,7 @@ public class PaymentRepository {
 
     @Transactional
     public Payment createPayment(CreatePaymentDTO dto) {
-        //todo 테스트용, 추후 수정
+        //todo user완료되면 추후 수정
         User relatedUser
                 = new User(); //userRepo.findByUsername(username);
 
@@ -43,5 +44,11 @@ public class PaymentRepository {
     public void deletePayment(UUID paymentId, String deletedBy) {
 
         paymentDAO.softDeletePayment(paymentId, deletedBy);
+    }
+
+    @Transactional
+    public void updatePayment(UUID id, UpdatePaymentDTO dto) {
+
+        paymentDAO.update(id, dto);
     }
 }

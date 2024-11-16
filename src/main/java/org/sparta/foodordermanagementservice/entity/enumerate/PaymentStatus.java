@@ -1,16 +1,29 @@
 package org.sparta.foodordermanagementservice.entity.enumerate;
 
+import lombok.RequiredArgsConstructor;
+import org.sparta.foodordermanagementservice.dto.request.BaseQueryStringEnum;
+
 @SuppressWarnings("unused")
-public enum PaymentStatus {
 
-    PAY_WAIT,
-    PAYED,
-    PAY_PG_API_ERROR,
-    PG_DENIED_PAY,
 
-    CANCEL_WAIT,
-    CANCELED,
-    CANCEL_PG_API_ERROR,
-    PG_DENIED_CANCEL
+@RequiredArgsConstructor
+public enum PaymentStatus implements BaseQueryStringEnum {
 
+    PAY_WAIT("payWait"),
+    PAYED("payed"),
+    PAY_PG_API_ERROR("payPgApiError"),
+    PG_DENIED_PAY("pgDeniedPay"),
+
+    CANCEL_WAIT("cancelWait"),
+    CANCELED("canceled"),
+    CANCEL_PG_API_ERROR("cancelPgApiError"),
+    PG_DENIED_CANCEL("pgDeniedCancel");
+
+
+    private final String queryString;
+
+    @Override
+    public String getQueryString() {
+        return queryString;
+    }
 }

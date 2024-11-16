@@ -10,7 +10,7 @@ import java.util.UUID;
 @Value
 @Builder
 @RequiredArgsConstructor
-public class PostPaymentReq {
+public class ReqPostPayment {
 
     UUID orderId;
     String username;

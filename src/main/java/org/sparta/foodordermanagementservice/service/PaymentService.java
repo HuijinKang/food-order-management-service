@@ -1,6 +1,7 @@
 package org.sparta.foodordermanagementservice.service;
 
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
+import org.sparta.foodordermanagementservice.dto.UpdatePaymentDTO;
 import org.sparta.foodordermanagementservice.dto.response.GetPaymentRes;
 import org.springframework.stereotype.Service;
 
@@ -13,4 +14,6 @@ public interface PaymentService {
     UUID createPayment(CreatePaymentDTO dto);
 
     void deletePayment(UUID id);
+
+    void updatePayment(UUID id, UpdatePaymentDTO dto);
 }

@@ -3,6 +3,7 @@ package org.sparta.foodordermanagementservice.service;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
+import org.sparta.foodordermanagementservice.dto.UpdatePaymentDTO;
 import org.sparta.foodordermanagementservice.dto.response.GetPaymentRes;
 import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.repository.PaymentRepository;
@@ -40,5 +41,11 @@ public class PaymentServiceImpl implements PaymentService {
         String deleter = "admin";/*todo auth완료시 username으로 넣기 */
 
         repository.deletePayment(paymentId, deleter);
+    }
+
+    @Override
+    public void updatePayment(UUID id, UpdatePaymentDTO dto) {
+
+        repository.updatePayment(id, dto);
     }
 }

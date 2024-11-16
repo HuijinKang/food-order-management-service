@@ -31,6 +31,7 @@ public class Payment {
             @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)})
     private User user;
 
+    @Setter
     @Column(nullable = false, length = 1000)
     private String receipt;
 
@@ -60,6 +61,7 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status;
 
+    @Setter
     @Column(nullable = false)
     private int payedPrice;
 
