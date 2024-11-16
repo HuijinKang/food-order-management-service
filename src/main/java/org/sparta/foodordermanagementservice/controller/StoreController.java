@@ -3,6 +3,7 @@ package org.sparta.foodordermanagementservice.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
+import org.sparta.foodordermanagementservice.dto.request.SearchRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.StoreRegistrationRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.StoreUpdateRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.StoreUpdateResponseDTO;
@@ -31,14 +32,10 @@ public class StoreController {
 
     // 10km 이내 가게명 및 카테고리명으로 검색
     @GetMapping("/search")
-    public ApiResponse<Page<Store>> searchStore(@RequestParam String keyword,
-                                                @RequestParam double latitude,
+    public ApiResponse<Page<Store>> searchStore(@RequestParam double latitude,
                                                 @RequestParam double longitude,
-                                                @RequestParam(defaultValue = "10") int pageSize,
-                                                @RequestParam(defaultValue = "0") int pageNumber,
-                                                @RequestParam(defaultValue = "createdAt") String sortedBy,
-                                                @RequestParam(defaultValue = "true") boolean isAsc) {
-        return ApiResponse.ofSuccess(storeService.getSearchStoreList(keyword, latitude, longitude, pageSize, pageNumber, sortedBy, isAsc));
+                                                @ModelAttribute SearchRequestDto searchRequestDto) {
+        return ApiResponse.ofSuccess(storeService.getSearchStoreList(latitude, longitude, searchRequestDto));
     }
 
     // 가게 등록

@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.service;
 
+import org.sparta.foodordermanagementservice.dto.request.SearchRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.StoreRegistrationRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.StoreUpdateRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.StoreUpdateResponseDTO;
@@ -17,7 +18,7 @@ public interface StoreService {
     Store getStoreById(UUID storeId);
 
     // 가게 검색
-    Page<Store> getSearchStoreList(String keyword, double latitude, double longitude, int pageSize, int pageNumber, String sortBy, boolean isAsc);
+    Page<Store> getSearchStoreList(double latitude, double longitude, SearchRequestDto searchRequestDto);
 
     // 가게 등록
     Store registerStore(StoreRegistrationRequestDTO storeRegistrationRequestDTO, User user);

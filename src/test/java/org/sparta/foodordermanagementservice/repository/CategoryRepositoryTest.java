@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,10 +22,6 @@ public class CategoryRepositoryTest {
     public void testFindById_Success() {
         Category category = Category.builder()
                 .name("Test Category")
-                .createdAt(LocalDateTime.now())
-                .createdBy("admin")
-                .updatedAt(LocalDateTime.now())
-                .updatedBy("admin")
                 .build();
 
         categoryRepository.save(category);

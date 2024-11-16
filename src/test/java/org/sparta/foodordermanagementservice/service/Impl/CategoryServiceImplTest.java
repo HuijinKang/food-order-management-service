@@ -111,8 +111,6 @@ public class CategoryServiceImplTest {
         Category savedCategory = new Category();
         savedCategory.setId(UUID.randomUUID());
         savedCategory.setName(categoryName);
-        savedCategory.setCreatedBy(user.getUsername());
-        savedCategory.setUpdatedBy(user.getUsername());
 
         when(categoryRepository.save(any(Category.class))).thenReturn(savedCategory);
 
@@ -165,7 +163,6 @@ public class CategoryServiceImplTest {
         Category result = categoryService.updateCategory(categoryId, updateRequestDTO, user);
 
         assertEquals(newName, result.getName());
-        assertEquals(user.getUsername(), result.getUpdatedBy());
         verify(categoryRepository, times(1)).findById(categoryId);
         verify(categoryRepository, times(1)).existsByName(newName);
         verify(categoryRepository, times(1)).save(category);

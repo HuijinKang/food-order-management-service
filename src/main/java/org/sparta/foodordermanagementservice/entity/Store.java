@@ -18,7 +18,7 @@ import java.util.UUID;
 @ToString
 @Table(name = "p_store")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Store {
+public class Store extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,7 +38,7 @@ public class Store {
     @Column(nullable = false)
     private double longitude;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String name;
 
     @ManyToMany
@@ -49,24 +49,11 @@ public class Store {
     )
     private Set<Category> categories;
 
-
     @Column
     private int totalRating;
 
     @Column
     private int reviewCount;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, length = 100)
-    private String createdBy;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(nullable = false, length = 100)
-    private String updatedBy;
 
     @Column
     private LocalDateTime deletedAt;

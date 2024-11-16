@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_category")
-public class Category {
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,18 +27,6 @@ public class Category {
 
     @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, length = 100)
-    private String createdBy;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(nullable = false, length = 100)
-    private String updatedBy;
 
     @Column
     private LocalDateTime deletedAt;
