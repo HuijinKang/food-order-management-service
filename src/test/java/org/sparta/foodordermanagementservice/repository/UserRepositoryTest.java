@@ -1,6 +1,7 @@
 package org.sparta.foodordermanagementservice.repository;
 
 import org.junit.jupiter.api.Test;
+import org.sparta.foodordermanagementservice.common.QueryDSLConfig;
 import org.sparta.foodordermanagementservice.config.TestConfig;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
@@ -15,7 +16,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(TestConfig.class)
+@Import({TestConfig.class, QueryDSLConfig.class})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 
 class UserRepositoryTest {
