@@ -1,6 +1,7 @@
 package org.sparta.foodordermanagementservice.service;
 
 import org.sparta.foodordermanagementservice.dto.UserDTO;
+import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.dto.request.UpdateUserRequestDTO;
 
@@ -9,4 +10,6 @@ public interface UserService {
     void updateUser(String username, UpdateUserRequestDTO request);
     void updateUserRole(String username, UserRole role);
     void deleteUser(String username, String deletedBy);
+
+    User findByUsername(String username);
 }

@@ -3,17 +3,15 @@ package org.sparta.foodordermanagementservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_menu")
-public class Menu {
+public class Menu extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,9 +21,9 @@ public class Menu {
     @JoinColumn(name = "store_id")
     private Store store;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private MenuStatus status = MenuStatus.ACTIVE;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MenuStatus status = MenuStatus.ACTIVE;
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -33,24 +31,30 @@ public class Menu {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = true)
+    private String description;
+
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String menuImageUrl;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    public void updateName(String name) {
+        this.name = name;
+    }
 
-    @Column(nullable = false, length = 100)
-    private String createdBy;
+    public void updatePrice(int price) {
+        this.price = price;
+    }
 
-    @Column
-    private LocalDateTime updatedAt;
+    public void updateDescription(String description) {
+        this.description = description;
+    }
 
-    @Column(length = 100)
-    private String updatedBy;
+    public void updateStatus(MenuStatus status) {
+        this.status = status;
+    }
 
-    @Column
-    private LocalDateTime deletedAt;
+    public void updateMenuImageUrl(String menuImageUrl) {
+        this.menuImageUrl = menuImageUrl;
+    }
 
-    @Column(length = 100)
-    private String deletedBy;
 }

@@ -8,9 +8,9 @@ import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.CategoryRepository;
-import org.sparta.foodordermanagementservice.security.UserDetailsImpl;
 import org.sparta.foodordermanagementservice.service.CategoryService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -52,10 +52,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = Category.builder()
                 .name(registrationRequestDTO.getName())
-                .createdAt(LocalDateTime.now())
-                .createdBy(user.getUsername())
-                .updatedAt(LocalDateTime.now())
-                .updatedBy(user.getUsername())
                 .build();
 
         return categoryRepository.save(category);
@@ -69,15 +65,13 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryUpdateRequestDTO.getName() != null && !categoryUpdateRequestDTO.getName().equals(category.getName())) {
             checkDuplicateCategoryName(categoryUpdateRequestDTO.getName());
             category.setName(categoryUpdateRequestDTO.getName());
-            category.setUpdatedAt(LocalDateTime.now());
-            category.setUpdatedBy(user.getUsername());
         }
 
         return categoryRepository.save(category);
     }
 
     @Override
-    public Category deleteCategory(UUID categoryId, UserDetailsImpl userDetails) {
+    public Category deleteCategory(UUID categoryId, UserDetails userDetails) {
         Category category = getCategoryById(categoryId);
 
         category.setDeletedAt(LocalDateTime.now());

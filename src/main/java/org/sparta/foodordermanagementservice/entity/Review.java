@@ -2,18 +2,18 @@ package org.sparta.foodordermanagementservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.sparta.foodordermanagementservice.dto.request.ReviewRequestDto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_review")
-public class Review {
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,21 +33,14 @@ public class Review {
     @Column(length = 255)
     private String content;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, length = 100)
-    private String createdBy;
-
-    @Column
-    private LocalDateTime updatedAt;
-
-    @Column(length = 100)
-    private String updatedBy;
-
     @Column
     private LocalDateTime deletedAt;
 
     @Column(length = 100)
     private String deletedBy;
+
+    public void update(ReviewRequestDto requestDto) {
+        this.rating = requestDto.getRating();
+        this.content = requestDto.getContent();
+    }
 }

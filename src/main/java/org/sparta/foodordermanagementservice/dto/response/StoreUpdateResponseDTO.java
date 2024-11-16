@@ -9,14 +9,14 @@ import java.util.UUID;
 
 @Getter
 public class StoreUpdateResponseDTO {
-    private UUID id;
-    private String name;
-    private String region;
-    private double latitude;
-    private double longitude;
-    private Set<String> categories;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
+    private final UUID id;
+    private final String name;
+    private final String region;
+    private final double latitude;
+    private final double longitude;
+    private final Set<String> categories;
+    private final LocalDateTime updatedAt;
+    private final String updatedBy;
 
     @Builder
     public StoreUpdateResponseDTO(LocalDateTime updatedAt, UUID id, String name, String region, double latitude, double longitude, Set<String> categories, String updatedBy) {

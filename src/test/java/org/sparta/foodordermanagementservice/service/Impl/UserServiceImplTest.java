@@ -45,8 +45,8 @@ class UserServiceImplTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
     }
     @Test
@@ -157,8 +157,8 @@ class UserServiceImplTest {
                 .isPublic(false)
                 .userRole(UserRole.MASTER)
                 .status(UserStatus.ACTIVE)
-                .createdBy("masterUser")
-                .updatedBy("masterUser")
+//                .createdBy("masterUser")
+//                .updatedBy("masterUser")
                 .build();
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(masterUser));

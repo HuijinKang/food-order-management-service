@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -23,6 +24,7 @@ public class UpdateUserRequestDTO {
     private final String email;
 
     @Builder
+    @JsonCreator
     public UpdateUserRequestDTO(String nickname, String password, Boolean isPublic, String email) {
         this.nickname = nickname;
         this.password = password;
