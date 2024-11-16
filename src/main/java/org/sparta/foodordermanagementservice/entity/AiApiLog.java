@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_ai_api_log")
-public class AiApiLog {
+public class AiApiLog extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,19 +24,19 @@ public class AiApiLog {
     private User user;
 
     @Column(nullable = false, length = 500)
-    private String request;
+    private String question;
 
-    @Column(nullable = false, length = 500)
-    private String response;
+    @Column(nullable = false, length = 100)
+    private String answer;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+//    @Column(nullable = false)
+//    private LocalDateTime createdAt;
 
     @Column(nullable = false, length = 100)
     private String createdBy;
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+//    @Column(nullable = false)
+//    private LocalDateTime updatedAt;
 
     @Column(nullable = false, length = 100)
     private String updatedBy;
