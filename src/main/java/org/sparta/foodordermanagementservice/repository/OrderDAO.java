@@ -28,16 +28,15 @@ public class OrderDAO {
     private final QOrder order = QOrder.order;
     private final JPAQueryFactory queryFactory;
 
-    public long countTotalPages(PaginateOrdersDTO dto) {
+    public long countTotal(UUID storeId, String username) {
 
         return queryFactory
                 .selectFrom(order)
                 .where(
-                        storeIdEq(dto.getStoreId()),
-                        userNameEq(dto.getUserName()),
+                        storeIdEq(storeId),
+                        usernameEq(username),
                         order.deletedAt.isNull()
                 )
-                .orderBy(OrderSpec.of(dto.getSortedBy(), dto.isAsc()))
                 .fetch()
                 .size();
     }
@@ -48,7 +47,7 @@ public class OrderDAO {
                 .selectFrom(order)
                 .where(
                         storeIdEq(dto.getStoreId()),
-                        userNameEq(dto.getUserName()),
+                        usernameEq(dto.getUsername()),
                         order.deletedAt.isNull()
                 )
                 .orderBy(OrderSpec.of(dto.getSortedBy(), dto.isAsc()))
@@ -66,12 +65,11 @@ public class OrderDAO {
     }
 
 
-    protected BooleanExpression userNameEq(String userName) {
+    protected BooleanExpression usernameEq(String username) {
 
-        if (userName == null) return null;
+        if (username == null) return null;
 
-//      return order.user.username.eq(dto.getUserName()); //todo 임시, user 구현되면 이걸로 쓰기
-        return order.userName.eq(userName);
+        return order.user.username.eq(username);
     }
 
 

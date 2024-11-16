@@ -19,17 +19,19 @@ import java.util.UUID;
 public class OrderRepository {
 
     private final OrderDAO orderDao;
-    //    private final PaymentDAO paymentDao;
+    private final OrderedMenuDAO orderedMenuDao;
 
 
     @Transactional(readOnly = true)
     public List<OrderDTO> readCurrentPageOrders(PaginateOrdersDTO dto) {
 
+        log.info("my repository " + dto.toString());
         List<OrderDTO> currentPageOrderDTOs
                 = orderDao.readCurrentPage(dto)
                 .stream()
                 .map(OrderDTO::from)
                 .toList();
+
 
         return currentPageOrderDTOs;
     }
@@ -39,8 +41,20 @@ public class OrderRepository {
         orderDao.softDeleteOrder(orderId, deleterName);
     }
 
-    public long countTotalPages(PaginateOrdersDTO dto) {
+    public long countTotalOrders(UUID storeId, String username) {
 
-        return orderDao.countTotalPages(dto);
+        return orderDao.countTotal(storeId, username);
     }
+
+    public OrderDTO readOrder(UUID orderId) {
+
+        return OrderDTO.from(orderDao.readOrder(orderId));
+    }
+
+//    public UUID createOrder(CreateOrderDto dto) {
+//
+//            UUID createdId = orderedMenuDao.createOrder(dto);
+//
+//            return createdId;
+//    }
 }

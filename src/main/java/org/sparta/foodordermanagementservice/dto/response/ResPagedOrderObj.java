@@ -3,11 +3,12 @@ package org.sparta.foodordermanagementservice.dto.response;
 import lombok.Builder;
 import lombok.ToString;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.dto.OrderDTO;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 
-
+@Slf4j
 @ToString
 
 @Value
@@ -21,10 +22,9 @@ public class ResPagedOrderObj {
 
 
     public static ResPagedOrderObj from(OrderDTO order) {
-
-        //todo storeDTO 작업되면 수정
+        log.info("orderDto: {}", order);
         return ResPagedOrderObj.builder()
-                .storeId("temp")      //String.valueOf(order.getStoreDTO().getId()))
+                .storeId(String.valueOf(order.getStoreId()))
                 .status(order.getStatus())
                 .type(order.getType())
                 .address(order.getAddress())

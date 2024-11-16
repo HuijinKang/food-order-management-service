@@ -19,7 +19,7 @@
 					store_id,
 					user_id,
 					status,
-					user_name
+					username
 					)
 		values(
 			uuid_generate_v4(),
@@ -36,7 +36,7 @@
 			'05bf78d1-1286-4b39-8188-9fa83b7aa458',
 			1,
 			'WAIT',
-			'bones'
+			'nara'
 		);
 -- 	end loop;
 -- end $$;

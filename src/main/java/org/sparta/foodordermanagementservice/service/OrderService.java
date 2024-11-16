@@ -2,6 +2,7 @@ package org.sparta.foodordermanagementservice.service;
 
 import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
 import org.sparta.foodordermanagementservice.dto.response.ResPagedOrderObj;
+import org.sparta.foodordermanagementservice.dto.response.ResReadOrderDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,5 +12,9 @@ public interface OrderService {
     Page<ResPagedOrderObj> paginateOrders(PaginateOrdersDTO dto, UserDetails userDetails);
 
 
-    void deleteOrder(UUID orderId,String userName);
+    void deleteOrder(UUID orderId, UserDetails userDetails);
+
+    ResReadOrderDetail readOrderDetail(UUID orderId,UserDetails userDetails);
+
+//    UUID createOrder(CreateOrderDto dto);
 }

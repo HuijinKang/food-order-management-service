@@ -9,7 +9,7 @@ import org.sparta.foodordermanagementservice.common.utils.QueryStringEnumConvert
 public enum PaginateOrdersReqCondition implements BaseQueryStringEnum {
 
     STORE_ID("storeId"),
-    USER_NAME("userName");
+    USER_NAME("username");
 
     private final String queryString;
 

@@ -1,14 +1,16 @@
 package org.sparta.foodordermanagementservice.controller;
 
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.common.PageSizeRule;
 import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
-import org.sparta.foodordermanagementservice.dto.request.ReqPaginateOrders;
+import org.sparta.foodordermanagementservice.dto.request.PaginateOrdersReqCondition;
+import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 import org.sparta.foodordermanagementservice.dto.response.ResPagedOrderObj;
+import org.sparta.foodordermanagementservice.dto.response.ResReadOrderDetail;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.service.OrderService;
 import org.springframework.data.domain.Page;
@@ -24,26 +26,45 @@ import java.util.UUID;
 @RequiredArgsConstructor
 
 @RestController
-@RequestMapping("api/orders")
+@RequestMapping("/api/orders")
 public class OrderController {
 
     private final OrderService orderService;
 
-    @GetMapping                                 //todo JsonCreator로 유효성 검사 넣기, pageSizeRule도 저안에 넣기
+
+    @GetMapping
     public ApiResponse<Page<ResPagedOrderObj>> paginateOrders
             (
-                    @ModelAttribute ReqPaginateOrders request,
+                    @RequestParam PaginateOrdersReqCondition condition,
+                    @RequestParam String key,
+                    @RequestParam int pageSize,
+                    @RequestParam int pageNumber,
+                    @RequestParam SortedBy sortedBy,
+                    @RequestParam boolean isAsc,
                     @AuthenticationPrincipal UserDetails userDetails
             ) {
 
-        if (!PageSizeRule.validate(
-                request.getPageSize())) {
-
-            request.setPageSize(PageSizeRule.DEFAULT_PAGE_SIZE);
+        if (!PageSizeRule.validate(pageSize)) {
+            pageSize = PageSizeRule.DEFAULT_PAGE_SIZE;
         }
 
         PaginateOrdersDTO dto
-                = PaginateOrdersDTO.from(request);
+                = PaginateOrdersDTO.builder()
+                .storeId(condition == PaginateOrdersReqCondition.STORE_ID
+                        ? UUID.fromString(key)
+                        : null
+                )
+                .username(condition == PaginateOrdersReqCondition.USER_NAME
+                        ? key
+                        : null
+                )
+                .pageSize(pageSize)
+                .pageNumber(pageNumber)
+                .sortedBy(sortedBy)
+                .isAsc(isAsc)
+                .build();
+
+        log.info("hihi " + dto.toString());
 
         Page<ResPagedOrderObj> pagedResObjs
                 = orderService.paginateOrders(dto, userDetails);
@@ -51,27 +72,39 @@ public class OrderController {
         return ApiResponse.ofSuccess(pagedResObjs);
     }
 
-//    @GetMapping("/{id}")
-//    public ApiResponse<ResReadOrder> readOrderDetail(@PathVariable long id) {
+    @GetMapping("/{id}")
+    public ApiResponse<ResReadOrderDetail> readOrderDetail
+            (
+                    @PathVariable UUID id,
+                    @AuthenticationPrincipal UserDetails userDetails
+            ) {
+
+        ResReadOrderDetail response
+                = orderService.readOrderDetail(id, userDetails);
+
+        return ApiResponse.ofSuccess(response);
+    }
+
+//    @PostMapping
+//    @Secured(UserRole.Authority.CUSTOMER)
+//    public ApiResponse<UUID> createOrder(ReqCreateOrder request) {
 //
-//        OrderDTO searchedOrder
-//                = orderService.searchOrder(id);
+//        UUID createdId
+//                = orderService.createOrder(CreateOrderDto.from(request));
 //
-//        ResReadOrder orderDetailRes
-//                = ResReadOrder.from(searchedOrder);
+//        return ApiResponse.ofSuccess(createdId);
 //
-//        return ApiResponse.ofSuccess(orderDetailRes);
 //    }
 
     @Secured(UserRole.Authority.MASTER)
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteOrder
             (
-                    @PathVariable @NotBlank UUID id,
+                    @PathVariable @NotNull UUID id,
                     @AuthenticationPrincipal UserDetails userDetails
             ) {
 
-        orderService.deleteOrder(id, userDetails.getUsername());
+        orderService.deleteOrder(id, userDetails);
 
         return ApiResponse.ofSuccess(null);
     }

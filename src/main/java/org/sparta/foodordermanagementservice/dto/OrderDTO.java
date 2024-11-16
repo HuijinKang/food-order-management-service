@@ -4,19 +4,23 @@ package org.sparta.foodordermanagementservice.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.sparta.foodordermanagementservice.entity.Order;
+import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@ToString
+
 @Getter
 @SuppressWarnings("unused")
 public class OrderDTO {
 
     private UUID id;
-    private String userName;
+    private String username;
     private UUID storeId;
     private OrderStatus status;
     private OrderType type;
@@ -37,7 +41,7 @@ public class OrderDTO {
 
         return OrderDTO.builder()
                 .id(order.getId())
-                .userName(order.getUserName())
+                .username(order.getUser().getUsername())
                 .storeId(order.getId())
                 .status(order.getStatus())
                 .type(order.getType())
@@ -55,7 +59,7 @@ public class OrderDTO {
 
     @Builder //AllArgsConstructor
     public OrderDTO(UUID id,
-                    String userName,
+                    String username,
                     UUID storeId,
                     OrderStatus status,
                     OrderType type,
@@ -69,7 +73,7 @@ public class OrderDTO {
                     LocalDateTime deletedAt,
                     String deletedBy) {
         this.id = id;
-        this.userName = userName;
+        this.username = username;
         this.storeId = storeId;
         this.status = status;
         this.type = type;
@@ -83,4 +87,5 @@ public class OrderDTO {
         this.deletedAt = deletedAt;
         this.deletedBy = deletedBy;
     }
+
 }
