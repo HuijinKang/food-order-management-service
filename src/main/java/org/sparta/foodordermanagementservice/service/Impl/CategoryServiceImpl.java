@@ -11,6 +11,7 @@ import org.sparta.foodordermanagementservice.repository.CategoryRepository;
 import org.sparta.foodordermanagementservice.security.UserDetailsImpl;
 import org.sparta.foodordermanagementservice.service.CategoryService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -77,7 +78,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category deleteCategory(UUID categoryId, UserDetailsImpl userDetails) {
+    public Category deleteCategory(UUID categoryId, UserDetails userDetails) {
         Category category = getCategoryById(categoryId);
 
         category.setDeletedAt(LocalDateTime.now());
