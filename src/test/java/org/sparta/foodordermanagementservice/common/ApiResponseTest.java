@@ -11,7 +11,7 @@ class ApiResponseTest {
     void ofError() {
         ApiResponse<Void> apiResponse = ApiResponse.ofError(ErrorCode.BAD_REQUEST);
         assertNull(apiResponse.data());
-        assertEquals("잘못된 요청입니다.", apiResponse.message());
+        assertEquals("잘못된 요청입니다. (%s)", apiResponse.message());
         assertEquals("C011", apiResponse.code());
     }
 

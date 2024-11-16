@@ -5,11 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestControllerAdvice
@@ -30,15 +35,25 @@ public class GlobalExceptionHandler {
     }
 
 
-//    @ExceptionHandler(BadCredentialsException.class)
-//    protected ResponseEntity<ApiResponse<Void>> handleBadCredentialsException() {
-//        return new ResponseEntity<>(ApiResponse.ofError(ErrorCode.FAIL_LOGIN), ErrorCode.FAIL_LOGIN.getStatus());
-//    }
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity<ApiResponse<Void>> handleBadCredentialsException() {
+        return new ResponseEntity<>(ApiResponse.ofError(ErrorCode.FAIL_LOGIN), ErrorCode.FAIL_LOGIN.getStatus());
+    }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> methodArgumentValidException() {
-        return new ResponseEntity<>(ApiResponse.ofError(ErrorCode.BAD_REQUEST), ErrorCode.BAD_REQUEST.getStatus());
+    public ResponseEntity<ApiResponse<Void>> methodArgumentValidException(MethodArgumentNotValidException e) {
+        Map<String, String> errors = new HashMap<>();
+
+        e.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        String errorMessage= String.format(ErrorCode.BAD_REQUEST.getDescription(), errors);
+
+        return new ResponseEntity<>(ApiResponse.ofError(ErrorCode.BAD_REQUEST,errorMessage), ErrorCode.BAD_REQUEST.getStatus());
     }
 
 
@@ -53,6 +68,12 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ApiResponse<Void>> handleRuntimeException(final RuntimeException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(ApiResponse.ofError(ErrorCode.INTERNAL_SERVER_ERROR), ErrorCode.INTERNAL_SERVER_ERROR.getStatus());
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    protected ResponseEntity<ApiResponse<Void>> handleAuthorizationDeniedException(final AuthorizationDeniedException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(ApiResponse.ofError(ErrorCode.FORBIDDEN), ErrorCode.FORBIDDEN.getStatus());
     }
 
 }
