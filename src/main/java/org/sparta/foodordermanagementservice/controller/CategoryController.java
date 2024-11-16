@@ -56,7 +56,7 @@ public class CategoryController {
 
     // 카테고리 삭제
     @DeleteMapping("/{categoryId}")
-//    @Secured({UserRole.Authority.MASTER})
+    @Secured({UserRole.Authority.MASTER})
     public ApiResponse<Category> deleteCategory(@PathVariable UUID categoryId, @AuthenticationPrincipal UserDetails userDetails) {
         return ApiResponse.ofSuccess(categoryService.deleteCategory(categoryId, userDetails));
     }
