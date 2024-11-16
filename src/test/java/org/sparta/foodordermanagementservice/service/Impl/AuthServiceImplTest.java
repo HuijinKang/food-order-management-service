@@ -59,8 +59,8 @@ class AuthServiceImplTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
         validSignUpRequest = SignupRequestDTO.builder()
                 .username(testUser.getUsername())
@@ -207,8 +207,8 @@ class AuthServiceImplTest {
                 .isPublic(true)
                 .status(UserStatus.LEAVE)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("deletedUser")
-                .updatedBy("deletedUser")
+//                .createdBy("deletedUser")
+//                .updatedBy("deletedUser")
                 .build();
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(deletedUser));

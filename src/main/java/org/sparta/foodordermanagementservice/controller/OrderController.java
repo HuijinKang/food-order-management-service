@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class OrderController {
 
-    private final OrderService orderService;
+//    private final OrderService orderService;
 
     @GetMapping
     public ApiResponse<List<OrderListResponse>> getOrderList

@@ -1,6 +1,8 @@
 package org.sparta.foodordermanagementservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.sparta.foodordermanagementservice.common.exeption.CustomException;
+import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.request.StoreRegistrationRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.StoreUpdateRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.StoreUpdateResponseDTO;
@@ -182,5 +184,11 @@ public class StoreServiceImpl implements StoreService {
                 .updatedAt(store.getUpdatedAt())
                 .updatedBy(store.getUpdatedBy())
                 .build();
+    }
+
+    @Override
+    public Store findByStoreId(UUID storeId) {
+        return storeRepository.findById(storeId).orElseThrow(() ->
+                new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
     }
 }

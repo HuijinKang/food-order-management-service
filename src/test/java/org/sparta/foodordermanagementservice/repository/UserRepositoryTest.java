@@ -32,8 +32,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -61,8 +61,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -90,8 +90,8 @@ class UserRepositoryTest {
                 .isPublic(true)
                 .status(UserStatus.LEAVE)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -110,8 +110,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -130,8 +130,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -149,8 +149,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);

@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Table(name = "p_user", indexes = {
         @Index(name = "users_idx_username", columnList = "username")
 })
-public class User extends Timestamped{
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,17 +53,17 @@ public class User extends Timestamped{
 //    @CreatedDate
 //    private LocalDateTime createdAt;
 
-    @Column(nullable = false, length = 100, updatable = false)
-    @CreatedBy
-    private String createdBy;
+//    @Column(nullable = false, length = 100, updatable = false)
+//    @CreatedBy
+//    private String createdBy;
 
 //    @Column(nullable = false)
 //    @LastModifiedDate
 //    private LocalDateTime updatedAt;
 
-    @Column(nullable = false, length = 100)
-    @LastModifiedBy
-    private String updatedBy;
+//    @Column(nullable = false, length = 100)
+//    @LastModifiedBy
+//    private String updatedBy;
 
     @Column
     private LocalDateTime deletedAt;
