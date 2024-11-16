@@ -8,7 +8,6 @@ import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.repository.CategoryRepository;
-import org.sparta.foodordermanagementservice.security.UserDetailsImpl;
 import org.sparta.foodordermanagementservice.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,10 +52,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = Category.builder()
                 .name(registrationRequestDTO.getName())
-                .createdAt(LocalDateTime.now())
-                .createdBy(user.getUsername())
-                .updatedAt(LocalDateTime.now())
-                .updatedBy(user.getUsername())
                 .build();
 
         return categoryRepository.save(category);
@@ -70,8 +65,6 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryUpdateRequestDTO.getName() != null && !categoryUpdateRequestDTO.getName().equals(category.getName())) {
             checkDuplicateCategoryName(categoryUpdateRequestDTO.getName());
             category.setName(categoryUpdateRequestDTO.getName());
-            category.setUpdatedAt(LocalDateTime.now());
-            category.setUpdatedBy(user.getUsername());
         }
 
         return categoryRepository.save(category);

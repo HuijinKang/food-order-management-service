@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.sparta.foodordermanagementservice.dto.request.SearchRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.StoreRegistrationRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.StoreUpdateRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.StoreUpdateResponseDTO;
@@ -20,7 +21,6 @@ import org.sparta.foodordermanagementservice.repository.CategoryRepository;
 import org.sparta.foodordermanagementservice.repository.StoreRepository;
 import org.springframework.data.domain.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,8 +58,6 @@ public class StoreServiceImplTest {
                 .region("서울")
                 .categories(new HashSet<>(Collections.singletonList(category)))
                 .user(user)
-                .createdAt(LocalDateTime.now())
-                .createdBy(user.getUsername())
                 .build();
     }
 
@@ -197,10 +195,17 @@ public class StoreServiceImplTest {
         String sortBy = "createdAt";
         boolean isAsc = true;
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize,
-                Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
+        // SearchRequestDto 생성
+        SearchRequestDto searchRequestDto = new SearchRequestDto(null, keyword, pageSize, pageNumber, sortBy, isAsc);
+
+        Sort sort = Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
         // 카테고리에 해당하는 가게 생성
+        Category category = new Category();
+        category.setId(UUID.randomUUID());
+        category.setName("식당");
+
         Store store1 = Store.builder()
                 .id(UUID.randomUUID())
                 .name("가게1")
@@ -227,7 +232,7 @@ public class StoreServiceImplTest {
                 .name("가게3")
                 .latitude(37.5600)
                 .longitude(126.9750)
-                .categories(new HashSet<>(List.of(otherCategory))) // "카페" 카테고리
+                .categories(new HashSet<>(Collections.singletonList(otherCategory))) // "카페" 카테고리
                 .build();
 
         // 키워드에 매칭되는 가게들만 포함하도록 수정
@@ -237,7 +242,7 @@ public class StoreServiceImplTest {
         when(storeRepository.searchStores(keyword, pageRequest)).thenReturn(page);
 
         // when
-        Page<Store> resultPage = storeService.getSearchStoreList(keyword, latitude, longitude, pageSize, pageNumber, sortBy, isAsc);
+        Page<Store> resultPage = storeService.getSearchStoreList(latitude, longitude, searchRequestDto);
 
         // then
         assertNotNull(resultPage);
@@ -263,7 +268,11 @@ public class StoreServiceImplTest {
         String sortBy = "createdAt";
         boolean isAsc = true;
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
+        // SearchRequestDto 생성
+        SearchRequestDto searchRequestDto = new SearchRequestDto(null, keyword, pageSize, pageNumber, sortBy, isAsc);
+
+        Sort sort = Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
         // 검색하고자 하는 가게 생성
         Store store1 = Store.builder()
@@ -288,7 +297,7 @@ public class StoreServiceImplTest {
         when(storeRepository.searchStores(keyword, pageRequest)).thenReturn(page);
 
         // when
-        Page<Store> resultPage = storeService.getSearchStoreList(keyword, latitude, longitude, pageSize, pageNumber, sortBy, isAsc);
+        Page<Store> resultPage = storeService.getSearchStoreList(latitude, longitude, searchRequestDto);
 
         // then
         assertNotNull(resultPage);
@@ -306,10 +315,19 @@ public class StoreServiceImplTest {
     void testGetSearchStoreList_InvalidKeyword() {
         // given
         String keyword = "   ";
+        double latitude = 0;
+        double longitude = 0;
+        int pageSize = 10;
+        int pageNumber = 0;
+        String sortBy = "createdAt";
+        boolean isAsc = true;
+
+        // SearchRequestDto 생성
+        SearchRequestDto searchRequestDto = new SearchRequestDto(null, keyword, pageSize, pageNumber, sortBy, isAsc);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            storeService.getSearchStoreList(keyword, 0, 0, 10, 0, "createdAt", true);
+            storeService.getSearchStoreList(latitude, longitude, searchRequestDto);
         });
         assertEquals("Keyword cannot be null or empty.", exception.getMessage());
     }
