@@ -34,7 +34,7 @@ public class StoreController {
     @GetMapping("/search")
     public ApiResponse<Page<Store>> searchStore(@RequestParam double latitude,
                                                 @RequestParam double longitude,
-                                                @RequestBody SearchRequestDto searchRequestDto) {
+                                                @ModelAttribute SearchRequestDto searchRequestDto) {
         return ApiResponse.ofSuccess(storeService.getSearchStoreList(latitude, longitude, searchRequestDto));
     }
 
