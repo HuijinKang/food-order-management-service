@@ -12,7 +12,7 @@ import java.util.UUID;
 @Value
 @Builder
 @RequiredArgsConstructor
-public class GetPaymentRes {
+public class ResPayment {
 
     UUID orderId;
     String receipt;
@@ -25,9 +25,9 @@ public class GetPaymentRes {
     LocalDateTime deletedAt;
     String deletedBy;
 
-    public static GetPaymentRes from(PaymentDTO paymentDto) {
+    public static ResPayment from(PaymentDTO paymentDto) {
 
-        return GetPaymentRes.builder()
+        return ResPayment.builder()
                 .orderId(paymentDto.getOrderId())
                 .receipt(paymentDto.getReceipt())
                 .status(paymentDto.getStatus())

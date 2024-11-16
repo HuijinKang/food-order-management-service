@@ -17,7 +17,11 @@ public enum PaymentStatus implements BaseQueryStringEnum {
     CANCEL_WAIT("cancelWait"),
     CANCELED("canceled"),
     CANCEL_PG_API_ERROR("cancelPgApiError"),
-    PG_DENIED_CANCEL("pgDeniedCancel");
+    PG_DENIED_CANCEL("pgDeniedCancel"),
+
+    OWNER_SETTLEMENT_WAIT("ownerSettlementWait"),
+    OWNER_SETTLED("ownerSettled"),
+    PG_DENIED_OWNER_SETTLEMENT("pgDeniedOwnerSettlement");
 
 
     private final String queryString;

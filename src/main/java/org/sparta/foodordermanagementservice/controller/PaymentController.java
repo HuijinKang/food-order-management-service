@@ -1,16 +1,27 @@
 package org.sparta.foodordermanagementservice.controller;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
+import org.sparta.foodordermanagementservice.common.PageSizeRule;
+import org.sparta.foodordermanagementservice.common.exeption.CustomException;
+import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
+import org.sparta.foodordermanagementservice.dto.PaginatePaymentsDTO;
 import org.sparta.foodordermanagementservice.dto.ReqPatchPayment;
 import org.sparta.foodordermanagementservice.dto.UpdatePaymentDTO;
 import org.sparta.foodordermanagementservice.dto.request.ReqPostPayment;
-import org.sparta.foodordermanagementservice.dto.response.GetPaymentRes;
+import org.sparta.foodordermanagementservice.dto.request.SortedBy;
+import org.sparta.foodordermanagementservice.dto.response.ResPayment;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.service.PaymentService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,13 +36,51 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @GetMapping("/{id}")
-    @Secured({UserRole.Authority.CUSTOMER, UserRole.Authority.MASTER})
-    public ApiResponse<GetPaymentRes> readPayment(@PathVariable UUID id) {
+    public ApiResponse<ResPayment> readPayment(@PathVariable UUID id,
+                                               @AuthenticationPrincipal UserDetails userDetails) {
 
-        GetPaymentRes getPaymentRes
-                = paymentService.readPayment(id);
+        ResPayment resPayment
+                = paymentService.readPayment(id, userDetails);
 
-        return ApiResponse.ofSuccess(getPaymentRes);
+        return ApiResponse.ofSuccess(resPayment);
+    }
+
+    @GetMapping
+    public ApiResponse<Page<ResPayment>> paginatePayments
+            (
+                    @RequestParam @NotBlank String username,
+                    @RequestParam @Min(1) int pageSize,
+                    @RequestParam @Min(0) int pageNumber,
+                    @RequestParam SortedBy sortedBy,
+                    @RequestParam boolean isAsc,
+                    @RequestParam Boolean includingDeleted,
+                    @AuthenticationPrincipal UserDetails userDetails
+            ) {
+
+        if (!paymentService.authorizeToRead(userDetails, username, includingDeleted != null ? includingDeleted : false)) {
+
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        PaginatePaymentsDTO dto
+                = PaginatePaymentsDTO.builder()
+                .username(username)
+                .pageSize(PageSizeRule.validate(pageSize)
+                        ? pageSize
+                        : PageSizeRule.DEFAULT_PAGE_SIZE)
+                .pageNumber(pageNumber)
+                .sortedBy(sortedBy)
+                .isAsc(isAsc)
+                .includingDeleted(includingDeleted == null
+                        ? false
+                        : includingDeleted)
+                .pageRequest(PageRequest.of(pageNumber, pageSize))
+                .build();
+
+        Page<ResPayment> pagedPayments
+                = paymentService.paginatePayments(dto);
+
+        return ApiResponse.ofSuccess(pagedPayments);
     }
 
     @PostMapping

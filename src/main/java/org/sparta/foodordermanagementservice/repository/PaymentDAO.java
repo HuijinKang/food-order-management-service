@@ -4,12 +4,15 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.PaginatePaymentsDTO;
 import org.sparta.foodordermanagementservice.dto.UpdatePaymentDTO;
 import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.QPayment;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderSpec;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -18,7 +21,7 @@ public class PaymentDAO {
 
     private final PaymentJpaRepository jpaRepo;
     private final JPAQueryFactory queryFactory;
-    private final QPayment qPayment = QPayment.payment;
+    private final QPayment payment = QPayment.payment;
 
     public Payment readPayment(UUID paymentId) {
 
@@ -52,5 +55,36 @@ public class PaymentDAO {
         target.setReceipt(dto.getReceipt());
 
         jpaRepo.save(target);
+    }
+
+    public List<Payment> readCurrentPage(PaginatePaymentsDTO dto) {
+
+        return queryFactory
+                .selectFrom(payment)
+                .where(
+                        payment.user.username.eq(dto.getUsername()),
+                        dto.isIncludingDeleted()
+                                ? null
+                                : payment.deletedAt.isNull()
+                )
+                .orderBy(OrderSpec.of(dto.getSortedBy(), dto.isAsc()))
+                .offset(dto.getPageSize() * dto.getPageNumber())
+                .limit(dto.getPageSize())
+                .fetch();
+    }
+
+    public long countTotal(String username, boolean includingDeleted) {
+
+        return queryFactory
+                .selectFrom(payment)
+                .where(
+                        payment.user.username.eq(username),
+                        includingDeleted
+                                ? null
+                                : payment.deletedAt.isNull()
+                )
+                .fetch()
+                .size();
+
     }
 }

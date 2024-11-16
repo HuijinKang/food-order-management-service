@@ -16,6 +16,8 @@ public class PaymentDTO {
     private final UUID id;
     private final UUID orderId;
     private final long userId;
+    private final String username;
+    @Setter
     private String receipt;
     @Setter
     private PaymentStatus status;
@@ -37,6 +39,7 @@ public class PaymentDTO {
                 .id(payment.getId())
                 .orderId(payment.getOrder().getId())
                 .userId(payment.getUser().getId())
+                .username(payment.getUser().getUsername())
                 .receipt(payment.getReceipt())
                 .status(payment.getStatus())
                 .payedPrice(payment.getPayedPrice())
@@ -53,6 +56,7 @@ public class PaymentDTO {
     public PaymentDTO(UUID id,
                       UUID orderId,
                       long userId,
+                      String username,
                       String receipt,
                       PaymentStatus status,
                       int payedPrice,
@@ -66,6 +70,7 @@ public class PaymentDTO {
         this.id = id;
         this.orderId = orderId;
         this.userId = userId;
+        this.username = username;
         this.receipt = receipt;
         this.status = status;
         this.payedPrice = payedPrice;

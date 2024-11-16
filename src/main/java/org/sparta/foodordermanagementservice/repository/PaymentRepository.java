@@ -2,6 +2,8 @@ package org.sparta.foodordermanagementservice.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
+import org.sparta.foodordermanagementservice.dto.PaginatePaymentsDTO;
+import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.dto.UpdatePaymentDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.Payment;
@@ -9,6 +11,7 @@ import org.sparta.foodordermanagementservice.entity.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -50,5 +53,19 @@ public class PaymentRepository {
     public void updatePayment(UUID id, UpdatePaymentDTO dto) {
 
         paymentDAO.update(id, dto);
+    }
+
+    public List<PaymentDTO> readCurrentPagePayments(PaginatePaymentsDTO dto) {
+
+        return paymentDAO.readCurrentPage(dto)
+                .stream()
+                .map(PaymentDTO::from)
+                .toList();
+    }
+
+    public long countTotalPayments(String username, boolean includingDeleted) {
+
+        return paymentDAO.countTotal(username, includingDeleted);
+
     }
 }
