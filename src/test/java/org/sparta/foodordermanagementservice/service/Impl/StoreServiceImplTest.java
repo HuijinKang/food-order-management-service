@@ -186,20 +186,53 @@ public class StoreServiceImplTest {
     }
 
     @Test
-    @DisplayName("가게 검색 - 성공")
-    void testGetSearchStoreList_Success() {
+    @DisplayName("가게 검색 - 성공 (카테고리명으로 검색)")
+    void testGetSearchStoreList_ByCategoryName() {
         // given
-        String keyword = "테스트";
-        double latitude = 37.5665;
-        double longitude = 126.9780;
+        String keyword = "식당"; // 카테고리명
+        double latitude = 37.5665;   // 서울시청 위도
+        double longitude = 126.9780; // 서울시청 경도
         int pageSize = 10;
         int pageNumber = 0;
         String sortBy = "createdAt";
         boolean isAsc = true;
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
-        List<Store> stores = Collections.singletonList(store);
-        Page<Store> page = new PageImpl<>(stores, pageRequest, stores.size());
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize,
+                Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
+
+        // 카테고리에 해당하는 가게 생성
+        Store store1 = Store.builder()
+                .id(UUID.randomUUID())
+                .name("가게1")
+                .latitude(37.5665)
+                .longitude(126.9780)
+                .categories(new HashSet<>(Collections.singletonList(category))) // "식당" 카테고리
+                .build();
+
+        Store store2 = Store.builder()
+                .id(UUID.randomUUID())
+                .name("가게2")
+                .latitude(37.5700)
+                .longitude(126.9820)
+                .categories(new HashSet<>(Collections.singletonList(category))) // "식당" 카테고리
+                .build();
+
+        // 다른 카테고리에 해당하는 가게 생성
+        Category otherCategory = new Category();
+        otherCategory.setId(UUID.randomUUID());
+        otherCategory.setName("카페");
+
+        Store store3 = Store.builder()
+                .id(UUID.randomUUID())
+                .name("가게3")
+                .latitude(37.5600)
+                .longitude(126.9750)
+                .categories(new HashSet<>(List.of(otherCategory))) // "카페" 카테고리
+                .build();
+
+        // 키워드에 매칭되는 가게들만 포함하도록 수정
+        List<Store> matchingStores = Arrays.asList(store1, store2);
+        Page<Store> page = new PageImpl<>(matchingStores, pageRequest, matchingStores.size());
 
         when(storeRepository.searchStores(keyword, pageRequest)).thenReturn(page);
 
@@ -208,7 +241,63 @@ public class StoreServiceImplTest {
 
         // then
         assertNotNull(resultPage);
+        // "식당" 카테고리에 해당하는 가게는 store1, store2
+        assertEquals(2, resultPage.getTotalElements());
+        List<Store> filteredStores = resultPage.getContent();
+        assertTrue(filteredStores.contains(store1));
+        assertTrue(filteredStores.contains(store2));
+        assertFalse(filteredStores.contains(store3));
+
+        verify(storeRepository, times(1)).searchStores(keyword, pageRequest);
+    }
+
+    @Test
+    @DisplayName("가게 검색 - 성공 (가게명으로 검색)")
+    void testGetSearchStoreList_ByStoreName() {
+        // given
+        String keyword = "특별한 가게";
+        double latitude = 37.5665;   // 서울시청 위도
+        double longitude = 126.9780; // 서울시청 경도
+        int pageSize = 10;
+        int pageNumber = 0;
+        String sortBy = "createdAt";
+        boolean isAsc = true;
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
+
+        // 검색하고자 하는 가게 생성
+        Store store1 = Store.builder()
+                .id(UUID.randomUUID())
+                .name("특별한 가게")
+                .latitude(37.5665)
+                .longitude(126.9780)
+                .build();
+
+        // 다른 이름의 가게 생성
+        Store store2 = Store.builder()
+                .id(UUID.randomUUID())
+                .name("일반 가게")
+                .latitude(37.5700)
+                .longitude(126.9820)
+                .build();
+
+        // 키워드에 매칭되는 가게만 포함하도록 수정
+        List<Store> matchingStores = Collections.singletonList(store1);
+        Page<Store> page = new PageImpl<>(matchingStores, pageRequest, matchingStores.size());
+
+        when(storeRepository.searchStores(keyword, pageRequest)).thenReturn(page);
+
+        // when
+        Page<Store> resultPage = storeService.getSearchStoreList(keyword, latitude, longitude, pageSize, pageNumber, sortBy, isAsc);
+
+        // then
+        assertNotNull(resultPage);
+        // 가게명에 "특별한 가게"가 포함된 가게는 store1
         assertEquals(1, resultPage.getTotalElements());
+        List<Store> filteredStores = resultPage.getContent();
+        assertTrue(filteredStores.contains(store1));
+        assertFalse(filteredStores.contains(store2));
+
         verify(storeRepository, times(1)).searchStores(keyword, pageRequest);
     }
 
