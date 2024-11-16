@@ -1,6 +1,8 @@
 package org.sparta.foodordermanagementservice.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.sparta.foodordermanagementservice.common.exeption.CustomException;
+import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
 import org.sparta.foodordermanagementservice.dto.PaginatePaymentsDTO;
 import org.sparta.foodordermanagementservice.dto.PaymentDTO;
@@ -19,7 +21,7 @@ import java.util.UUID;
 public class PaymentRepository {
 
     private final PaymentDAO paymentDAO;
-    //    private final UserDAO userDAO;
+    private final UserRepository userDAO;
     private final OrderDAO orderDAO;
 
     @Transactional(readOnly = true)
@@ -30,9 +32,10 @@ public class PaymentRepository {
 
     @Transactional
     public Payment createPayment(CreatePaymentDTO dto) {
-        //todo user완료되면 추후 수정
+
         User relatedUser
-                = new User(); //userRepo.findByUsername(username);
+                = userDAO.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
 
         Order relatedOrder
                 = orderDAO.readOrder(dto.getOrderId());

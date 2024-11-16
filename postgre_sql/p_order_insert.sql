@@ -1,4 +1,4 @@
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- uuid_generate_v4()
 
 -- do $$
@@ -19,7 +19,7 @@
 					store_id,
 					user_id,
 					status,
-					user_name
+					username
 					)
 		values(
 			uuid_generate_v4(),

@@ -1,6 +1,5 @@
 package org.sparta.foodordermanagementservice.common;
 
-import org.sparta.foodordermanagementservice.common.utils.PaymentStatusConverter;
 import org.sparta.foodordermanagementservice.common.utils.SortedByConverter;
 import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +13,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new SortedByConverter());
         registry.addConverter(new OrderListRequestCondition.Converter());
-        registry.addConverter(new PaymentStatusConverter());
     }
 
 }

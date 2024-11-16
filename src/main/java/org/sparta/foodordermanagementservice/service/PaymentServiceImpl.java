@@ -3,7 +3,6 @@ package org.sparta.foodordermanagementservice.service;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
-import org.sparta.foodordermanagementservice.common.utils.RoleUtils;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
 import org.sparta.foodordermanagementservice.dto.PaginatePaymentsDTO;
 import org.sparta.foodordermanagementservice.dto.PaymentDTO;
@@ -20,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+import static org.sparta.foodordermanagementservice.common.utils.RoleUtils.hasMasterRole;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -33,8 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentDTO foundPayment
                 = PaymentDTO.from(repository.readPayment(paymentId));
 
-        if (!authorizeToRead
-                (userDetails, foundPayment.getUsername(), false)) {
+        if (!authorizeToRead(userDetails, foundPayment.getUsername(), false)) {
 
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
@@ -44,11 +44,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     public boolean authorizeToRead(UserDetails userDetails, String paymentUserName, Boolean includingDeleted) {
 
-        boolean userAuthorized
+        boolean normalUserAuthorized
                 = paymentUserName.equals(userDetails.getUsername())
                 && (includingDeleted == null || !includingDeleted);
 
-        return userAuthorized || RoleUtils.hasMasterRole(userDetails);
+        return normalUserAuthorized || hasMasterRole(userDetails);
     }
 
     @Override
