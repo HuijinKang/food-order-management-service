@@ -59,9 +59,7 @@ public class OrderController {
                 .map(OrderListResObj::from)
                 .collect(Collectors.toList());
 
-        return ApiResponse.ofSuccess(
-                responseObjList
-        );
+        return ApiResponse.ofSuccess(responseObjList);
     }
 
 //    @GetMapping("/{id}")
@@ -81,8 +79,6 @@ public class OrderController {
 
         orderService.deleteOrder(id);
 
-        return ApiResponse.ofSuccess(
-                null
-        );
+        return ApiResponse.ofSuccess(null);
     }
 }
