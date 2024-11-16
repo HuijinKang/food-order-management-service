@@ -2,19 +2,20 @@ package org.sparta.foodordermanagementservice.repository;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.entity.QCategory;
 import org.sparta.foodordermanagementservice.entity.QStore;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 @RequiredArgsConstructor
 public class StoreCustomRepositoryImpl implements StoreCustomRepository {
 
