@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @Table(name = "p_payment")
-public class Payment {
+public class Payment extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
