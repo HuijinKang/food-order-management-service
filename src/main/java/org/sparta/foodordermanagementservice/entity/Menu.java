@@ -3,6 +3,7 @@ package org.sparta.foodordermanagementservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +24,7 @@ public class Menu extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private MenuStatus status = MenuStatus.ACTIVE;
 
     @Column(nullable = false, length = 100)
@@ -36,6 +38,12 @@ public class Menu extends BaseEntity {
 
     @Column(nullable = true, columnDefinition = "TEXT")
     private String menuImageUrl;
+
+    @Column
+    private LocalDateTime deletedAt;
+
+    @Column(length = 255)
+    private String deletedBy;
 
     public void updateName(String name) {
         this.name = name;
@@ -51,6 +59,14 @@ public class Menu extends BaseEntity {
 
     public void updateStatus(MenuStatus status) {
         this.status = status;
+    }
+
+    public void updateDeletedAt() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void updateDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
     }
 
     public void updateMenuImageUrl(String menuImageUrl) {
