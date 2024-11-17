@@ -23,9 +23,23 @@ public class RoleUtils {
         return userDetails.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.CUSTOMER));
     }
-//todo order쪽 브랜치 작성 내용 복붙해와 수정
+
     public static boolean hasOwnerRole(UserDetails userDetails) {
         return userDetails.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.OWNER));
+    }
+
+    public static boolean hasUserRoleIn(UserDetails userDetails, UserRole... userRoles) {
+
+        for (UserRole userRole : userRoles) {
+
+            if (userDetails.getAuthorities().stream()
+                    .anyMatch(grantedAuthority ->
+                            grantedAuthority.getAuthority().equals(userRole.getAuthority()))
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 }

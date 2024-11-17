@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.sparta.foodordermanagementservice.entity.Order;
-import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 
@@ -22,6 +21,7 @@ public class OrderDTO {
     private UUID id;
     private String username;
     private UUID storeId;
+    private String storeName;
     private OrderStatus status;
     private OrderType type;
     private String address;
@@ -43,6 +43,7 @@ public class OrderDTO {
                 .id(order.getId())
                 .username(order.getUser().getUsername())
                 .storeId(order.getId())
+                .storeName(order.getStore().getName())
                 .status(order.getStatus())
                 .type(order.getType())
                 .address(order.getAddress())
@@ -61,6 +62,7 @@ public class OrderDTO {
     public OrderDTO(UUID id,
                     String username,
                     UUID storeId,
+                    String storeName,
                     OrderStatus status,
                     OrderType type,
                     String address,
@@ -75,6 +77,7 @@ public class OrderDTO {
         this.id = id;
         this.username = username;
         this.storeId = storeId;
+        this.storeName = storeName;
         this.status = status;
         this.type = type;
         this.address = address;

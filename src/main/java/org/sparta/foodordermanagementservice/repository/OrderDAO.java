@@ -85,7 +85,7 @@ public class OrderDAO {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
 
         order.setDeletedAt(LocalDateTime.now());
-        order.setDeletedBy("system");//todo auth에서 로그인아이디 받아오도록 수정
+        order.setDeletedBy(deleterName);
 
         jpaRepo.save(order);
     }
