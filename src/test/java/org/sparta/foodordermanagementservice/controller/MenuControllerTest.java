@@ -305,6 +305,7 @@ class MenuControllerTest {
                                 fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
                                 fieldWithPath("data.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지의 요소 수"),
                                 fieldWithPath("data.empty").type(JsonFieldType.BOOLEAN).description("페이지가 비어 있는지 여부"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).optional().description("결과 데이터"),
                                 fieldWithPath("code").type(JsonFieldType.STRING).description("결과 코드"),
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메시지")
                         )
