@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_ai_api_log")
-public class AiApiLog {
+public class AiApiLog extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,22 +24,10 @@ public class AiApiLog {
     private User user;
 
     @Column(nullable = false, length = 500)
-    private String request;
-
-    @Column(nullable = false, length = 500)
-    private String response;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private String question;
 
     @Column(nullable = false, length = 100)
-    private String createdBy;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(nullable = false, length = 100)
-    private String updatedBy;
+    private String answer;
 
     @Column
     private LocalDateTime deletedAt;

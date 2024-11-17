@@ -1,9 +1,12 @@
 package org.sparta.foodordermanagementservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -12,34 +15,45 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "p_store")
-public class Store {
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class Store extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false, length = 100)
     private String region;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
+    private double latitude;
+
+    @Column(nullable = false)
+    private double longitude;
+
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @ManyToMany
+    @JoinTable(
+            name = "store_category",
+            joinColumns = @JoinColumn(name = "store_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories;
 
-    @Column(nullable = false, length = 100)
-    private String createdBy;
+    @Column
+    private int totalRating;
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(nullable = false, length = 100)
-    private String updatedBy;
+    @Column
+    private int reviewCount;
 
     @Column
     private LocalDateTime deletedAt;

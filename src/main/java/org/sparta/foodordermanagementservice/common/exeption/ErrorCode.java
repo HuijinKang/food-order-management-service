@@ -16,6 +16,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C004", "Internal Server Error"),
     ENTITY_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C005", "db 저장 실패"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "C011", "잘못된 요청입니다. (%s)"),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "C012", "접근 권한이 없습니다"),
 
     /* 회원가입 */
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "S001", "중복된 아이디입니다."),
@@ -33,7 +34,24 @@ public enum ErrorCode {
     /* 주문 */
     MENU_DELETED(HttpStatus.CONFLICT, "O001", "메뉴 정보 변경: 삭제된 메뉴입니다."),
     MENU_PRICE_CHANGED(HttpStatus.CONFLICT, "O002", "메뉴 정보 변경: 가격이 변경되었습니다."),
-    MENU_NOT_FOUND(HttpStatus.CONFLICT, "O003", "없는 메뉴입니다");
+    MENU_NOT_FOUND(HttpStatus.CONFLICT, "O003", "없는 메뉴입니다"),
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "U001", "사용자가 존재하지 않습니다."),
+    CANNOT_DELETE_MASTER_USER(HttpStatus.FORBIDDEN, "U002", "마스터 사용자는 삭제할 수 없습니다."),
+    DELETED_USER(HttpStatus.FORBIDDEN, "U003", "탈퇴한 사용자입니다."),
+
+     /* 메뉴 */
+    MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "해당 메뉴를 찾을 수 없습니다."),
+    MENU_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "M002", "메뉴 수정에 실패했습니다."),
+    MENU_DELETE_FAILED(HttpStatus.FORBIDDEN, "M003", "이미 삭제된 메뉴입니다."),
+
+    // 이미지 관련 오류 추가
+    INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "I001", "허용되지 않는 파일 타입입니다."),
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "I002", "이미지 업로드에 실패했습니다."),
+    FILE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "I003", "이미지 삭제에 실패했습니다."),
+
+    // 리뷰 관련 에러 코드
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "해당 리뷰를 찾을 수 없습니다."),
+    REVIEW_PERMISSION_DENIED(HttpStatus.FORBIDDEN, "R002", "본인이 작성한 리뷰만 수정/삭제할 수 있습니다.");
 
 
     private final HttpStatus status;

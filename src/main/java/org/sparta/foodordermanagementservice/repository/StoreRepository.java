@@ -6,9 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-
 @Repository
-public interface StoreRepository extends JpaRepository<Store, UUID>{//, StoreCustomRepository {
+public interface StoreRepository extends JpaRepository<Store, UUID>, StoreCustomRepository {
     // 가게 이름 중복 체크
     boolean existsByName(String name);
 }

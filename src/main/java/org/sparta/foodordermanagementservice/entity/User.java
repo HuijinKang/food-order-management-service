@@ -7,12 +7,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +25,7 @@ import java.time.LocalDateTime;
 @Table(name = "p_user", indexes = {
         @Index(name = "users_idx_username", columnList = "username")
 })
-public class User extends Timestamped {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +34,7 @@ public class User extends Timestamped {
     @Column(nullable = false, unique = true, length = 100)
     private String username;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -40,7 +45,7 @@ public class User extends Timestamped {
     @Column(nullable = false, unique = true, length = 100)
     private String nickname;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @JdbcType(PostgreSQLEnumJdbcType.class)
@@ -55,17 +60,17 @@ public class User extends Timestamped {
 //    @CreatedDate
 //    private LocalDateTime createdAt;
 
-    @Column(nullable = false, length = 100, updatable = false)
-    @CreatedBy
-    private String createdBy;
+//    @Column(nullable = false, length = 100, updatable = false)
+//    @CreatedBy
+//    private String createdBy;
 
 //    @Column(nullable = false)
 //    @LastModifiedDate
 //    private LocalDateTime updatedAt;
 
-    @Column(nullable = false, length = 100)
-    @LastModifiedBy
-    private String updatedBy;
+//    @Column(nullable = false, length = 100)
+//    @LastModifiedBy
+//    private String updatedBy;
 
     @Column
     private LocalDateTime deletedAt;

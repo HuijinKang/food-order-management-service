@@ -1,6 +1,7 @@
 package org.sparta.foodordermanagementservice.repository;
 
 import org.junit.jupiter.api.Test;
+import org.sparta.foodordermanagementservice.common.QueryDSLConfig;
 import org.sparta.foodordermanagementservice.config.TestConfig;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.entity.UserRole;
@@ -15,7 +16,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(TestConfig.class)
+@Import({TestConfig.class, QueryDSLConfig.class})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 
 class UserRepositoryTest {
@@ -32,8 +33,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -61,8 +62,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -90,8 +91,8 @@ class UserRepositoryTest {
                 .isPublic(true)
                 .status(UserStatus.LEAVE)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -110,8 +111,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -130,8 +131,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
@@ -149,8 +150,8 @@ class UserRepositoryTest {
                 .nickname("testNickname")
                 .isPublic(true)
                 .userRole(UserRole.CUSTOMER)
-                .createdBy("testUser")
-                .updatedBy("testUser")
+//                .createdBy("testUser")
+//                .updatedBy("testUser")
                 .build();
 
         userRepository.save(testUser);
