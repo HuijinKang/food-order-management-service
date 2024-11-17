@@ -65,7 +65,10 @@ dependencies {
 }
 
 openapi3 {
-    server = 'http://localhost:8080'
+    servers = [
+            { url = "http://localhost:8080" },
+            { url = "http://43.202.67.79" }
+    ]
     title = 'Food Order Management Service API'
     description = 'Food Order Management Service API description'
     version = '1.0.0'
