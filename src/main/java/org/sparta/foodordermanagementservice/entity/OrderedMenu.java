@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_ordered_menu")
-public class OrderedMenu extends Timestamped{
+public class OrderedMenu extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

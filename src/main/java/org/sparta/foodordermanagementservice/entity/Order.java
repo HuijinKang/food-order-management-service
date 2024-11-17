@@ -21,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @AllArgsConstructor
 @Table(name = "p_order")
-public class Order extends Timestamped{
+public class Order extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -10,6 +10,7 @@ import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.QOrder;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderSpec;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -92,5 +93,16 @@ public class OrderDAO {
     public Order createOrder(Order order) {
 
         return jpaRepo.save(order);
+    }
+
+    public void updateStatus(UUID orderId, OrderStatus orderStatus) {
+
+        jpaRepo.findById(orderId).ifPresentOrElse(order -> {
+                    order.setStatus(orderStatus);
+                    jpaRepo.save(order);
+                }
+                , () -> {
+                    throw new CustomException(ErrorCode.ORDER_NOT_FOUND);
+                });
     }
 }

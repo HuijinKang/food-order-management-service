@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
-import org.sparta.foodordermanagementservice.dto.CreateOrderDto;
-import org.sparta.foodordermanagementservice.dto.OrderDTO;
-import org.sparta.foodordermanagementservice.dto.OrderedMenuInfo;
-import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
+import org.sparta.foodordermanagementservice.dto.*;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.OrderedMenu;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
@@ -105,4 +102,10 @@ public class OrderRepository {
 
         return createdOrder.getId();
     }
+
+    public void updateOrderStatus(UUID orderId, UpdateOrderStatusDto dto) {
+
+        orderDao.updateStatus(orderId, dto.getOrderStatus());
+    }
+
 }

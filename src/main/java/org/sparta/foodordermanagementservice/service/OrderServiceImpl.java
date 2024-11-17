@@ -9,6 +9,7 @@ import org.sparta.foodordermanagementservice.dto.response.ResOrderedMenu;
 import org.sparta.foodordermanagementservice.dto.response.ResPagedOrderObj;
 import org.sparta.foodordermanagementservice.dto.response.ResReadOrderDetail;
 import org.sparta.foodordermanagementservice.entity.Menu;
+import org.sparta.foodordermanagementservice.entity.MenuStatus;
 import org.sparta.foodordermanagementservice.entity.UserRole;
 import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
 import org.sparta.foodordermanagementservice.repository.MenuRepository;
@@ -90,7 +91,8 @@ public class OrderServiceImpl implements OrderService {
                         .toList());
         currentMenuPriceMap
                 = orderedMenuList.stream()
-                .filter(menu -> menu.getDeletedAt() == null)
+                .filter(menu -> /*todo 강현님 삭제정보 추가시 주석 해제*/ //menu.getDeletedAt() == null ||
+                        menu.getStatus() != MenuStatus.ACTIVE)
                 .collect(Collectors.toMap(Menu::getId, Menu::getPrice));
 
         dto.getOrderedMenuInfos().forEach(menuInfo ->
@@ -145,6 +147,12 @@ public class OrderServiceImpl implements OrderService {
                 : null;
 
         return ResReadOrderDetail.from(order, menuList, payment);
+    }
+
+    @Override
+    public void updateOrder(UUID orderId, UpdateOrderStatusDto dto) {
+
+            orderRepo.updateOrderStatus(orderId, dto);
     }
 
     protected void eraseNotAllowedInfo(OrderDTO target,
