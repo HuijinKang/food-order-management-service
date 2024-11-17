@@ -59,7 +59,7 @@ public class MenuCustomRepositoryImpl implements MenuCustomRepository {
         switch (property.toLowerCase()) {
             case "price":
                 return ascending ? menu.price.asc() : menu.price.desc();
-            case "createdat":
+            case "createdAt":
                 return ascending ? menu.createdAt.asc() : menu.createdAt.desc();
             default:
                 return menu.createdAt.desc();

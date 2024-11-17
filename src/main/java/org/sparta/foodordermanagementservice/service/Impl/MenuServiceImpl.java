@@ -96,6 +96,9 @@ public class MenuServiceImpl implements MenuService {
         }
 
         menu.updateStatus(MenuStatus.DISCONTINUED);
+        menu.updateDeletedAt();
+        menu.updateDeletedBy(username);
+
     }
 
     // 메뉴 단건 조회
