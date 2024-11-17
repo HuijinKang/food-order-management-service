@@ -20,7 +20,7 @@ public class ImageServiceImpl implements ImageService {
 
     private final AmazonS3 amazonS3;
 
-    @Value("${S3_BUCKETNAME}")
+    @Value("${s3.bucketname}")
     private String bucketName;
 
     public String uploadFile(MultipartFile file) {

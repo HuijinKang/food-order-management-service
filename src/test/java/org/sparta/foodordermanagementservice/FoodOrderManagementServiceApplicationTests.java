@@ -9,8 +9,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 class FoodOrderManagementServiceApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
-
 }
