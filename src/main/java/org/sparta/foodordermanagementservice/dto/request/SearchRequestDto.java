@@ -1,8 +1,10 @@
 package org.sparta.foodordermanagementservice.dto.request;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class SearchRequestDto {
 
     private String condition;
