@@ -1,6 +1,8 @@
 package org.sparta.foodordermanagementservice.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import java.util.UUID;
 
 @Builder
 @Value
+@Getter
 public class ResOrderedMenu {
 
     UUID menuId;
@@ -40,8 +43,20 @@ public class ResOrderedMenu {
                 .updatedBy(dto.getUpdatedBy())
                 .deletedAt(dto.getDeletedAt())
                 .deletedBy(dto.getDeletedBy())
-
                 .build();
     }
 
+    @JsonCreator
+    public ResOrderedMenu(UUID menuId, String menuName, int price, int amount, LocalDateTime createdAt, String createdBy, LocalDateTime updatedAt, String updatedBy, LocalDateTime deletedAt, String deletedBy) {
+        this.menuId = menuId;
+        this.menuName = menuName;
+        this.price = price;
+        this.amount = amount;
+        this.createdAt = createdAt;
+        this.createdBy = createdBy;
+        this.updatedAt = updatedAt;
+        this.updatedBy = updatedBy;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+    }
 }

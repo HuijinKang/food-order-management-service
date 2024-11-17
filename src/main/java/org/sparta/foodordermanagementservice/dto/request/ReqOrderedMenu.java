@@ -1,6 +1,7 @@
 package org.sparta.foodordermanagementservice.dto.request;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Builder;
 import lombok.ToString;
 import lombok.Value;
@@ -13,10 +14,18 @@ import java.util.UUID;
 
 
 @Value
-@Builder
 public class ReqOrderedMenu {
 
     UUID menuId;
     int amount;
+    int menuPrice;
+
+    @JsonCreator
+    @Builder
+    public ReqOrderedMenu(UUID menuId, int amount, int menuPrice) {
+        this.menuId = menuId;
+        this.amount = amount;
+        this.menuPrice = menuPrice;
+    }
 
 }

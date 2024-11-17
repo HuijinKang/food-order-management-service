@@ -34,26 +34,4 @@ public class PaginateOrdersDTO {
         this.sortedBy = sortedBy;
         this.isAsc = isAsc;
     }
-
-//    public static PaginateOrdersDTO from(ReqPaginateOrders.java req) {
-//
-//        UUID targetStoreId
-//                = req.getCondition() == PaginateOrdersReqCondition.STORE_ID
-//                ? UUID.fromString(req.getKey())
-//                : null;
-//
-//        String targetUserName
-//                = req.getCondition() == PaginateOrdersReqCondition.USER_NAME
-//                ? req.getKey()
-//                : null;
-//
-//        return PaginateOrdersDTO.builder()
-//                .storeId(targetStoreId)
-//                .username(targetUserName)
-//                .pageSize(req.getPageSize())
-//                .pageNumber(req.getPageNumber())
-//                .sortedBy(req.getSortedBy())
-//                .isAsc(req.isAsc())
-//                .build();
-//    }
 }

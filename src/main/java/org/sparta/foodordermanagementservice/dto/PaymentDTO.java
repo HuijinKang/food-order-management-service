@@ -1,7 +1,7 @@
 package org.sparta.foodordermanagementservice.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
@@ -11,8 +11,7 @@ import java.util.UUID;
 
 @Slf4j
 
-
-@AllArgsConstructor
+@Getter
 @Builder
 public class PaymentDTO {
 
@@ -31,6 +30,8 @@ public class PaymentDTO {
 
     public static PaymentDTO from (Payment payment) {
 
+        log.info(payment.toString());
+
         return PaymentDTO.builder()
                 .id(payment.getId())
                 .orderId(payment.getOrder().getId())
@@ -44,5 +45,30 @@ public class PaymentDTO {
                 .status(payment.getStatus())
                 .payedPrice(payment.getPayedPrice())
                 .build();
+    }
+
+
+    public PaymentDTO(UUID id,
+                      UUID orderId,
+                      String receipt,
+                      LocalDateTime createdAt,
+                      String createdBy,
+                      LocalDateTime updatedAt,
+                      String updatedBy,
+                      LocalDateTime deletedAt,
+                      String deletedBy,
+                      PaymentStatus status,
+                      int payedPrice) {
+        this.id = id;
+        this.orderId = orderId;
+        this.receipt = receipt;
+        this.createdAt = createdAt;
+        this.createdBy = createdBy;
+        this.updatedAt = updatedAt;
+        this.updatedBy = updatedBy;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.status = status;
+        this.payedPrice = payedPrice;
     }
 }

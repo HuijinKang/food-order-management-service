@@ -3,6 +3,8 @@ package org.sparta.foodordermanagementservice.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.Value;
 import org.sparta.foodordermanagementservice.common.utils.OrderTypeConverter;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
@@ -10,6 +12,10 @@ import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 import java.util.List;
 import java.util.UUID;
 
+@ToString
+
+
+@Getter
 @Value
 public class ReqCreateOrder {
 
@@ -21,7 +27,7 @@ public class ReqCreateOrder {
     OrderType orderType;
     int totalPrice;
 
-    static OrderTypeConverter orderTypeConverter = new OrderTypeConverter();
+    public final static OrderTypeConverter orderTypeConverter = new OrderTypeConverter();
 
     @JsonCreator
     @Builder

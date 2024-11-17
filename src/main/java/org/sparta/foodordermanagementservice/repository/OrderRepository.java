@@ -77,14 +77,14 @@ public class OrderRepository {
                 .address(dto.getAddress())
                 .comment(dto.getComment())
                 .totalPrice(dto.getTotalPrice())
-                .createdBy(dto.getUsername())
                 .build();
         createdOrder
                 = orderDao.createOrder(orderToCreate);
 
 
         Consumer<OrderedMenuInfo> createOrderedMenu
-                = menuInfo -> {
+                = menuInfo ->
+        {
             OrderedMenu orderedMenu
                     = OrderedMenu.builder()
                     .order(createdOrder)
@@ -96,6 +96,7 @@ public class OrderRepository {
 
             orderedMenuDao.create(orderedMenu);
         };
+
         dto.getOrderedMenuInfos().forEach(createOrderedMenu);
 
 

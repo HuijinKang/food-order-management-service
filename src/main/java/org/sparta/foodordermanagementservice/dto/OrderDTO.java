@@ -42,7 +42,7 @@ public class OrderDTO {
         return OrderDTO.builder()
                 .id(order.getId())
                 .username(order.getUser().getUsername())
-                .storeId(order.getId())
+                .storeId(order.getStore().getId())
                 .storeName(order.getStore().getName())
                 .status(order.getStatus())
                 .type(order.getType())

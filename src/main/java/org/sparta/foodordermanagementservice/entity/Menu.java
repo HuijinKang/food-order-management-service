@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.util.UUID;
 
+@ToString
+
+
 @Entity
 @Getter
 @Builder

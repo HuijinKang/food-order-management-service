@@ -13,7 +13,6 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 
 
-
 @ToString
 
 @Entity
@@ -21,7 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @AllArgsConstructor
 @Table(name = "p_order")
-public class Order extends BaseEntity{
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -78,15 +77,17 @@ public class Order extends BaseEntity{
     @Column
     private String deletedBy;
 
+
     @Builder
-    public Order(User user,
+    public Order(UUID id,
+                 User user,
                  Store store,
                  OrderStatus status,
                  OrderType type,
                  String address,
                  String comment,
-                 int totalPrice,
-                 String createdBy) {
+                 int totalPrice) {
+        this.id = id;
         this.user = user;
         this.store = store;
         this.status = status;

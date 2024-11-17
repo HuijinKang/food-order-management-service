@@ -12,12 +12,12 @@ public enum SortedBy {
     UPDATED_AT("updatedAt"),
     CREATED_AT("createdAt");
 
-    private final String requested;
+    private final String queryString;
 
 
     public static SortedBy of(String requested) {
         for (SortedBy sortedBy : values()) {
-            if (sortedBy.requested.equals(requested)) {
+            if (sortedBy.queryString.equals(requested)) {
                 return sortedBy;
             }
         }

@@ -92,14 +92,17 @@ public class OrderController {
         ResReadOrderDetail response
                 = orderService.readOrderDetail(id, userDetails);
 
+        log.info(response.toString());
         return ApiResponse.ofSuccess(response);
     }
 
     @PostMapping
     @Secured(UserRole.Authority.CUSTOMER)
     public ApiResponse<UUID> createOrder
-            (@RequestBody ReqCreateOrder request,
-             @AuthenticationPrincipal UserDetails userDetails) {
+            (
+                    @RequestBody ReqCreateOrder request,
+                    @AuthenticationPrincipal UserDetails userDetails
+            ) {
 
         UUID createdOrderId
                 = orderService.createOrder(CreateOrderDto.from(request, userDetails));

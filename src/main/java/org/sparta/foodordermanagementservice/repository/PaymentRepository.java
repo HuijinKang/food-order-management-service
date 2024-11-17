@@ -1,4 +1,4 @@
-package org.sparta.foodordermanagementservice.service;
+package org.sparta.foodordermanagementservice.repository;
 
 import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.entity.Payment;

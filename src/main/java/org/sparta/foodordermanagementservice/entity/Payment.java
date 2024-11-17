@@ -9,6 +9,8 @@ import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@ToString
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
@@ -64,7 +66,6 @@ public class Payment extends BaseEntity{
     private int payedPrice;
 
 
-    @Builder
     public Payment(Order order, User user, PaymentStatus status, int payedPrice, String receipt) {
         this.order = order;
         this.user = user;

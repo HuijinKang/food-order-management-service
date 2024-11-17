@@ -1,8 +1,10 @@
 package org.sparta.foodordermanagementservice.dto.response;
 
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 import org.sparta.foodordermanagementservice.dto.OrderDTO;
 import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
@@ -12,8 +14,11 @@ import java.util.List;
 import java.util.UUID;
 
 
-@AllArgsConstructor
+@ToString
+
+
 @Builder
+@Getter
 public class ResReadOrderDetail {
     private final UUID storeId;
     private final String storeName;
@@ -31,15 +36,29 @@ public class ResReadOrderDetail {
                                           PaymentDTO payment) {
 
         return ResReadOrderDetail.builder()
-                .storeId(orderDTO.getId())
+                .storeId(orderDTO.getStoreId())
                 .storeName(orderDTO.getStoreName())
                 .orderStatus(orderDTO.getStatus())
                 .orderType(orderDTO.getType())
                 .address(orderDTO.getAddress())
                 .totalPrice(orderDTO.getTotalPrice())
-                .<ResOrderedMenu>menuList(menuList)
+                .menuList(menuList)
                 .comment(orderDTO.getComment())
                 .payment(payment)
                 .build();
+    }
+
+    @JsonCreator
+
+    public ResReadOrderDetail(UUID storeId, String storeName, OrderStatus orderStatus, OrderType orderType, String address, int totalPrice, List<ResOrderedMenu> menuList, String comment, PaymentDTO payment) {
+        this.storeId = storeId;
+        this.storeName = storeName;
+        this.orderStatus = orderStatus;
+        this.orderType = orderType;
+        this.address = address;
+        this.totalPrice = totalPrice;
+        this.menuList = menuList;
+        this.comment = comment;
+        this.payment = payment;
     }
 }
