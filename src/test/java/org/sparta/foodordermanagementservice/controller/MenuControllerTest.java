@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -70,7 +71,7 @@ class MenuControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andDo(document("create-menu-success-without-file",
+                .andDo(document("create-menu-success",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         queryParameters(
@@ -87,6 +88,44 @@ class MenuControllerTest {
                 ));
 
     }
+
+
+    @Test
+    @DisplayName("메뉴 수정 성공")
+    @WithMockUser(username = "testUser", roles = {"OWNER", "MASTER"})
+    void updateMenuSuccessWithoutFile() throws Exception {
+        UUID menuId = UUID.randomUUID();
+        UUID storeId = UUID.randomUUID();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/menus/{menuId}", menuId)
+                        .queryParam("storeId", storeId.toString())
+                        .queryParam("name", "수정된 메뉴")
+                        .queryParam("price", "15000")
+                        .queryParam("description", "수정된 메뉴 설명")
+                        .queryParam("status", "ACTIVE")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("update-menu-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("storeId").description("가게 ID"),
+                                parameterWithName("name").description("수정된 메뉴 이름"),
+                                parameterWithName("price").description("수정된 메뉴 가격"),
+                                parameterWithName("description").description("수정된 메뉴 설명"),
+                                parameterWithName("status").description("수정된 메뉴 상태")
+                        ),
+                        responseFields(
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과 데이터").optional(),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메시지")
+                        )
+                ));
+    }
+
 
 
 
