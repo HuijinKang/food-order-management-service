@@ -2,21 +2,28 @@ package org.sparta.foodordermanagementservice.dto;
 
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.sparta.foodordermanagementservice.dto.request.ReqOrderedMenu;
+
+import java.util.UUID;
 
 
 @Builder
 @RequiredArgsConstructor
-public class CreateOrderedMenuDto {
+@Getter
+@Value
+public class OrderedMenuInfo {
 
-    private final Long menuId;
-    private final int amount;
+    UUID menuId;
+    int amount;
+    int menuPrice;
 
 
-    public static CreateOrderedMenuDto from(ReqOrderedMenu reqOrderedMenu) {
+    public static OrderedMenuInfo from(ReqOrderedMenu reqOrderedMenu) {
 
-        return CreateOrderedMenuDto.builder()
+        return OrderedMenuInfo.builder()
                 .menuId(reqOrderedMenu.getMenuId())
                 .amount(reqOrderedMenu.getAmount())
                 .build();

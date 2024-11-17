@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.service;
 
+import org.sparta.foodordermanagementservice.dto.CreateOrderDto;
 import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
 import org.sparta.foodordermanagementservice.dto.response.ResPagedOrderObj;
 import org.sparta.foodordermanagementservice.dto.response.ResReadOrderDetail;
@@ -16,5 +17,5 @@ public interface OrderService {
 
     ResReadOrderDetail readOrderDetail(UUID orderId,UserDetails userDetails);
 
-//    UUID createOrder(CreateOrderDto dto);
+    UUID createOrder(CreateOrderDto dto);
 }

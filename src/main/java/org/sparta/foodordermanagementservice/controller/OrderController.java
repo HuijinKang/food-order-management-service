@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.ApiResponse;
 import org.sparta.foodordermanagementservice.common.PageSizeRule;
+import org.sparta.foodordermanagementservice.dto.CreateOrderDto;
 import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
 import org.sparta.foodordermanagementservice.dto.request.PaginateOrdersReqCondition;
+import org.sparta.foodordermanagementservice.dto.request.ReqCreateOrder;
 import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 import org.sparta.foodordermanagementservice.dto.response.ResPagedOrderObj;
 import org.sparta.foodordermanagementservice.dto.response.ResReadOrderDetail;
@@ -85,16 +87,17 @@ public class OrderController {
         return ApiResponse.ofSuccess(response);
     }
 
-//    @PostMapping
-//    @Secured(UserRole.Authority.CUSTOMER)
-//    public ApiResponse<UUID> createOrder(ReqCreateOrder request) {
-//
-//        UUID createdId
-//                = orderService.createOrder(CreateOrderDto.from(request));
-//
-//        return ApiResponse.ofSuccess(createdId);
-//
-//    }
+    @PostMapping
+    @Secured(UserRole.Authority.CUSTOMER)
+    public ApiResponse<UUID> createOrder
+            (@RequestBody ReqCreateOrder request,
+             @AuthenticationPrincipal UserDetails userDetails) {
+
+        UUID createdOrderId
+                = orderService.createOrder(CreateOrderDto.from(request, userDetails));
+
+        return ApiResponse.ofSuccess(createdOrderId);
+    }
 
     @Secured(UserRole.Authority.MASTER)
     @DeleteMapping("/{id}")

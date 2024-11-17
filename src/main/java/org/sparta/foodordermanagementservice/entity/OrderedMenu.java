@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -12,9 +13,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_ordered_menu")
-public class OrderedMenu {
+public class OrderedMenu extends Timestamped{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
+    private UUID id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
@@ -26,8 +31,8 @@ public class OrderedMenu {
     @Column(nullable = false)
     private int amount;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+//    @Column(nullable = false)
+//    private LocalDateTime createdAt;
 
     @Column(nullable = false, length = 255)
     private String createdBy;

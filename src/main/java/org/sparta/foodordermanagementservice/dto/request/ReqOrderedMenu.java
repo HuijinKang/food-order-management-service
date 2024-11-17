@@ -6,6 +6,8 @@ import lombok.ToString;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.UUID;
+
 @ToString
 @Slf4j
 
@@ -14,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 public class ReqOrderedMenu {
 
-    Long menuId;
+    UUID menuId;
     int amount;
 
 }

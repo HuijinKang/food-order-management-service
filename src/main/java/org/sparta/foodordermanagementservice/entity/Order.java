@@ -21,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @AllArgsConstructor
 @Table(name = "p_order")
-public class Order {
+public class Order extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -58,14 +58,14 @@ public class Order {
     @Column(nullable = false)
     private final int totalPrice;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+//    @Column(nullable = false)
+//    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private String createdBy;
 
-    @Column
-    private LocalDateTime updatedAt;
+//    @Column
+//    private LocalDateTime updatedAt;
 
     @Column
     private String updatedBy;
@@ -85,7 +85,8 @@ public class Order {
                  OrderType type,
                  String address,
                  String comment,
-                 int totalPrice) {
+                 int totalPrice,
+                 String createdBy) {
         this.user = user;
         this.store = store;
         this.status = status;

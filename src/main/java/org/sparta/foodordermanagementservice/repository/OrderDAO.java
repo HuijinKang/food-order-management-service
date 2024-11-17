@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderDAO {
 
-    private final OrderJpaRepository orderJpaRepo;
+    private final OrderJpaRepository jpaRepo;
 
     private final QOrder order = QOrder.order;
     private final JPAQueryFactory queryFactory;
@@ -74,18 +74,23 @@ public class OrderDAO {
 
 
     public Order readOrder(UUID orderId) {
-        return orderJpaRepo.findById(orderId)
+        return jpaRepo.findById(orderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
     }
 
     public void softDeleteOrder(UUID orderId, String deleterName) {
 
-        Order order = orderJpaRepo.findById(orderId)
+        Order order = jpaRepo.findById(orderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
 
         order.setDeletedAt(LocalDateTime.now());
         order.setDeletedBy("system");//todo auth에서 로그인아이디 받아오도록 수정
 
-        orderJpaRepo.save(order);
+        jpaRepo.save(order);
+    }
+
+    public Order createOrder(Order order) {
+
+        return jpaRepo.save(order);
     }
 }

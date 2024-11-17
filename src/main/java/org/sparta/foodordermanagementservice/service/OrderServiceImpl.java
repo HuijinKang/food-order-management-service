@@ -2,13 +2,16 @@ package org.sparta.foodordermanagementservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sparta.foodordermanagementservice.dto.OrderDTO;
-import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
-import org.sparta.foodordermanagementservice.dto.PaymentDTO;
+import org.sparta.foodordermanagementservice.common.exeption.CustomException;
+import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.*;
 import org.sparta.foodordermanagementservice.dto.response.ResOrderedMenu;
 import org.sparta.foodordermanagementservice.dto.response.ResPagedOrderObj;
 import org.sparta.foodordermanagementservice.dto.response.ResReadOrderDetail;
+import org.sparta.foodordermanagementservice.entity.Menu;
 import org.sparta.foodordermanagementservice.entity.UserRole;
+import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
+import org.sparta.foodordermanagementservice.repository.MenuRepository;
 import org.sparta.foodordermanagementservice.repository.OrderRepository;
 import org.sparta.foodordermanagementservice.repository.OrderedMenuRepository;
 import org.springframework.data.domain.Page;
@@ -18,10 +21,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 
@@ -33,13 +39,13 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepo;
     private final OrderedMenuRepository orderedMenuRepo;
     private final PaymentRepository paymentRepo;
+    private final MenuRepository menuRepo;
 
 
     @Override
     public Page<ResPagedOrderObj> paginateOrders(PaginateOrdersDTO dto,
                                                  UserDetails userDetails) {
 
-        //todo 컨트롤러 부터 pageable작업해오기
         List<ResPagedOrderObj> pageContent
                 = orderRepo.readCurrentPageOrders(dto)
                 .stream()
@@ -71,28 +77,52 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-//    @Override
-//    public UUID createOrder(CreateOrderDto dto) {
-//
-//        //total price calculation
-//        double totalPrice = dto.getOrderedMenuList()
-//                .stream()
-//                .mapToDouble(orderedMenu -> orderedMenu.getMenu().getPrice() * orderedMenu.getQuantity())
-//                .sum();
-//
-//        //payment
-//        PaymentDTO payment = PaymentDTO.builder()
-//                .totalPrice(totalPrice)
-//                .build();
-//
-//        //create Order
-//        UUID createdId = orderRepo.createOrder(dto);
-//
-//
-//        //create orderedMenu
-//
-//        return createdId;
-//    }
+    @Override
+    @Transactional
+    public UUID createOrder(CreateOrderDto dto) {
+
+        Map<UUID, Integer> currentMenuPriceMap;
+        List<Menu> orderedMenuList
+                = menuRepo.findAllById(
+                dto.getOrderedMenuInfos()
+                        .stream()
+                        .map(OrderedMenuInfo::getMenuId)
+                        .toList());
+        currentMenuPriceMap
+                = orderedMenuList.stream()
+                .filter(menu -> menu.getDeletedAt() == null)
+                .collect(Collectors.toMap(Menu::getId, Menu::getPrice));
+
+        dto.getOrderedMenuInfos().forEach(menuInfo ->
+        {
+            if (!currentMenuPriceMap.containsKey(menuInfo.getMenuId())) {
+                throw new CustomException(ErrorCode.MENU_DELETED);
+
+            } else if (menuInfo.getMenuPrice() != currentMenuPriceMap.get(menuInfo.getMenuId())) {
+
+                throw new CustomException(ErrorCode.MENU_PRICE_CHANGED);
+            }
+        });
+
+        PaymentDTO orderPayment;
+        int totalPrice
+                = dto.getOrderedMenuInfos()
+                .stream()
+                .mapToInt(menuInfo ->
+                        menuInfo.getMenuPrice() * menuInfo.getAmount())
+                .sum();
+        orderPayment
+                = PaymentDTO.builder()
+                .payedPrice(totalPrice)
+                .status(PaymentStatus.PAY_WAIT)
+                .build();
+        paymentRepo.createPayment(orderPayment);
+
+        UUID createdOrderId
+                = orderRepo.createOrder(dto);
+
+        return createdOrderId;
+    }
 
     @Override
     public ResReadOrderDetail readOrderDetail(UUID orderId, UserDetails userDetails) {

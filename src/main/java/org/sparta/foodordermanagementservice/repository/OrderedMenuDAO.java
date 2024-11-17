@@ -12,9 +12,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderedMenuDAO {
 
-    private final OrderedMenuJpaRepository jpaRepository;
+    private final OrderedMenuJpaRepository jpaRepo;
 
     public List<OrderedMenu> readOrderedMenuList(UUID orderId) {
-        return jpaRepository.findAllById(orderId);
+        return jpaRepo.findAllById(orderId);
+    }
+
+    public OrderedMenu create(OrderedMenu orderedMenu) {
+        return jpaRepo.save(orderedMenu);
     }
 }

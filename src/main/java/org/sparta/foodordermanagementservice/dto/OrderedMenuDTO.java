@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OrderedMenuDTO {
 
-
+    private UUID orderId;
     private UUID menuId;
     private String menuName;
     private int price;
@@ -30,6 +30,7 @@ public class OrderedMenuDTO {
     public static OrderedMenuDTO from(OrderedMenu orderedMenu) {
 
         return OrderedMenuDTO.builder()
+                .orderId(orderedMenu.getOrder().getId())
                 .menuId(orderedMenu.getMenu().getId())
                 .menuName(orderedMenu.getMenu().getName())
                 .price(orderedMenu.getMenu().getPrice())
