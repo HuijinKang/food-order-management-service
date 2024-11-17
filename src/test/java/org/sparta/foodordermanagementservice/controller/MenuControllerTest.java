@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -232,6 +234,82 @@ class MenuControllerTest {
                                 fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메시지")
                         )
                 ));
+    }
+
+    @Test
+    @DisplayName("메뉴 검색 성공")
+    @WithMockUser(username = "testUser", roles = {"USER", "OWNER", "MASTER"})
+    void searchMenusSuccess() throws Exception {
+        String condition = "name";
+        String keyword = "테스트";
+        int pageSize = 10;
+        int pageNumber = 0;
+        String sortedBy = "price";
+        boolean isAsc = true;
+
+        MenuResponseDto menu1 = MenuResponseDto.builder()
+                .name("테스트 메뉴1")
+                .price(10000)
+                .description("테스트 메뉴1 설명")
+                .storeId(UUID.randomUUID())
+                .build();
+
+        MenuResponseDto menu2 = MenuResponseDto.builder()
+                .name("테스트 메뉴2")
+                .price(15000)
+                .description("테스트 메뉴2 설명")
+                .storeId(UUID.randomUUID())
+                .build();
+
+        Page<MenuResponseDto> responsePage = new PageImpl<>(List.of(menu1, menu2));
+
+        given(menuService.searchMenus(condition, keyword, pageSize, pageNumber, sortedBy, isAsc))
+                .willReturn(responsePage);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/menus/search")
+                        .queryParam("condition", condition)
+                        .queryParam("keyword", keyword)
+                        .queryParam("pageSize", String.valueOf(pageSize))
+                        .queryParam("pageNumber", String.valueOf(pageNumber))
+                        .queryParam("sortedBy", sortedBy)
+                        .queryParam("isAsc", String.valueOf(isAsc))
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("search-menus-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("condition").description("검색 조건 (예: name, description)"),
+                                parameterWithName("keyword").description("검색 키워드"),
+                                parameterWithName("pageSize").description("페이지 크기"),
+                                parameterWithName("pageNumber").description("페이지 번호"),
+                                parameterWithName("sortedBy").description("정렬 기준 (예: price, name)"),
+                                parameterWithName("isAsc").description("오름차순 여부 (true/false)")
+                        ),
+                        responseFields(
+                                fieldWithPath("data.content[].name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                fieldWithPath("data.content[].price").type(JsonFieldType.NUMBER).description("메뉴 가격"),
+                                fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("메뉴 설명"),
+                                fieldWithPath("data.content[].storeId").type(JsonFieldType.STRING).description("가게 ID"),
+                                fieldWithPath("data.pageable").type(JsonFieldType.STRING).description("페이지 정보 (Pageable)"),
+                                fieldWithPath("data.sort.empty").type(JsonFieldType.BOOLEAN).description("정렬 정보가 비어있는지 여부"),
+                                fieldWithPath("data.sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬되지 않았는지 여부"),
+                                fieldWithPath("data.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬되었는지 여부"),
+                                fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER).description("총 검색 결과 개수"),
+                                fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
+                                fieldWithPath("data.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                                fieldWithPath("data.number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
+                                fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+                                fieldWithPath("data.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지의 요소 수"),
+                                fieldWithPath("data.empty").type(JsonFieldType.BOOLEAN).description("페이지가 비어 있는지 여부"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메시지")
+                        )
+                ));
+
     }
 
 
