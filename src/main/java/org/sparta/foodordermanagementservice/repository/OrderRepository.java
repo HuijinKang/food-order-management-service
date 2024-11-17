@@ -92,7 +92,6 @@ public class OrderRepository {
                             .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND))
                     )
                     .amount(menuInfo.getAmount())
-                    .createdBy(dto.getUsername())
                     .build();
 
             orderedMenuDao.create(orderedMenu);

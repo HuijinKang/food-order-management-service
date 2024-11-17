@@ -34,14 +34,14 @@ public class OrderedMenu extends BaseEntity{
 //    @Column(nullable = false)
 //    private LocalDateTime createdAt;
 
-    @Column(nullable = false, length = 255)
-    private String createdBy;
-
-    @Column
-    private LocalDateTime updatedAt;
-
-    @Column(length = 255)
-    private String updatedBy;
+//    @Column(nullable = false, length = 255)
+//    private String createdBy;
+//
+//    @Column
+//    private LocalDateTime updatedAt;
+//
+//    @Column(length = 255)
+//    private String updatedBy;
 
     @Column
     private LocalDateTime deletedAt;

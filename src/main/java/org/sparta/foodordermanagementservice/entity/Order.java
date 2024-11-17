@@ -61,14 +61,14 @@ public class Order extends BaseEntity{
 //    @Column(nullable = false)
 //    private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private String createdBy;
+//    @Column(nullable = false)
+//    private String createdBy;
 
 //    @Column
 //    private LocalDateTime updatedAt;
 
-    @Column
-    private String updatedBy;
+//    @Column
+//    private String updatedBy;
 
     @Setter
     @Column
