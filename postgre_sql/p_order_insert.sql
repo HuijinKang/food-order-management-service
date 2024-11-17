@@ -1,9 +1,9 @@
 -- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- uuid_generate_v4()
 
-do $$
-begin
-	for i in 1..100 loop
+-- do $$
+-- begin
+-- 	for i in 1..100 loop
 		insert into p_order (
 					id, 
 					address, 
@@ -38,6 +38,6 @@ begin
 			'WAIT',
 			'nora'
 		);
-	end loop;
-end $$;
+-- 	end loop;
+-- end $$;
 

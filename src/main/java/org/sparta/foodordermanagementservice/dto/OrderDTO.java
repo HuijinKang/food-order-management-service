@@ -16,7 +16,7 @@ public class OrderDTO {
 
     private UUID id;
     private UserDTO userDTO;
-    private StoreDTO storeDTO;
+//    private StoreDTO storeDTO;
     private OrderStatus status;
     private OrderType type;
     private String address;
@@ -32,8 +32,8 @@ public class OrderDTO {
 
     @Builder //AllArgsConstructor
     public OrderDTO(UUID id,
-                    UserDTO userDTO,
-                    StoreDTO storeDTO,
+//                    UserDTO userDTO,
+//                    StoreDTO storeDTO,
                     OrderStatus status,
                     OrderType type,
                     String address,
@@ -46,8 +46,8 @@ public class OrderDTO {
                     LocalDateTime deletedAt,
                     String deletedBy) {
         this.id = id;
-        this.userDTO = userDTO;
-        this.storeDTO = storeDTO;
+//        this.userDTO = userDTO;
+//        this.storeDTO = storeDTO;
         this.status = status;
         this.type = type;
         this.address = address;
@@ -64,13 +64,13 @@ public class OrderDTO {
     public static OrderDTO from(Order order) {
         //todo 담당자와 연계해 user,
         // store 변환함수 builder 인자로 추가
-        UserDTO userDto = new UserDTO();
-        StoreDTO storeDto = new StoreDTO();
+//        UserDTO userDto = new UserDTO();
+//        StoreDTO storeDto = new StoreDTO();
 
         return OrderDTO.builder()
                 .id(order.getId())
-                .userDTO(userDto)
-                .storeDTO(storeDto)
+//                .userDTO(userDto)
+//                .storeDTO(storeDto)
                 .status(order.getStatus())
                 .type(order.getType())
                 .address(order.getAddress())
