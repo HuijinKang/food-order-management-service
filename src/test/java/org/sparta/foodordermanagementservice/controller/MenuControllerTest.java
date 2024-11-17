@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.sparta.foodordermanagementservice.dto.request.MenuRequestDto;
+import org.sparta.foodordermanagementservice.dto.response.MenuResponseDto;
 import org.sparta.foodordermanagementservice.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,8 +24,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -126,6 +129,110 @@ class MenuControllerTest {
                 ));
     }
 
+    @Test
+    @DisplayName("메뉴 삭제 성공")
+    @WithMockUser(username = "testUser", roles = {"OWNER", "MASTER"})
+    void deleteMenuSuccess() throws Exception {
+        UUID menuId = UUID.randomUUID();
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/menus/{menuId}", menuId)
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("delete-menu-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("data").type(JsonFieldType.OBJECT).description("결과 데이터").optional(),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메시지")
+                        )
+                ));
+    }
+
+
+    @Test
+    @DisplayName("메뉴 단건 조회 성공")
+    @WithMockUser(username = "testUser", roles = {"USER", "OWNER", "MASTER"})
+    void getMenuSuccess() throws Exception {
+        // Given
+        UUID menuId = UUID.randomUUID();
+
+        MenuResponseDto responseDto = MenuResponseDto.builder()
+                .name("테스트 메뉴")
+                .price(12000)
+                .description("테스트 메뉴 설명")
+                .storeId(UUID.randomUUID())
+                .build();
+
+        given(menuService.getMenu(menuId)).willReturn(responseDto);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/menus/{menuId}", menuId)
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("get-menu-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("data.name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                fieldWithPath("data.price").type(JsonFieldType.NUMBER).description("메뉴 가격"),
+                                fieldWithPath("data.description").type(JsonFieldType.STRING).description("메뉴 설명"),
+                                fieldWithPath("data.storeId").type(JsonFieldType.STRING).description("가게 ID"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메시지")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("메뉴 목록 조회 성공")
+    @WithMockUser(username = "testUser", roles = {"USER", "OWNER", "MASTER"})
+    void getMenusSuccess() throws Exception {
+        UUID storeId = UUID.randomUUID();
+
+        MenuResponseDto menu1 = MenuResponseDto.builder()
+                .name("메뉴1")
+                .price(10000)
+                .description("첫 번째 메뉴 설명")
+                .storeId(storeId)
+                .build();
+
+        MenuResponseDto menu2 = MenuResponseDto.builder()
+                .name("메뉴2")
+                .price(15000)
+                .description("두 번째 메뉴 설명")
+                .storeId(storeId)
+                .build();
+
+        List<MenuResponseDto> responseDtoList = List.of(menu1, menu2);
+
+        given(menuService.getMenus(storeId)).willReturn(responseDtoList);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/menus")
+                        .queryParam("storeId", storeId.toString())
+                        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("get-menus-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("storeId").description("가게 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("data[].name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                fieldWithPath("data[].price").type(JsonFieldType.NUMBER).description("메뉴 가격"),
+                                fieldWithPath("data[].description").type(JsonFieldType.STRING).description("메뉴 설명"),
+                                fieldWithPath("data[].storeId").type(JsonFieldType.STRING).description("가게 ID"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("결과 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("결과 메시지")
+                        )
+                ));
+    }
 
 
 
