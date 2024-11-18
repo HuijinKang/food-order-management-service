@@ -27,6 +27,10 @@ public class PaymentDTO {
     private LocalDateTime deletedAt;
     private String deletedBy;
 
+
+
+
+
     public static PaymentDTO from(Payment payment) {
 
         return PaymentDTO.builder()

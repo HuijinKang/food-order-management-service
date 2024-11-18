@@ -38,7 +38,7 @@ public class OrderController {
                     @RequestParam boolean isAsc
             ) {
 
-        if (!PageSizeRule.isPageSizeValid(pageSize))
+        if (!PageSizeRule.validate(pageSize))
             pageSize = PageSizeRule.DEFAULT_PAGE_SIZE;
 
         ReadOrderListDto dto

@@ -1,8 +1,8 @@
 
 
 -- init
--- ALTER TABLE p_payment
--- DISABLE TRIGGER ALL;
+ALTER TABLE p_order
+DISABLE TRIGGER ALL;
 
 
 -- close
