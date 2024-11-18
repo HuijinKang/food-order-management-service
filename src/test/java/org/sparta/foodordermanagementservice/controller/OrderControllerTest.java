@@ -105,8 +105,8 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.data.size").value(pageSize))
                 .andExpect(jsonPath("$.data.number").value(pageNumber))
                 .andExpect(jsonPath("$.data.content[0].storeId").value(testResObj.getStoreId()))
-                .andExpect(jsonPath("$.data.content[0].status").value(testResObj.getStatus().name()))
-                .andExpect(jsonPath("$.data.content[0].type").value(testResObj.getType().name()))
+                .andExpect(jsonPath("$.data.content[0].status").value(testResObj.getStatus().getQueryString()))
+                .andExpect(jsonPath("$.data.content[0].type").value(testResObj.getType().getQueryString()))
                 .andExpect(jsonPath("$.data.content[0].address").value(testResObj.getAddress()))
                 .andExpect(jsonPath("$.data.content[0].totalPrice").value(testResObj.getTotalPrice()))
 
