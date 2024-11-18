@@ -143,7 +143,7 @@ class OrderWithoutRepoTest {
                 .andExpect(jsonPath("$.data.content[0].totalPrice").value(result0.getTotalPrice()))
 
                 .andDo(print())
-                .andDo(document("order-paginateOrders",
+                .andDo(document("order-paginateOrders-controller&service",
                         queryParameters(
                                 parameterWithName("condition").description("조회 조건"),
                                 parameterWithName("key").description("조회 조건에 해당하는 값"),
