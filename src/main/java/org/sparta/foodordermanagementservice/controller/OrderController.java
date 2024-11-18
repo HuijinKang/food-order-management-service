@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/orders")
 public class OrderController {
 
-    private final OrderService orderService;
+//    private final OrderService orderService;
 
     @GetMapping
     public ApiResponse<List<OrderListResObj>> readOrderList

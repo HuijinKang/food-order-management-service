@@ -8,12 +8,11 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_menu")
-public class Menu {
+public class Menu extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,9 +22,10 @@ public class Menu {
     @JoinColumn(name = "store_id")
     private Store store;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private MenuStatus status = MenuStatus.ACTIVE;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private MenuStatus status = MenuStatus.ACTIVE;
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -33,24 +33,44 @@ public class Menu {
     @Column(nullable = false)
     private int price;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = true)
+    private String description;
+
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String menuImageUrl;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, length = 100)
-    private String createdBy;
-
-    @Column
-    private LocalDateTime updatedAt;
-
-    @Column(length = 100)
-    private String updatedBy;
 
     @Column
     private LocalDateTime deletedAt;
 
-    @Column(length = 100)
+    @Column(length = 255)
     private String deletedBy;
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updatePrice(int price) {
+        this.price = price;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updateStatus(MenuStatus status) {
+        this.status = status;
+    }
+
+    public void updateDeletedAt() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void updateDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
+
+    public void updateMenuImageUrl(String menuImageUrl) {
+        this.menuImageUrl = menuImageUrl;
+    }
+
 }
