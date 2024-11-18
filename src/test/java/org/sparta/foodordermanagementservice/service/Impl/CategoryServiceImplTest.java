@@ -1,183 +1,267 @@
 package org.sparta.foodordermanagementservice.service.Impl;
 
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.sparta.foodordermanagementservice.dto.request.CategoryRegistrationRequestDTO;
-import org.sparta.foodordermanagementservice.dto.request.CategoryUpdateRequestDTO;
-import org.sparta.foodordermanagementservice.entity.Category;
-import org.sparta.foodordermanagementservice.entity.User;
-import org.sparta.foodordermanagementservice.repository.CategoryRepository;
-import org.sparta.foodordermanagementservice.security.UserDetailsImpl;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+import java.time.LocalDateTime;
+import java.util.*;
+
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.sparta.foodordermanagementservice.dto.request.CategoryRegistrationRequestDTO;
+import org.sparta.foodordermanagementservice.dto.request.CategoryUpdateRequestDTO;
+import org.sparta.foodordermanagementservice.dto.response.CategoryStoreListDTO;
+import org.sparta.foodordermanagementservice.entity.*;
+import org.sparta.foodordermanagementservice.repository.CategoryRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.server.ResponseStatusException;
+
+@ExtendWith(MockitoExtension.class)
 public class CategoryServiceImplTest {
-
-    @Mock
-    private CategoryRepository categoryRepository;
-
-    @Mock
-    private UserDetailsImpl userDetails;
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
 
+    @Mock
+    private CategoryRepository categoryRepository;
+
     @Test
-    public void getCategoryById_Success() {
+    @DisplayName("getCategoryById - 성공")
+    public void testGetCategoryById_Success() {
         UUID categoryId = UUID.randomUUID();
-        Category category = Category.builder()
-                .id(categoryId)
-                .name("Sample Category")
-                .createdAt(LocalDateTime.now())
-                .createdBy("admin")
-                .updatedAt(LocalDateTime.now())
-                .updatedBy("admin")
-                .build();
+        Category category = new Category();
+        category.setId(categoryId);
 
-        Mockito.when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
 
-        Category foundCategory = categoryService.getCategoryById(categoryId);
+        Category result = categoryService.getCategoryById(categoryId);
 
-        assertNotNull(foundCategory);
-        assertEquals(category.getId(), foundCategory.getId());
-        assertEquals(category.getName(), foundCategory.getName());
+        assertEquals(category, result);
+        verify(categoryRepository, times(1)).findById(categoryId);
     }
 
-//    @Test
-//    public void getCategoryById_NotFound() {
-//        UUID categoryId = UUID.randomUUID();
-//
-//        Mockito.when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
-//
-//        assertThrows(IllegalArgumentException.class, () -> categoryService.getCategoryById(categoryId));
-//    }
+    @Test
+    @DisplayName("getCategoryById - 실패 (카테고리 없음)")
+    public void testGetCategoryById_NotFound() {
+        UUID categoryId = UUID.randomUUID();
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            categoryService.getCategoryById(categoryId);
+        });
+
+        assertTrue(exception.getMessage().contains("Category not found with id: " + categoryId));
+        verify(categoryRepository, times(1)).findById(categoryId);
+    }
 
     @Test
-    public void registerCategory_Success() {
-        // Given
-        CategoryRegistrationRequestDTO registrationRequest = new CategoryRegistrationRequestDTO();
-        registrationRequest.setName("New Category");
+    @DisplayName("getStoresByCategory - 성공")
+    public void testGetStoresByCategory_Success() {
+        String categoryName = "음식";
+        Category category = new Category();
+        category.setName(categoryName);
 
-        Category savedCategory = Category.builder()
-                .id(UUID.randomUUID())
-                .name("New Category")
-                .createdAt(LocalDateTime.now())
-                .createdBy("admin")
-                .updatedAt(LocalDateTime.now())
-                .updatedBy("admin")
-                .build();
+        Store store1 = new Store();
+        store1.setDeletedAt(null);
+        Store store2 = new Store();
+        store2.setDeletedAt(LocalDateTime.now()); // 삭제된 가게
+        Store store3 = new Store();
+        store3.setDeletedAt(null);
 
-        // When
-        when(categoryRepository.existsByName(registrationRequest.getName())).thenReturn(false);
+        Set<Store> stores = new HashSet<>(Arrays.asList(store1, store2, store3));
+        category.setStores(stores);
+
+        when(categoryRepository.findByNameIgnoreCase(categoryName)).thenReturn(Optional.of(category));
+
+        List<CategoryStoreListDTO> result = categoryService.getStoresByCategory(categoryName);
+
+        assertEquals(2, result.size());
+        verify(categoryRepository, times(1)).findByNameIgnoreCase(categoryName);
+    }
+
+    @Test
+    @DisplayName("getStoresByCategory - 실패 (카테고리 없음)")
+    public void testGetStoresByCategory_CategoryNotFound() {
+        String categoryName = "없는카테고리";
+
+        when(categoryRepository.findByNameIgnoreCase(categoryName)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            categoryService.getStoresByCategory(categoryName);
+        });
+
+        assertEquals("Category not found: " + categoryName, exception.getMessage());
+        verify(categoryRepository, times(1)).findByNameIgnoreCase(categoryName);
+    }
+
+    @Test
+    @DisplayName("registerCategory - 성공")
+    public void testRegisterCategory_Success() {
+        String categoryName = "새로운카테고리";
+        User user = User.builder().username("testuser").build();
+
+        CategoryRegistrationRequestDTO requestDTO = new CategoryRegistrationRequestDTO();
+        requestDTO.setName(categoryName);
+
+        when(categoryRepository.existsByName(categoryName)).thenReturn(false);
+
+        Category savedCategory = new Category();
+        savedCategory.setId(UUID.randomUUID());
+        savedCategory.setName(categoryName);
+
         when(categoryRepository.save(any(Category.class))).thenReturn(savedCategory);
 
-        Category result = categoryService.registerCategory(registrationRequest, new User());
+        Category result = categoryService.registerCategory(requestDTO, user);
 
-        // Then
-        assertNotNull(result);
-        assertEquals("New Category", result.getName());
+        assertEquals(savedCategory, result);
+        verify(categoryRepository, times(1)).existsByName(categoryName);
         verify(categoryRepository, times(1)).save(any(Category.class));
     }
 
     @Test
-    public void updateCategory_Success() {
-        UUID categoryId = UUID.randomUUID();
-        Category existingCategory = Category.builder()
-                .id(categoryId)
-                .name("Old Category Name")
-                .createdAt(LocalDateTime.now())
-                .createdBy("admin")
-                .updatedAt(LocalDateTime.now())
-                .updatedBy("admin")
-                .build();
+    @DisplayName("registerCategory - 실패 (이름 중복)")
+    public void testRegisterCategory_DuplicateName() {
+        String categoryName = "중복카테고리";
+        User user = User.builder().username("testuser").build();
 
-        CategoryUpdateRequestDTO updateRequest = new CategoryUpdateRequestDTO();
-        updateRequest.setName("New Category Name");
+        CategoryRegistrationRequestDTO requestDTO = new CategoryRegistrationRequestDTO();
+        requestDTO.setName(categoryName);
 
-        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
-        when(categoryRepository.existsByName(updateRequest.getName())).thenReturn(false);
-        when(categoryRepository.save(any(Category.class))).thenReturn(existingCategory);
+        when(categoryRepository.existsByName(categoryName)).thenReturn(true);
 
-        Category updatedCategory = categoryService.updateCategory(categoryId, updateRequest, new User());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            categoryService.registerCategory(requestDTO, user);
+        });
 
-        assertNotNull(updatedCategory);
-        assertEquals("New Category Name", updatedCategory.getName());
-        verify(categoryRepository, times(1)).save(existingCategory);
-    }
-
-    @Test
-    public void updateCategory_NameAlreadyExists() {
-        UUID categoryId = UUID.randomUUID();
-        Category existingCategory = Category.builder()
-                .id(categoryId)
-                .name("Old Category Name")
-                .createdAt(LocalDateTime.now())
-                .createdBy("admin")
-                .updatedAt(LocalDateTime.now())
-                .updatedBy("admin")
-                .build();
-
-        CategoryUpdateRequestDTO updateRequest = new CategoryUpdateRequestDTO();
-        updateRequest.setName("Duplicate Category Name");
-
-        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
-        when(categoryRepository.existsByName(updateRequest.getName())).thenReturn(true);
-
-        assertThrows(IllegalArgumentException.class, () -> categoryService.updateCategory(categoryId, updateRequest, new User()));
-
-        verify(categoryRepository, never()).save(existingCategory);
-    }
-
-    @Test
-    public void updateCategory_CategoryNotFound() {
-        UUID categoryId = UUID.randomUUID();
-        CategoryUpdateRequestDTO updateRequest = new CategoryUpdateRequestDTO();
-        updateRequest.setName("New Category Name");
-
-        when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> categoryService.updateCategory(categoryId, updateRequest, new User()));
-
+        assertEquals("Category name already exists: " + categoryName, exception.getMessage());
+        verify(categoryRepository, times(1)).existsByName(categoryName);
         verify(categoryRepository, never()).save(any(Category.class));
     }
 
     @Test
-    public void deleteCategory_Success() {
-        // Given
+    @DisplayName("updateCategory - 성공")
+    public void testUpdateCategory_Success() {
         UUID categoryId = UUID.randomUUID();
-        Category category = Category.builder()
-                .id(categoryId)
-                .name("Sample Category")
-                .createdAt(LocalDateTime.now())
-                .createdBy("admin")
-                .updatedAt(LocalDateTime.now())
-                .updatedBy("admin")
-                .build();
+        String oldName = "기존카테고리";
+        String newName = "새로운카테고리";
+        User user = User.builder().username("testuser").build();
 
-        // UserDetails 모킹 설정
-        when(userDetails.getUsername()).thenReturn("testUser");
+        CategoryUpdateRequestDTO updateRequestDTO = new CategoryUpdateRequestDTO();
+        updateRequestDTO.setName(newName);
 
-        // CategoryRepository 모킹 설정
+        Category category = new Category();
+        category.setId(categoryId);
+        category.setName(oldName);
+
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
-        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+        when(categoryRepository.existsByName(newName)).thenReturn(false);
+        when(categoryRepository.save(category)).thenReturn(category);
 
-        // When
-        Category deletedCategory = categoryService.deleteCategory(categoryId, userDetails);
+        Category result = categoryService.updateCategory(categoryId, updateRequestDTO, user);
 
-        // Then
-        assertNotNull(deletedCategory.getDeletedAt());
-        assertEquals("testUser", deletedCategory.getDeletedBy());
+        assertEquals(newName, result.getName());
+        verify(categoryRepository, times(1)).findById(categoryId);
+        verify(categoryRepository, times(1)).existsByName(newName);
         verify(categoryRepository, times(1)).save(category);
     }
 
+    @Test
+    @DisplayName("updateCategory - 실패 (이름 중복)")
+    public void testUpdateCategory_DuplicateName() {
+        UUID categoryId = UUID.randomUUID();
+        String oldName = "기존카테고리";
+        String duplicateName = "중복카테고리";
+        User user = User.builder().username("testuser").build();
+
+        CategoryUpdateRequestDTO updateRequestDTO = new CategoryUpdateRequestDTO();
+        updateRequestDTO.setName(duplicateName);
+
+        Category category = new Category();
+        category.setId(categoryId);
+        category.setName(oldName);
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+        when(categoryRepository.existsByName(duplicateName)).thenReturn(true);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            categoryService.updateCategory(categoryId, updateRequestDTO, user);
+        });
+
+        assertEquals("Category name already exists: " + duplicateName, exception.getMessage());
+        verify(categoryRepository, times(1)).findById(categoryId);
+        verify(categoryRepository, times(1)).existsByName(duplicateName);
+        verify(categoryRepository, never()).save(any(Category.class));
+    }
+
+    @Test
+    @DisplayName("deleteCategory - 성공")
+    public void testDeleteCategory_Success() {
+        UUID categoryId = UUID.randomUUID();
+        Category category = new Category();
+        category.setId(categoryId);
+
+        UserDetails userDetails = mock(UserDetails.class);
+        when(userDetails.getUsername()).thenReturn("testuser");
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+        when(categoryRepository.save(category)).thenReturn(category);
+
+        Category result = categoryService.deleteCategory(categoryId, userDetails);
+
+        assertEquals(category, result);
+        assertNotNull(category.getDeletedAt());
+        assertEquals("testuser", category.getDeletedBy());
+        verify(categoryRepository, times(1)).findById(categoryId);
+        verify(categoryRepository, times(1)).save(category);
+    }
+
+    @Test
+    @DisplayName("deleteCategory - 실패 (카테고리 없음)")
+    public void testDeleteCategory_CategoryNotFound() {
+        UUID categoryId = UUID.randomUUID();
+
+        UserDetails userDetails = mock(UserDetails.class);
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            categoryService.deleteCategory(categoryId, userDetails);
+        });
+
+        assertTrue(exception.getMessage().contains("Category not found with id: " + categoryId));
+        verify(categoryRepository, times(1)).findById(categoryId);
+        verify(categoryRepository, never()).save(any(Category.class));
+    }
+
+    @Test
+    @DisplayName("checkDuplicateCategoryName - 실패 (이름 존재)")
+    public void testCheckDuplicateCategoryName_NameExists() {
+        String name = "중복카테고리";
+
+        when(categoryRepository.existsByName(name)).thenReturn(true);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            categoryService.checkDuplicateCategoryName(name);
+        });
+
+        assertEquals("Category name already exists: " + name, exception.getMessage());
+        verify(categoryRepository, times(1)).existsByName(name);
+    }
+
+    @Test
+    @DisplayName("checkDuplicateCategoryName - 성공 (이름 없음)")
+    public void testCheckDuplicateCategoryName_NameDoesNotExist() {
+        String name = "새로운카테고리";
+
+        when(categoryRepository.existsByName(name)).thenReturn(false);
+
+        assertDoesNotThrow(() -> {
+            categoryService.checkDuplicateCategoryName(name);
+        });
+
+        verify(categoryRepository, times(1)).existsByName(name);
+    }
 }

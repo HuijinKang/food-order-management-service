@@ -11,6 +11,7 @@ import org.sparta.foodordermanagementservice.security.UserDetailsImpl;
 import org.sparta.foodordermanagementservice.service.CategoryService;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class CategoryController {
     // 카테고리 삭제
     @DeleteMapping("/{categoryId}")
     @Secured({UserRole.Authority.MASTER})
-    public ApiResponse<Category> deleteCategory(@PathVariable UUID categoryId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ApiResponse<Category> deleteCategory(@PathVariable UUID categoryId, @AuthenticationPrincipal UserDetails userDetails) {
         return ApiResponse.ofSuccess(categoryService.deleteCategory(categoryId, userDetails));
     }
 }

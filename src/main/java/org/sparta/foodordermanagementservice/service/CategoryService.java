@@ -7,6 +7,7 @@ import org.sparta.foodordermanagementservice.entity.Category;
 import org.sparta.foodordermanagementservice.entity.Store;
 import org.sparta.foodordermanagementservice.entity.User;
 import org.sparta.foodordermanagementservice.security.UserDetailsImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public interface CategoryService {
     Category updateCategory(UUID categoryId, CategoryUpdateRequestDTO categoryUpdateRequestDTO, User user);
 
     // 카테고리 삭제
-    Category deleteCategory(UUID categoryId, UserDetailsImpl userDetails);
+    Category deleteCategory(UUID categoryId, UserDetails userDetails);
 
     // 동일한 카테고리명이 있을시 예외 발생
     void checkDuplicateCategoryName(String name);

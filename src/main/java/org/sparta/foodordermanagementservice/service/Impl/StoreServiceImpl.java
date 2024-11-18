@@ -1,6 +1,9 @@
 package org.sparta.foodordermanagementservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.sparta.foodordermanagementservice.common.exeption.CustomException;
+import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.request.SearchRequestDto;
 import org.sparta.foodordermanagementservice.dto.request.StoreRegistrationRequestDTO;
 import org.sparta.foodordermanagementservice.dto.request.StoreUpdateRequestDTO;
 import org.sparta.foodordermanagementservice.dto.response.StoreUpdateResponseDTO;
@@ -37,18 +40,18 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public Page<Store> getSearchStoreList(String keyword, double latitude, double longitude, int pageSize, int pageNumber, String sortBy, boolean isAsc) {
+    public Page<Store> getSearchStoreList(double latitude, double longitude, SearchRequestDto searchRequestDto) {
         // 키워드 검증
-        if (keyword == null || keyword.trim().isEmpty()) {
+        if (searchRequestDto.getKeyword() == null || searchRequestDto.getKeyword().trim().isEmpty()) {
             throw new IllegalArgumentException("Keyword cannot be null or empty.");
         }
 
         // 정렬 설정
-        Sort sort = Sort.by(isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+        Sort sort = Sort.by(searchRequestDto.isAsc() ? Sort.Direction.ASC : Sort.Direction.DESC, searchRequestDto.getSortedBy());
+        PageRequest pageRequest = PageRequest.of(searchRequestDto.getPageNumber(), searchRequestDto.getPageSize(), sort);
 
         // 키워드로 가게 이름이나 카테고리를 검색하여 삭제된 가게는 제외
-        List<Store> searchResults = storeRepository.searchStores(keyword, pageRequest).getContent();
+        List<Store> searchResults = storeRepository.searchStores(searchRequestDto.getKeyword(), pageRequest).getContent();
 
         // 거리 필터링을 적용하여 10km 이내의 가게만 포함
         List<Store> filteredStores = searchResults.stream()
@@ -87,10 +90,6 @@ public class StoreServiceImpl implements StoreService {
                 .longitude(storeRegistrationRequestDTO.getLongitude())
                 .name(storeRegistrationRequestDTO.getName())
                 .categories(categories)
-                .createdAt(LocalDateTime.now())
-                .createdBy(user.getUsername())
-                .updatedAt(LocalDateTime.now())
-                .updatedBy(user.getUsername())
                 .build();
 
         return storeRepository.save(store);
@@ -114,8 +113,6 @@ public class StoreServiceImpl implements StoreService {
         store.setLongitude(storeUpdateRequestDTO.getLongitude());
         store.setName(storeUpdateRequestDTO.getName());
         store.setCategories(categories);
-        store.setUpdatedAt(LocalDateTime.now());
-        store.setUpdatedBy(user.getUsername());
 
         return toStoreUpdateResponseDTO(storeRepository.save(store));
     }
@@ -182,5 +179,11 @@ public class StoreServiceImpl implements StoreService {
                 .updatedAt(store.getUpdatedAt())
                 .updatedBy(store.getUpdatedBy())
                 .build();
+    }
+
+    @Override
+    public Store findByStoreId(UUID storeId) {
+        return storeRepository.findById(storeId).orElseThrow(() ->
+                new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
     }
 }

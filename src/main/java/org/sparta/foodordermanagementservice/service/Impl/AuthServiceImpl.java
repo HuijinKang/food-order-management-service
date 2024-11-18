@@ -49,8 +49,8 @@ public class AuthServiceImpl implements AuthService {
                 .isPublic(requestDTO.getIsPublic())
                 .status(UserStatus.ACTIVE)
                 .userRole(requestDTO.getUserRole())
-                .createdBy(username)
-                .updatedBy(username)
+//                .createdBy(username)
+//                .updatedBy(username)
                 .build();
 
         userRepository.save(user);
