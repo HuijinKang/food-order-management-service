@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.service;
 
+import org.sparta.foodordermanagementservice.dto.PaymentDTO;
 import org.sparta.foodordermanagementservice.dto.CreatePaymentDTO;
 import org.sparta.foodordermanagementservice.dto.PaginatePaymentsDTO;
 import org.sparta.foodordermanagementservice.dto.UpdatePaymentDTO;

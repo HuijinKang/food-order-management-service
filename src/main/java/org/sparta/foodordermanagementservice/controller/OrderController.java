@@ -6,31 +6,70 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@SuppressWarnings("unused")
+@Slf4j
+@RequiredArgsConstructor
+
 @RestController
 @RequestMapping("api/orders")
-
-@RequiredArgsConstructor
-@Slf4j
 public class OrderController {
-
+//
 //    private final OrderService orderService;
-
+//
 //    @GetMapping
-//    public ApiResponse<List<OrderListResponse>> getOrderList
+//    public ApiResponse<List<OrderListResObj>> readOrderList
 //            (
 //                    @RequestParam OrderListRequestCondition condition,
-//                    @RequestParam Long key,
+//                    @RequestParam String key,
 //                    @RequestParam int pageSize,
 //                    @RequestParam int pageNumber,
 //                    @RequestParam SortedBy sortedBy,
 //                    @RequestParam boolean isAsc
 //            ) {
 //
-//        if (!PageSizeRule.isPageSizeValid(pageSize))
+//        if (!PageSizeRule.validate(pageSize))
 //            pageSize = PageSizeRule.DEFAULT_PAGE_SIZE;
 //
+//        ReadOrderListDto dto
+//                = ReadOrderListDto.builder()
+//                .condition(condition)
+//                .key(key)
+//                .pageSize(pageSize)
+//                .pageNumber(pageNumber)
+//                .sortedBy(sortedBy)
+//                .isAsc(isAsc)
+//                .build();
 //
+//        List<OrderDTO> orderList
+//                = orderService.readOrderList(dto);
 //
-//        return ApiResponse.ofSuccess(null);
+//        List<OrderListResObj> responseObjList
+//                = orderList.stream()
+//                .map(OrderListResObj::from)
+//                .collect(Collectors.toList());
+//
+//        return ApiResponse.ofSuccess(responseObjList);
+//    }
+//
+////    @GetMapping("/{id}")
+////    public ApiResponse<SearchOrderDetailRes> searchOrderDetail(@PathVariable long id) {
+////
+////        OrderDTO searchedOrder
+////                = orderService.searchOrder(id);
+////
+////        SearchOrderDetailRes orderDetailRes
+////                = SearchOrderDetailRes.from(searchedOrder);
+////
+////        return ApiResponse.ofSuccess(orderDetailRes);
+////    }
+//
+//    @DeleteMapping("/{id}")
+//    public ApiResponse<Void> deleteOrder(@PathVariable UUID id) {
+//
+//        orderService.deleteOrder(id);
+//
+//        return ApiResponse.ofSuccess(
+//                null
+//        );
 //    }
 }

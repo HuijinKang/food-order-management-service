@@ -107,6 +107,7 @@ public class PaymentController {
     @Secured(UserRole.Authority.MASTER)
     public ApiResponse<Void> deletePayment(@PathVariable UUID id) {
 
+        //todo 권한 인증
         paymentService.deletePayment(id);
 
         return ApiResponse.ofSuccess(null);

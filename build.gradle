@@ -63,10 +63,14 @@ dependencies {
 
     // Entity와 DTO간의 매핑을 위한 라이브러리
     implementation 'org.modelmapper:modelmapper:2.4.2'
+
 }
 
 openapi3 {
-    server = 'http://localhost:8080'
+    servers = [
+            { url = "http://localhost:8080" },
+            { url = "http://13.125.218.97" }
+    ]
     title = 'Food Order Management Service API'
     description = 'Food Order Management Service API description'
     version = '1.0.0'
