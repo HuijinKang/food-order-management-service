@@ -9,7 +9,7 @@ import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
+@Builder
 @Getter
 public class PaymentDTO {
 
@@ -52,7 +52,7 @@ public class PaymentDTO {
                 .build();
     }
 
-    @Builder
+
     public PaymentDTO(UUID id,
                       UUID orderId,
                       long userId,

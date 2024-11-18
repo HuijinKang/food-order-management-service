@@ -87,4 +87,9 @@ public class PaymentDAO {
                 .size();
 
     }
+
+    public Payment readOrderPayment(UUID orderId) {
+        return jpaRepo.findByOrderId(orderId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
+    }
 }

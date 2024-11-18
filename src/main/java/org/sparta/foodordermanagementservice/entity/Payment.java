@@ -2,6 +2,9 @@ package org.sparta.foodordermanagementservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

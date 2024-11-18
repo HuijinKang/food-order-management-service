@@ -30,6 +30,12 @@ public class PaymentRepository {
         return paymentDAO.readPayment(paymentId);
     }
 
+    @Transactional(readOnly = true)
+    public Payment readOrderPayment(UUID orderId) {
+
+        return paymentDAO.readOrderPayment(orderId);
+    }
+
     @Transactional
     public Payment createPayment(CreatePaymentDTO dto) {
 

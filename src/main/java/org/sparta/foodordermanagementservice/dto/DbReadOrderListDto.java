@@ -3,7 +3,7 @@ package org.sparta.foodordermanagementservice.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
+import org.sparta.foodordermanagementservice.dto.request.PaginateOrdersReqCondition;
 import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 
 import java.util.UUID;
@@ -24,12 +24,12 @@ public class DbReadOrderListDto {
     public static DbReadOrderListDto from(ReadOrderListDto dto) {
 
         UUID targetStoreId
-                = dto.getCondition() == OrderListRequestCondition.STORE_ID
+                = dto.getCondition() == PaginateOrdersReqCondition.STORE_ID
                 ? UUID.fromString(dto.getKey())
                 : null;
 
         String targetUserName
-                = dto.getCondition() == OrderListRequestCondition.USER_NAME
+                = dto.getCondition() == PaginateOrdersReqCondition.USER_NAME
                 ? dto.getKey()
                 : null;
 

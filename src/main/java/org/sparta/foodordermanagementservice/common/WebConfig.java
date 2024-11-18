@@ -3,7 +3,6 @@ package org.sparta.foodordermanagementservice.common;
 import org.sparta.foodordermanagementservice.common.utils.OrderTypeConverter;
 import org.sparta.foodordermanagementservice.common.utils.SortedByConverter;
 import org.sparta.foodordermanagementservice.dto.request.PaginateOrdersReqCondition;
-import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
