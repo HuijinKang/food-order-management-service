@@ -125,7 +125,7 @@ public class OrderServiceImpl implements OrderService {
             }
         });
 
-        PaymentDTO orderPayment;
+        CreatePaymentDTO orderPayment;
         int totalPrice
                 = dto.getOrderedMenuInfos()
                 .stream()
@@ -133,7 +133,7 @@ public class OrderServiceImpl implements OrderService {
                         menuInfo.getMenuPrice() * menuInfo.getAmount())
                 .sum();
         orderPayment
-                = PaymentDTO.builder()
+                = CreatePaymentDTO.builder()
                 .payedPrice(totalPrice)
                 .status(PaymentStatus.PAY_WAIT)
                 .build();
@@ -158,7 +158,7 @@ public class OrderServiceImpl implements OrderService {
 
         PaymentDTO payment
                 = hasManagerRole(userDetails) || hasCustomerRole(userDetails)
-                ? PaymentDTO.from(paymentRepo.readPayment())
+                ? PaymentDTO.from(paymentRepo.readOrderPayment(orderId))
                 : null;
 
         return ResReadOrderDetail.from(order, menuList, payment);

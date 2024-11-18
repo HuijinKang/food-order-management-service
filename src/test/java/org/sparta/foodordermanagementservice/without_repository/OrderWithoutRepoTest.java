@@ -261,6 +261,7 @@
 //
 //
 //        when(menuRepo.findAllById(any())).thenReturn(menus);
+//        when(paymentRepo.readOrderPayment(any())) // 아무것도 안하게
 //        when(orderRepo.createOrder(any())).thenReturn(createdOrderId);
 //
 //

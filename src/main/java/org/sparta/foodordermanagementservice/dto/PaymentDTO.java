@@ -2,73 +2,83 @@ package org.sparta.foodordermanagementservice.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Setter;
 import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Slf4j
-
-@Getter
 @Builder
+@Getter
 public class PaymentDTO {
 
-    private UUID id;
-    private UUID orderId;
+    private final UUID id;
+    private final UUID orderId;
+    private final long userId;
+    private final String username;
+    @Setter
     private String receipt;
-    private LocalDateTime createdAt;
-    private String createdBy;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
-    private LocalDateTime deletedAt;
-    private String deletedBy;
+    @Setter
     private PaymentStatus status;
     private int payedPrice;
+    private final LocalDateTime createdAt;
+    private final String createdBy;
+    private final LocalDateTime updatedAt;
+    private final String updatedBy;
+    private LocalDateTime deletedAt;
+    private String deletedBy;
 
 
-    public static PaymentDTO from (Payment payment) {
 
-        log.info(payment.toString());
+
+
+    public static PaymentDTO from(Payment payment) {
 
         return PaymentDTO.builder()
                 .id(payment.getId())
                 .orderId(payment.getOrder().getId())
+                .userId(payment.getUser().getId())
+                .username(payment.getUser().getUsername())
                 .receipt(payment.getReceipt())
+                .status(payment.getStatus())
+                .payedPrice(payment.getPayedPrice())
                 .createdAt(payment.getCreatedAt())
                 .createdBy(payment.getCreatedBy())
                 .updatedAt(payment.getUpdatedAt())
                 .updatedBy(payment.getUpdatedBy())
                 .deletedAt(payment.getDeletedAt())
                 .deletedBy(payment.getDeletedBy())
-                .status(payment.getStatus())
-                .payedPrice(payment.getPayedPrice())
                 .build();
     }
 
 
     public PaymentDTO(UUID id,
                       UUID orderId,
+                      long userId,
+                      String username,
                       String receipt,
+                      PaymentStatus status,
+                      int payedPrice,
                       LocalDateTime createdAt,
                       String createdBy,
                       LocalDateTime updatedAt,
                       String updatedBy,
                       LocalDateTime deletedAt,
-                      String deletedBy,
-                      PaymentStatus status,
-                      int payedPrice) {
+                      String deletedBy
+    ) {
         this.id = id;
         this.orderId = orderId;
+        this.userId = userId;
+        this.username = username;
         this.receipt = receipt;
+        this.status = status;
+        this.payedPrice = payedPrice;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
         this.updatedAt = updatedAt;
         this.updatedBy = updatedBy;
         this.deletedAt = deletedAt;
         this.deletedBy = deletedBy;
-        this.status = status;
-        this.payedPrice = payedPrice;
     }
 }
