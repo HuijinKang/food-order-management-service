@@ -1,5 +1,6 @@
 package org.sparta.foodordermanagementservice.entity.enumerate;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.RequiredArgsConstructor;
 import org.sparta.foodordermanagementservice.dto.request.BaseQueryStringEnum;
 
@@ -16,6 +17,7 @@ public enum OrderStatus implements BaseQueryStringEnum {
     private final String queryString;
 
     @Override
+    @JsonValue
     public String getQueryString() {
         return queryString;
     }
