@@ -1,4 +1,4 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- uuid_generate_v4()
 
 -- do $$
@@ -36,7 +36,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 			'05bf78d1-1286-4b39-8188-9fa83b7aa458',
 			1,
 			'WAIT',
-			'nora'
+			'nara'
 		);
 -- 	end loop;
 -- end $$;
