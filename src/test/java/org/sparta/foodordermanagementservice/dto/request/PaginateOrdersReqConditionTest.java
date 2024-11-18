@@ -18,7 +18,7 @@ class PaginateOrdersReqConditionTest {
         assertThat(condition).isEqualTo(PaginateOrdersReqCondition.STORE_ID);
 
         condition
-                = converter.convert("userName");
+                = converter.convert("username");
         assertThat(condition).isEqualTo(PaginateOrdersReqCondition.USER_NAME);
 
         try {
