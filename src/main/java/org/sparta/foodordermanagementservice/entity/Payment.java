@@ -2,18 +2,22 @@ package org.sparta.foodordermanagementservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.sparta.foodordermanagementservice.entity.enumerate.PaymentStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@ToString
+
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_payment")
-public class Payment {
+public class Payment extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,34 +28,49 @@ public class Payment {
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumns({
+            @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false),
+            @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)})
     private User user;
-
-    @Column(nullable = false, length = 255)
-    private String paymentType;
 
     @Column(nullable = false, length = 1000)
     private String receipt;
 
-//    @Enumerated(EnumType.STRING)
 //    @Column(nullable = false)
-//    private PaymentStatus status;
+//    private LocalDateTime createdAt;
+//
+//    @Column(nullable = false)
+//    private String createdBy;
+//
+//    @Column
+//    private LocalDateTime updatedAt;
+//
+//    @Column
+//    private String updatedBy;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false, length = 255)
-    private String createdBy;
-
-    @Column
-    private LocalDateTime updatedAt;
-
-    @Column(length = 255)
-    private String updatedBy;
-
+    @Setter
     @Column
     private LocalDateTime deletedAt;
 
-    @Column(length = 255)
+    @Setter
+    @Column
     private String deletedBy;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
+    private PaymentStatus status;
+
+    @Column(nullable = false)
+    private int payedPrice;
+
+
+    public Payment(Order order, User user, PaymentStatus status, int payedPrice, String receipt) {
+        this.order = order;
+        this.user = user;
+        this.receipt = receipt;
+        this.status = status;
+        this.payedPrice = payedPrice;
+    }
 }

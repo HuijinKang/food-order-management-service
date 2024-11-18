@@ -13,4 +13,8 @@ public interface MenuRepository extends JpaRepository<Menu, UUID>, MenuCustomRep
     List<Menu> findByStoreIdAndStatusNot(UUID storeId, MenuStatus menuStatus);
 
     Optional<Menu> findByIdAndStatusNot(UUID menuId, MenuStatus status);
+
+    List<Menu> findByStoreId(UUID storeId);
+
+    List<Menu> findAllById(Iterable<UUID> menuIds);
 }

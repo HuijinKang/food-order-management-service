@@ -1,0 +1,108 @@
+package org.sparta.foodordermanagementservice.repository;
+
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.sparta.foodordermanagementservice.common.exeption.CustomException;
+import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
+import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
+import org.sparta.foodordermanagementservice.entity.Order;
+import org.sparta.foodordermanagementservice.entity.QOrder;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderSpec;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@SuppressWarnings("unused")
+@Slf4j
+
+@Repository
+@RequiredArgsConstructor
+public class OrderDAO {
+
+    private final OrderJpaRepository jpaRepo;
+
+    private final QOrder order = QOrder.order;
+    private final JPAQueryFactory queryFactory;
+
+    public long countTotal(UUID storeId, String username) {
+
+        return queryFactory
+                .selectFrom(order)
+                .where(
+                        storeIdEq(storeId),
+                        usernameEq(username),
+                        order.deletedAt.isNull()
+                )
+                .fetch()
+                .size();
+    }
+
+    public List<Order> readCurrentPage(PaginateOrdersDTO dto) {
+
+        return queryFactory
+                .selectFrom(order)
+                .where(
+                        storeIdEq(dto.getStoreId()),
+                        usernameEq(dto.getUsername()),
+                        order.deletedAt.isNull()
+                )
+                .orderBy(OrderSpec.of(dto.getSortedBy(), dto.isAsc()))
+                .offset(dto.getPageSize() * dto.getPageNumber())
+                .limit(dto.getPageSize())
+                .fetch();
+
+    }
+
+    protected BooleanExpression storeIdEq(UUID storeId) {
+
+        if (storeId == null) return null;
+
+        return order.store.id.eq(storeId);
+    }
+
+
+    protected BooleanExpression usernameEq(String username) {
+
+        if (username == null) return null;
+
+        return order.user.username.eq(username);
+    }
+
+
+    public Order readOrder(UUID orderId) {
+        return jpaRepo.findById(orderId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
+    }
+
+    public void softDeleteOrder(UUID orderId, String deleterName) {
+
+        Order order = jpaRepo.findById(orderId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
+
+        order.setDeletedAt(LocalDateTime.now());
+        order.setDeletedBy(deleterName);
+
+        jpaRepo.save(order);
+    }
+
+    public Order createOrder(Order order) {
+
+        return jpaRepo.save(order);
+    }
+
+    public void updateStatus(UUID orderId, OrderStatus orderStatus) {
+
+        jpaRepo.findById(orderId).ifPresentOrElse(order -> {
+                    order.setStatus(orderStatus);
+                    jpaRepo.save(order);
+                }
+                , () -> {
+                    throw new CustomException(ErrorCode.ORDER_NOT_FOUND);
+                });
+    }
+}

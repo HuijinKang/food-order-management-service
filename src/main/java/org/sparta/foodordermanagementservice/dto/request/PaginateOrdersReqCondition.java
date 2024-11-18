@@ -6,17 +6,17 @@ import org.sparta.foodordermanagementservice.common.utils.QueryStringEnumConvert
 
 @Getter
 @RequiredArgsConstructor
-public enum OrderListRequestCondition implements BaseQueryStringEnum {
+public enum PaginateOrdersReqCondition implements BaseQueryStringEnum {
 
     STORE_ID("storeId"),
-    USER_NAME("userName");
+    USER_NAME("username");
 
     private final String queryString;
 
     public static class Converter
-            extends QueryStringEnumConverter<OrderListRequestCondition> {
+            extends QueryStringEnumConverter<PaginateOrdersReqCondition> {
         public Converter() {
-            super(OrderListRequestCondition.class);
+            super(PaginateOrdersReqCondition.class);
         }
     }
 }

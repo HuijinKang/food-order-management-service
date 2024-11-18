@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new UsernameNotFoundException("Not Found " + userName));
 
-        return new org.sparta.foodordermanagementservice.security.UserDetailsImpl(user);
+        return new UserDetailsImpl(user);
     }
 
 }

@@ -2,60 +2,98 @@ package org.sparta.foodordermanagementservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
+
+
+@ToString
+
 @Entity
 @Getter
-@Setter
-@Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @AllArgsConstructor
 @Table(name = "p_order")
-public class Order {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumns({
+            @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false),
+            @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)})
+    private final User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
-    private Store store;
+    @JoinColumn(nullable = false)
+    private final Store store;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private OrderStatus status;
-//
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private OrderType type;
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
+    private OrderStatus status;
 
-    @Column(nullable = false, length = 255)
-    private String address;
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(nullable = false)
+    private final OrderType type;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
+    private final String address;
+
+    @Column(nullable = false)
     private String comment;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private final int totalPrice;
 
-    @Column(nullable = false, length = 255)
-    private String createdBy;
+//    @Column(nullable = false)
+//    private LocalDateTime createdAt;
 
-    @Column
-    private LocalDateTime updatedAt;
+//    @Column(nullable = false)
+//    private String createdBy;
 
-    @Column(length = 255)
-    private String updatedBy;
+//    @Column
+//    private LocalDateTime updatedAt;
 
+//    @Column
+//    private String updatedBy;
+
+    @Setter
     @Column
     private LocalDateTime deletedAt;
 
-    @Column(length = 255)
+    @Setter
+    @Column
     private String deletedBy;
+
+
+    @Builder
+    public Order(UUID id,
+                 User user,
+                 Store store,
+                 OrderStatus status,
+                 OrderType type,
+                 String address,
+                 String comment,
+                 int totalPrice) {
+        this.id = id;
+        this.user = user;
+        this.store = store;
+        this.status = status;
+        this.type = type;
+        this.address = address;
+        this.comment = comment;
+        this.totalPrice = totalPrice;
+    }
 }

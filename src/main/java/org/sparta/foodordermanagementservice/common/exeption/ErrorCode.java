@@ -29,9 +29,16 @@ public enum ErrorCode {
     FAIL_LOGIN(HttpStatus.BAD_REQUEST, "L002", "로그인 실패"),
 
     /* 유저 */
+    DELETED_USER(HttpStatus.FORBIDDEN, "U004", "탈퇴한 사용자입니다."),
+
+    /* 주문 */
+    MENU_DELETED(HttpStatus.CONFLICT, "O001", "메뉴 정보 변경: 삭제된 메뉴입니다."),
+    MENU_PRICE_CHANGED(HttpStatus.CONFLICT, "O002", "메뉴 정보 변경: 가격이 변경되었습니다."),
+    ORDER_NOT_FOUND(HttpStatus.CONFLICT, "O003", "해당 주문을 찾을 수 없습니다"),
+    MENU_CHANGED(HttpStatus.CONFLICT, "O004", "메뉴 정보 변경: 가격이 변경되었습니다."),
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "U001", "사용자가 존재하지 않습니다."),
     CANNOT_DELETE_MASTER_USER(HttpStatus.FORBIDDEN, "U002", "마스터 사용자는 삭제할 수 없습니다."),
-    DELETED_USER(HttpStatus.FORBIDDEN, "U003", "탈퇴한 사용자입니다."),
+//    DELETED_USER(HttpStatus.FORBIDDEN, "U003", "탈퇴한 사용자입니다."),
 
      /* 메뉴 */
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", "해당 메뉴를 찾을 수 없습니다."),

@@ -18,4 +18,28 @@ public class RoleUtils {
         return userDetails.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.MANAGER));
     }
+
+    public static boolean hasCustomerRole(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.CUSTOMER));
+    }
+
+    public static boolean hasOwnerRole(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(UserRole.Authority.OWNER));
+    }
+
+    public static boolean hasUserRoleIn(UserDetails userDetails, UserRole... userRoles) {
+
+        for (UserRole userRole : userRoles) {
+
+            if (userDetails.getAuthorities().stream()
+                    .anyMatch(grantedAuthority ->
+                            grantedAuthority.getAuthority().equals(userRole.getAuthority()))
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
