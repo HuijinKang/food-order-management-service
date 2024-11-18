@@ -2,7 +2,7 @@ package org.sparta.foodordermanagementservice.dto;
 
 import lombok.Builder;
 import lombok.Value;
-import org.sparta.foodordermanagementservice.dto.request.PostPaymentReq;
+import org.sparta.foodordermanagementservice.dto.request.ReqPostPayment;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.Payment;
 import org.sparta.foodordermanagementservice.entity.User;
@@ -20,7 +20,7 @@ public class CreatePaymentDTO {
     int payedPrice;
     String receipt;
 
-    public static CreatePaymentDTO from(PostPaymentReq request) {
+    public static CreatePaymentDTO from(ReqPostPayment request) {
 
         return CreatePaymentDTO.builder()
                 .orderId(request.getOrderId())

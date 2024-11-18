@@ -3,12 +3,14 @@ package org.sparta.foodordermanagementservice.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.sparta.foodordermanagementservice.common.exeption.CustomException;
 import org.sparta.foodordermanagementservice.common.exeption.ErrorCode;
-import org.sparta.foodordermanagementservice.dto.DbReadOrderListDto;
+import org.sparta.foodordermanagementservice.dto.PaginateOrdersDTO;
 import org.sparta.foodordermanagementservice.entity.Order;
 import org.sparta.foodordermanagementservice.entity.QOrder;
 import org.sparta.foodordermanagementservice.entity.enumerate.OrderSpec;
+import org.sparta.foodordermanagementservice.entity.enumerate.OrderStatus;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -16,61 +18,91 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-
+@Slf4j
 
 @Repository
 @RequiredArgsConstructor
 public class OrderDAO {
 
-    private final OrderJpaRepository orderJpaRepo;
+    private final OrderJpaRepository jpaRepo;
 
-    private final QOrder qOrder = QOrder.order;
+    private final QOrder order = QOrder.order;
     private final JPAQueryFactory queryFactory;
 
-    public List<Order> readOrderList(DbReadOrderListDto dto) {
+    public long countTotal(UUID storeId, String username) {
 
-        BooleanExpression storeIdEq
-                = dto.getStoreId() == null
-                ? null
-                : qOrder.store.id.eq(dto.getStoreId());
-
-        BooleanExpression userNameEq
-                = dto.getUserName() == null
-                ? null
-//                : order.user.username.eq(dto.getUserName()); //todo 테스트용, user 구현되면 이걸로 쓰기
-                : qOrder.userName.eq(dto.getUserName());
-
-
-        List<Order> readOrderList
-                = queryFactory
-                .selectFrom(qOrder)
+        return queryFactory
+                .selectFrom(order)
                 .where(
-                        storeIdEq,
-                        userNameEq,
-                        qOrder.deletedAt.isNull()
+                        storeIdEq(storeId),
+                        usernameEq(username),
+                        order.deletedAt.isNull()
+                )
+                .fetch()
+                .size();
+    }
+
+    public List<Order> readCurrentPage(PaginateOrdersDTO dto) {
+
+        return queryFactory
+                .selectFrom(order)
+                .where(
+                        storeIdEq(dto.getStoreId()),
+                        usernameEq(dto.getUsername()),
+                        order.deletedAt.isNull()
                 )
                 .orderBy(OrderSpec.of(dto.getSortedBy(), dto.isAsc()))
-                .offset(dto.getPageSize() * (dto.getPageNumber() - 1))
+                .offset(dto.getPageSize() * dto.getPageNumber())
                 .limit(dto.getPageSize())
                 .fetch();
 
-        return readOrderList;
     }
 
+    protected BooleanExpression storeIdEq(UUID storeId) {
+
+        if (storeId == null) return null;
+
+        return order.store.id.eq(storeId);
+    }
+
+
+    protected BooleanExpression usernameEq(String username) {
+
+        if (username == null) return null;
+
+        return order.user.username.eq(username);
+    }
+
+
     public Order readOrder(UUID orderId) {
-        return orderJpaRepo.findById(orderId)
+        return jpaRepo.findById(orderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
     }
 
     public void softDeleteOrder(UUID orderId, String deleterName) {
 
-        Order order = orderJpaRepo.findById(orderId)
+        Order order = jpaRepo.findById(orderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_RESOURCE));
 
         order.setDeletedAt(LocalDateTime.now());
-        order.setDeletedBy("system");//todo auth에서 로그인아이디 받아오도록 수정
+        order.setDeletedBy(deleterName);
 
-        orderJpaRepo.save(order);
+        jpaRepo.save(order);
     }
 
+    public Order createOrder(Order order) {
+
+        return jpaRepo.save(order);
+    }
+
+    public void updateStatus(UUID orderId, OrderStatus orderStatus) {
+
+        jpaRepo.findById(orderId).ifPresentOrElse(order -> {
+                    order.setStatus(orderStatus);
+                    jpaRepo.save(order);
+                }
+                , () -> {
+                    throw new CustomException(ErrorCode.ORDER_NOT_FOUND);
+                });
+    }
 }

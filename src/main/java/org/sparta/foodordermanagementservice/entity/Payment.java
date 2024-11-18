@@ -11,11 +11,12 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+@Setter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_payment")
-public class Payment {
+public class Payment extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,27 +32,31 @@ public class Payment {
             @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)})
     private User user;
 
+    @Column(nullable = false, length = 255)
+    private String paymentType;
+
     @Column(nullable = false, length = 1000)
     private String receipt;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+//    @Column(nullable = false)
+//    private LocalDateTime createdAt;
+//
+//    @Column(nullable = false)
+//    private String createdBy;
+//
+//    @Column
+//    private LocalDateTime updatedAt;
+//
+//    @Column
+//    private String updatedBy;
 
-    @Column(nullable = false)
-    private String createdBy;
-
-    @Column
-    private LocalDateTime updatedAt;
-
-    @Column
+    @Column(length = 255)
     private String updatedBy;
 
-    @Setter
     @Column
     private LocalDateTime deletedAt;
 
-    @Setter
-    @Column
+    @Column(length = 255)
     private String deletedBy;
 
     @Setter
@@ -60,6 +65,7 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status;
 
+    @Setter
     @Column(nullable = false)
     private int payedPrice;
 

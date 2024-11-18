@@ -4,9 +4,10 @@
 ALTER TABLE p_order
 DISABLE TRIGGER ALL;
 
+ALTER TABLE p_payment
+DISABLE TRIGGER ALL;
 
--- close
-delete from p_order;
+ALTER TABLE  p_user
+DISABLE TRIGGER ALL;
 
-ALTER TABLE p_order
-ENABLE TRIGGER ALL;
+

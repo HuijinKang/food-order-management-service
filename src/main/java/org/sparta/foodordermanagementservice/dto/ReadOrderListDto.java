@@ -2,14 +2,14 @@ package org.sparta.foodordermanagementservice.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sparta.foodordermanagementservice.dto.request.OrderListRequestCondition;
+import org.sparta.foodordermanagementservice.dto.request.PaginateOrdersReqCondition;
 import org.sparta.foodordermanagementservice.dto.request.SortedBy;
 
 
 @Getter
 public class ReadOrderListDto {
 
-    private final OrderListRequestCondition condition;
+    private final PaginateOrdersReqCondition condition;
     private final String key;
     private final int pageSize;
     private final int pageNumber;
@@ -19,7 +19,7 @@ public class ReadOrderListDto {
     @Builder
     public ReadOrderListDto
             (
-                    OrderListRequestCondition condition,
+                    PaginateOrdersReqCondition condition,
                     String key,
                     int pageSize,
                     int pageNumber,
